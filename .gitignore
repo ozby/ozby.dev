@@ -1,0 +1,9 @@
+node_modules
+dist
+.wrangler
+.agent
+.agents
+.codex
+.omx
+.omc
+.DS_Store
