@@ -1,0 +1,24 @@
+{
+  "name": "ozby-dev",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.1.1",
+  "scripts": {
+    "build": "wp exec vite build",
+    "typecheck": "wp typecheck",
+    "test": "wp test --file src/projects.test.ts",
+    "lint": "wp lint",
+    "qa": "wp lint && wp typecheck && wp test --file src/projects.test.ts",
+    "deploy:dry-run": "wp deploy --lane prd --dry-run",
+    "deploy:production": "wp deploy --lane prd"
+  },
+  "dependencies": {
+    "@webpresso/agent-kit": "latest",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
+  }
+}
