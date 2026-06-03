@@ -1,7 +1,6 @@
 {
   "extends": "@webpresso/agent-kit/tsconfig/react-library.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
     "types": ["react", "react-dom"]
   },
   "include": ["src", "agent-kit.config.ts", "scripts"]
