@@ -9,9 +9,11 @@
     "test": "wp test --file src/projects.test.ts --file src/worker.test.ts",
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && pnpm run test",
+    "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
     "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
-    "deploy:dry-run": "pnpm run build && pnpm run verify:deploy-contract && wrangler deploy --config wrangler.jsonc --dry-run",
-    "deploy:production": "pnpm run build && pnpm run verify:deploy-contract && wrangler deploy --config wrangler.jsonc"
+    "deploy:dry-run": "bun scripts/deploy-production.ts --dry-run --skip-smoke",
+    "deploy:production": "bun scripts/deploy-production.ts",
+    "deploy:production:wrangler": "bun scripts/deploy-production.ts"
   },
   "dependencies": {
     "@webpresso/agent-kit": "latest",
