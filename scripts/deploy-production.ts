@@ -57,6 +57,11 @@ function requireCommand(name: string, hint: string): void {
   }
 }
 
+function hasCommand(name: string): boolean {
+  const result = spawnSync("command", ["-v", name], { encoding: "utf8", shell: true });
+  return result.status === 0;
+}
+
 function runWithSecrets(
   config: SecretsConfigMetadata,
   envProfile: string,
@@ -64,6 +69,11 @@ function runWithSecrets(
   commandArgs: string[],
   env: NodeJS.ProcessEnv = process.env,
 ) {
+  if (hasCommand("with-secrets")) {
+    run("with-secrets", ["--env-profile", envProfile, "--", command, ...commandArgs], env);
+    return;
+  }
+
   if (config.manager !== "doppler") {
     throw new Error(
       `Unsupported secret manager "${config.manager}" in ozby-dev deploy runner. ` +
@@ -71,7 +81,10 @@ function runWithSecrets(
     );
   }
 
-  requireCommand("doppler", "Install Doppler CLI and authenticate before deploying.");
+  requireCommand(
+    "doppler",
+    "Install Doppler CLI and authenticate before deploying, or install `with-secrets`.",
+  );
   run(
     "doppler",
     ["run", "--project", config.projectId, "--config", envProfile, "--", command, ...commandArgs],
@@ -119,7 +132,9 @@ if (dryRun) {
   process.exit(0);
 }
 
-console.log(`\n▶ Deploying ozby.dev via ${secretsConfig.manager}/${secretsConfig.projectId}…\n`);
+console.log(
+  `\n▶ Deploying ozby.dev via ${hasCommand("with-secrets") ? "with-secrets" : `${secretsConfig.manager}/${secretsConfig.projectId}`}…\n`,
+);
 runWithSecrets(secretsConfig, "prd", "wrangler", ["deploy", "--config", "wrangler.jsonc"]);
 
 if (skipSmoke) {
