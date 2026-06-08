@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./lib/secrets-policy.ts";

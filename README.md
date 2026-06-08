@@ -12,6 +12,12 @@ React personal dev site for Cloudflare Workers. `@webpresso/agent-kit` owns the 
 pnpm run setup:secrets
 ```
 
+- On install, the repo automatically seeds the runtime secret-manager metadata
+  into `.git/webpresso/secrets.json` when it is missing.
+- Secret-scoped deploy execution prefers the canonical `with-secrets -- <cmd>`
+  contract when available, and only falls back to direct Doppler execution when
+  that shared runner is not installed on the machine.
+
 - Dry-run deploy stays secret-free:
 
 ```bash
@@ -26,3 +32,9 @@ pnpm run deploy:production
 
 That build + deploy path resolves Cloudflare credentials through the selected
 manager instead of hardcoding repo-local env files or ad hoc provider commands.
+
+- Verify the repo stays metadata-only with:
+
+```bash
+pnpm run verify:secrets
+```
