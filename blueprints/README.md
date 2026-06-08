@@ -19,12 +19,12 @@ Each subdirectory represents a lifecycle state:
 
 Move files with `git mv` so history follows the spec through its lifecycle.
 
-## Active work (2026-06-03)
+## Active work (2026-06-08)
 
 | Blueprint | Path | Purpose |
 | --------- | ---- | ------- |
-| Strict agent-kit dogfood | [`in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | React Cloudflare Workers dogfood consumer with scaffold landed in commit `d6d5722`. As of 2026-06-03, upstream `wp deploy` + `toolchain-isolation` surfaces exist; remaining work is repo-local dry-run / audit / fresh-clone proof. |
+| Strict agent-kit dogfood | [`in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | Scaffold landed in commit `d6d5722`, but the repo now tracks the stricter current contract: repo-owned `typescript` / `vitest` / `wrangler` surfaces plus remaining repo-local dry-run, deploy-contract audit, and fresh-clone proof. |
 
 The upstream/parent blueprint lives in agent-kit:
 `webpresso/agent-kit/blueprints/in-progress/2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation.md`,
-with sibling consumer blueprints in `ozby/edge-matte/blueprints/in-progress/2026-06-02-edge-matte-wp-deploy-adapter-toolchain-isolation.md` and `ozby/ingest-lens/blueprints/in-progress/2026-06-02-ingest-lens-wp-deploy-adapter-toolchain-isolation.md`.
+with sibling consumer blueprints now completed in `ozby/edge-matte/blueprints/completed/2026-06-02-edge-matte-wp-deploy-adapter-toolchain-isolation.md` and `ozby/ingest-lens/blueprints/completed/2026-06-02-ingest-lens-wp-deploy-adapter-toolchain-isolation.md`.

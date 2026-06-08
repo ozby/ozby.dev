@@ -1,3 +1,3 @@
 # ozby.dev
 
-Strict dogfood consumer for `@webpresso/agent-kit`: React personal dev site deployed to Cloudflare Workers through `wp deploy`.
+React personal dev site for Cloudflare Workers. `@webpresso/agent-kit` owns the quality surface (`wp lint` / `wp typecheck` / `wp test`), and Wrangler owns deployment.

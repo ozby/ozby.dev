@@ -6,11 +6,12 @@
   "scripts": {
     "build": "wp exec vite build",
     "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts",
+    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && wp typecheck && wp test --file src/projects.test.ts",
-    "deploy:dry-run": "wp deploy --lane prd --dry-run",
-    "deploy:production": "wp deploy --lane prd"
+    "qa": "wp lint && wp typecheck && pnpm run test",
+    "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
+    "deploy:dry-run": "pnpm run build && pnpm run verify:deploy-contract && wrangler deploy --config wrangler.jsonc --dry-run",
+    "deploy:production": "pnpm run build && pnpm run verify:deploy-contract && wrangler deploy --config wrangler.jsonc"
   },
   "dependencies": {
     "@webpresso/agent-kit": "latest",
@@ -19,6 +20,9 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7",
+    "wrangler": "^4.22.0"
   }
 }

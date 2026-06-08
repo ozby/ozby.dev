@@ -1,8 +1,11 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ozby-dev",
+  "main": "./src/worker.ts",
   "compatibility_date": "2026-06-02",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
   "routes": [
