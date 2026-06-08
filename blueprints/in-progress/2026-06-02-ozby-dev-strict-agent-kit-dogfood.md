@@ -5,8 +5,8 @@ owner: ozby
 status: in-progress
 complexity: M
 created: "2026-06-02"
-last_updated: "2026-06-03"
-progress: "Scaffold landed 2026-06-02 (commit d6d5722). UNBLOCKED 2026-06-03: agent-kit's wp deploy orchestrator + toolchain-isolation audit already exist, so Phase 2 is now verify-only (wp deploy --lane prd --dry-run + wp audit toolchain-isolation). Superseded by master plan ~/.claude/plans/for-all-glistening-moon.md."
+last_updated: "2026-06-05"
+progress: "Scaffold landed 2026-06-02 (commit d6d5722), but the consumer drifted from the current agent-kit contract: `wp deploy` and `wp audit toolchain-isolation` are no longer exposed, while direct `typescript` / `vitest` / `wrangler` devDependencies are now required repo-owned execution surfaces. Phase 2 is now repo-local proof via `wrangler deploy --dry-run`, `wp audit cloudflare-deploy-contract`, and fresh-clone QA. Superseded by master plan ~/.claude/plans/for-all-glistening-moon.md."
 depends_on:
   - "webpresso/agent-kit: 2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation"
 tags:
@@ -61,14 +61,14 @@ ozby-dev/
   src/projects.ts       typed static project cards: agent-kit, ingest-lens,
                         edge-matte, node-pubsub
   src/projects.test.ts  unit test for project data
-  worker entry          SPA asset serving + /health JSON
+  src/worker.ts         Worker entry: /health JSON + SPA asset fallback via ASSETS binding
   agent-kit.config.ts   deploy.adapterModule -> scripts/agent-kit-deploy-adapter.ts
   scripts/agent-kit-deploy-adapter.ts   consumer-owned Cloudflare plumbing
   tsconfig.json         thin, extends agent-kit base
   wrangler.jsonc        thin worker config
   package.json          direct deps: @webpresso/agent-kit, react, react-dom
 
-deploy: wp deploy --lane prd   (orchestrator from agent-kit; provider steps in adapter)
+deploy: wrangler deploy --config wrangler.jsonc   (repo-owned provider deploy)
 ```
 
 ## Key Decisions
@@ -111,33 +111,33 @@ edge-matte, node-pubsub, plus a Worker entry serving SPA assets and `/health`.
 
 - [x] `scripts/agent-kit-deploy-adapter.ts` present, wired via `agent-kit.config.ts` `deploy.adapterModule`
 - [x] Thin `tsconfig.json` + `wrangler.jsonc` extend agent-kit
-- [x] `package.json` scripts call `wp` verbs (`wp typecheck/lint/test`, `wp deploy --lane prd`)
+- [x] `package.json` scripts call `wp` quality verbs (`wp typecheck/lint/test`) and keep deploy repo-owned through Wrangler
 
 ### Phase 2: Strict proof against agent-kit orchestrator [Complexity: M]
 
-#### [qa] Task 2.1: Adopt `wp deploy` + dry-run gate
+#### [qa] Task 2.1: Adopt Wrangler deploy + dry-run gate
 
 **Status:** todo
 
-The upstream `wp deploy` surface now exists. This task is the local proof pass: confirm `wp deploy --lane prd --dry-run` plans without Cloudflare secrets through the consumer adapter, then capture the credentialed production deploy evidence.
+Current agent-kit no longer exposes `wp deploy`, so this task is the repo-owned proof pass: confirm `wrangler deploy --config wrangler.jsonc --dry-run` bundles the Worker + assets without Cloudflare secrets, then capture the credentialed production deploy evidence.
 
 **Acceptance:**
 
-- [ ] `wp deploy --lane prd --dry-run` green with no secrets
-- [ ] Credentialed `wp deploy --lane prd` deploys ozby.dev to its custom domain
+- [ ] `wrangler deploy --config wrangler.jsonc --dry-run` green with no secrets
+- [ ] Credentialed `wrangler deploy --config wrangler.jsonc` deploys ozby.dev to its custom domain
 - [ ] Post-deploy `/health` smoke passes
 
-#### [qa] Task 2.2: Toolchain-isolation + fresh-clone proof
+#### [qa] Task 2.2: Deploy-contract audit + fresh-clone proof
 
 **Status:** todo
 
-Run after Task 2.1 against the current agent-kit build. The upstream audit surface exists; this task is the repo-local isolation proof and fresh-clone capture.
+Run after Task 2.1 against the current agent-kit build. The old `toolchain-isolation` audit no longer exists; the repo-local proof is now the deploy-contract guardrail plus a fresh-clone QA capture under the current direct-dependency contract.
 
 **Acceptance:**
 
-- [ ] `wp audit toolchain-isolation` passes
-- [ ] Fresh clone + install + QA with no global tsc/vite/vitest/wrangler/playwright/stryker/oxlint/tsx
-- [ ] Lockfile shows forbidden tools only as transitive deps of `@webpresso/agent-kit`
+- [ ] `wp audit cloudflare-deploy-contract` passes
+- [ ] Fresh clone + install + QA with no global toolchain requirements
+- [ ] Direct devDependencies are limited to repo-owned execution surfaces (`typescript`, `vitest`, `wrangler`) plus React types
 
 ## Verification Gates
 
@@ -146,8 +146,8 @@ Run after Task 2.1 against the current agent-kit build. The upstream audit surfa
 | Type safety | `wp typecheck` | Zero errors |
 | Lint | `wp lint` | Zero violations |
 | Tests | `wp test --file src/projects.test.ts` | All pass |
-| Deploy plan | `wp deploy --lane prd --dry-run` | Plans without secrets |
-| Isolation | `wp audit toolchain-isolation` | Passes |
+| Deploy plan | `wrangler deploy --config wrangler.jsonc --dry-run` | Bundles without secrets |
+| Deploy contract | `wp audit cloudflare-deploy-contract` | Passes |
 
 ## Dependency-boundary note (investigated 2026-06-03)
 
