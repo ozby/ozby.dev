@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ozby-dev",
   "main": "./src/worker.ts",
+  "tsconfig": "./tsconfig.json",
   "compatibility_date": "2026-06-02",
   "assets": {
     "directory": "./dist",
