@@ -59,7 +59,7 @@ Empty repo. No scaffold.
 ozby-dev/
   src/main.tsx          React homepage
   src/projects.ts       typed static project cards: agent-kit, ingest-lens,
-                        edge-matte, node-pubsub
+                        edge-matte
   src/projects.test.ts  unit test for project data
   src/worker.ts         Worker entry: /health JSON + SPA asset fallback via ASSETS binding
   agent-kit.config.ts   deploy.adapterModule -> scripts/agent-kit-deploy-adapter.ts
@@ -95,7 +95,8 @@ deploy: wrangler deploy --config wrangler.jsonc   (repo-owned provider deploy)
 **Status:** done
 
 React homepage rendering typed static project data for agent-kit, ingest-lens,
-edge-matte, node-pubsub, plus a Worker entry serving SPA assets and `/health`.
+and edge-matte, with ingest-lens superseding the older node-pubsub slot, plus a
+Worker entry serving SPA assets and `/health`.
 
 **Acceptance:**
 
