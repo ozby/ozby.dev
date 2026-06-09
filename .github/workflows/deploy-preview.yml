@@ -1,0 +1,102 @@
+name: Deploy preview
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "Preview lane: preview_main or preview_pr_<n>"
+        required: true
+        type: string
+      mode:
+        description: "deploy or destroy"
+        required: false
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - destroy
+
+concurrency:
+  group: ozby-dev-preview-${{ github.event.pull_request.number || github.ref_name || inputs.lane }}
+  cancel-in-progress: true
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      lane: ${{ steps.resolve.outputs.lane }}
+      dashed_lane: ${{ steps.resolve.outputs.dashed_lane }}
+      mode: ${{ steps.resolve.outputs.mode }}
+      preview_url: ${{ steps.resolve.outputs.preview_url }}
+    steps:
+      - name: Resolve preview lane + mode
+        id: resolve
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MANUAL_LANE: ${{ inputs.lane }}
+          MANUAL_MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          if [[ "${EVENT_NAME}" == "push" ]]; then
+            lane="preview_main"
+            mode="deploy"
+          elif [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            lane="preview_pr_${PR_NUMBER}"
+            if [[ "${EVENT_ACTION}" == "closed" ]]; then
+              mode="destroy"
+            else
+              mode="deploy"
+            fi
+          else
+            lane="${MANUAL_LANE}"
+            mode="${MANUAL_MODE}"
+          fi
+          if [[ ! "${lane}" =~ ^preview_main$|^preview_pr_[0-9]+$ ]]; then
+            echo "Invalid preview lane: ${lane}" >&2
+            exit 1
+          fi
+          if [[ "${lane}" == "preview_main" ]]; then
+            dashed_lane="preview-main"
+            preview_url="https://preview-main.ozby.dev"
+          else
+            pr_number="${lane#preview_pr_}"
+            dashed_lane="preview-pr-${pr_number}"
+            preview_url="https://preview-pr-${pr_number}.ozby.dev"
+          fi
+          {
+            printf 'lane=%s\n' "${lane}"
+            printf 'dashed_lane=%s\n' "${dashed_lane}"
+            printf 'mode=%s\n' "${mode}"
+            printf 'preview_url=%s\n' "${preview_url}"
+          } >> "$GITHUB_OUTPUT"
+
+  preview:
+    needs: resolve
+    uses: webpresso/agent-kit/.github/workflows/cloudflare-preview.yml@317fc3aa5952f5dee0604413a0b9dd1e6d7635dd
+    with:
+      lane: ${{ needs.resolve.outputs.lane }}
+      mode: ${{ needs.resolve.outputs.mode }}
+      install_command: pnpm install --frozen-lockfile
+      verify_command: |
+        pnpm run verify:secrets
+        pnpm run lint
+        pnpm run typecheck
+        pnpm run test
+        pnpm run verify:deploy-contract
+      deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
+      destroy_command: bun scripts/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
+      smoke_command: >
+        node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
+        const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
+      runner: ubuntu-latest
+      skip_when_ci_secret_missing: false
+    secrets:
+      ci_secret_provider_token: ${{ secrets.DOPPLER_SERVICE_TOKEN || secrets.DOPPLER_TOKEN }}

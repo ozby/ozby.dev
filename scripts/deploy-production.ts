@@ -115,7 +115,17 @@ process.exit(1);
   }
 }
 
+function verifyReleaseVersion(): void {
+  const releaseVersion =
+    process.env.RELEASE_VERSION ?? process.env.RELEASE_VERSION_INPUT ?? "";
+  if (releaseVersion.length === 0) return;
+  if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(releaseVersion)) {
+    throw new Error(`Invalid semantic release version: ${releaseVersion}`);
+  }
+}
+
 const secretsConfig = readSecretsConfig(ROOT);
+verifyReleaseVersion();
 
 if (!skipBuild) {
   console.log("\n▶ Building ozby.dev…\n");

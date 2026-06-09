@@ -1,6 +1,6 @@
 # ozby.dev
 
-React personal dev site for Cloudflare Workers. `@webpresso/agent-kit` owns the quality surface (`wp lint` / `wp typecheck` / `wp test`), and Wrangler owns deployment.
+React personal dev site for Cloudflare Workers. `@webpresso/agent-kit` owns the quality surface (`wp lint` / `wp typecheck` / `wp test`) and the canonical `wp deploy` adapter surface, while Wrangler remains the repo-local provider deployer behind that adapter.
 
 ## Secrets + deploy contract
 
@@ -24,6 +24,16 @@ pnpm run setup:secrets
 pnpm run deploy:dry-run
 ```
 
+- Preview deploys use additive custom domains:
+
+  - `https://preview-main.ozby.dev`
+  - `https://preview-pr-<n>.ozby.dev`
+
+- Preview deploys run a mandatory Cloudflare DNS preflight before publish. If a
+  conflicting manual CNAME already exists for the preview hostname, the deploy
+  fails early with a cleanup message instead of letting Cloudflare custom-domain
+  attachment fail later.
+
 - Production deploy uses the same DRY secret-manager contract as the other consumer repos:
 
 ```bash
@@ -38,3 +48,12 @@ manager instead of hardcoding repo-local env files or ad hoc provider commands.
 ```bash
 pnpm run verify:secrets
 ```
+
+## GitHub deploy workflows
+
+This repo now uses thin caller workflows that delegate to the shared
+`agent-kit` reusable deploy harness by immutable commit SHA while keeping the
+repo-local commands here:
+
+- preview: `.github/workflows/deploy-preview.yml`
+- production: `.github/workflows/deploy-production.yml`
