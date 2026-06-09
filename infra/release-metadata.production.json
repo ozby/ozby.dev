@@ -1,0 +1,7 @@
+{
+  "releaseKind": "version_pr",
+  "releaseVersion": "0.1.0",
+  "durableObjectMigration": "none",
+  "rolloutMode": "direct",
+  "requiredChecks": ["health", "homepage"]
+}

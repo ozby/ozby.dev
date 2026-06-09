@@ -1,19 +1,30 @@
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
+import { canonicalPreviewLaneToDashed } from "./lib/deploy-lanes.ts";
+
 type DeployRequest = {
   lane: string;
   dryRun: boolean;
 };
 
-type DeployStep = {
-  kind: "managed-tool";
-  id: string;
-  label: string;
-  tool: string;
-  args: string[];
-  cwd: string;
-};
+type DeployStep =
+  | {
+      kind: "managed-tool";
+      id: string;
+      label: string;
+      tool: string;
+      args: string[];
+      cwd: string;
+    }
+  | {
+      kind: "command";
+      id: string;
+      label: string;
+      command: string;
+      args: string[];
+      cwd: string;
+    };
 
 type DeployPlan = {
   schemaVersion: 1;
@@ -32,14 +43,59 @@ const repoRoot = resolve(scriptsDir, "..");
 
 export const webpressoDeployAdapter: DeployAdapter = {
   createPlan(request): DeployPlan {
+    const previewLane = canonicalPreviewLaneToDashed(
+      request.lane as "prd" | "preview_main" | `preview_pr_${number}`,
+    );
+
+    if (previewLane) {
+      return {
+        schemaVersion: 1,
+        lane: request.lane,
+        provider: "cloudflare",
+        requiredCredentials: request.dryRun
+          ? []
+          : ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ZONE_ID"],
+        steps: [
+          {
+            kind: "command",
+            id: "preview-deploy",
+            label: request.dryRun
+              ? `Validate ${request.lane} preview deploy without publishing`
+              : `Deploy ${request.lane} preview custom domain`,
+            command: "bun",
+            args: [
+              resolve(scriptsDir, "deploy-preview.ts"),
+              "--lane",
+              previewLane,
+              ...(request.dryRun ? ["--dry-run"] : []),
+            ],
+            cwd: repoRoot,
+          },
+        ],
+      };
+    }
+
+    if (request.lane !== "prd") {
+      throw new Error(`Unsupported deploy lane: ${request.lane}`);
+    }
+
     return {
       schemaVersion: 1,
       lane: request.lane,
       provider: "cloudflare",
       requiredCredentials: request.dryRun ? [] : ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"],
       steps: [
-        { kind: "managed-tool", id: "vite-build", label: "Build ozby.dev", tool: "vite", args: ["build"], cwd: repoRoot },
-        { kind: "managed-tool", id: "wrangler-deploy", label: request.dryRun ? "Validate Worker deploy" : "Deploy Worker", tool: "wrangler", args: ["deploy", "--config", "wrangler.jsonc", ...(request.dryRun ? ["--dry-run"] : [])], cwd: repoRoot },
+        {
+          kind: "command",
+          id: "production-deploy",
+          label: request.dryRun ? "Validate ozby.dev production deploy" : "Deploy ozby.dev production",
+          command: "bun",
+          args: [
+            resolve(scriptsDir, "deploy-production.ts"),
+            ...(request.dryRun ? ["--dry-run"] : []),
+          ],
+          cwd: repoRoot,
+        },
       ],
     };
   },

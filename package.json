@@ -6,15 +6,16 @@
   "scripts": {
     "build": "wp exec vite build",
     "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts",
+    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts",
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && pnpm run test",
     "postinstall": "test -n \"$CI\" || bun scripts/sync-webpresso-config.ts",
     "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
     "verify:secrets": "bun scripts/verify-secrets-policy.ts && bun scripts/sync-webpresso-config.ts --check-only",
     "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
-    "deploy:dry-run": "bun scripts/deploy-production.ts --dry-run --skip-smoke",
-    "deploy:production": "bun scripts/deploy-production.ts",
+    "deploy:dry-run": "wp deploy --lane prd --dry-run",
+    "deploy:preview": "wp deploy --lane preview_main",
+    "deploy:production": "wp deploy --lane prd",
     "deploy:production:wrangler": "bun scripts/deploy-production.ts"
   },
   "dependencies": {
