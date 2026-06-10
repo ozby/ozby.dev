@@ -6,6 +6,7 @@ import {
   parseSecretsConfigMetadata,
   type SecretsConfigMetadata,
 } from "./lib/secrets-policy.ts";
+import { buildChildEnv } from "./lib/deploy-runner.ts";
 
 const ROOT = process.cwd();
 const PRODUCTION_URL = "https://ozby.dev";
@@ -37,7 +38,7 @@ function readSecretsConfig(root: string): SecretsConfigMetadata {
 function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = process.env) {
   const result = spawnSync(command, commandArgs, {
     stdio: "inherit",
-    env,
+    env: buildChildEnv(ROOT, env),
     shell: false,
   });
   if (result.error) throw result.error;
@@ -108,7 +109,7 @@ process.exit(1);
 `;
   const result = spawnSync("node", ["--input-type=module", "--eval", script], {
     stdio: "inherit",
-    env: process.env,
+    env: buildChildEnv(ROOT, process.env),
   });
   if (result.status !== 0) {
     throw new Error(`Timed out waiting for ${url}`);
