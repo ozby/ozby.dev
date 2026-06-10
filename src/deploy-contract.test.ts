@@ -71,8 +71,14 @@ describe("ozby-dev deploy contract", () => {
       dryRun: true,
     });
     expect(previewMainDryRun.requiredCredentials).toEqual([]);
-    expect(previewMainDryRun.steps[0]?.args).toContain("preview-main");
-    expect(previewMainDryRun.steps[0]?.args).toContain("--dry-run");
+    expect(previewMainDryRun.steps).toHaveLength(1);
+    const previewMainStep = previewMainDryRun.steps[0];
+    expect(previewMainStep?.kind).toBe("command");
+    if (previewMainStep?.kind !== "command") throw new Error("expected command step");
+    expect(previewMainStep.runtimeProfile).toBeUndefined();
+    expect(previewMainStep.args).toEqual(
+      expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-main", "--dry-run"]),
+    );
 
     const previewPrDeploy = webpressoDeployAdapter.createPlan({
       lane: "preview_pr_123",
@@ -82,15 +88,62 @@ describe("ozby-dev deploy contract", () => {
       "CLOUDFLARE_API_TOKEN",
       "CLOUDFLARE_ZONE_ID",
     ]);
-    expect(previewPrDeploy.steps[0]?.args).toContain("preview-pr-123");
+    expect(previewPrDeploy.steps).toHaveLength(1);
+    const previewDeployStep = previewPrDeploy.steps[0];
+    expect(previewDeployStep?.kind).toBe("command");
+    if (previewDeployStep?.kind !== "command") throw new Error("expected command step");
+    expect(previewDeployStep.runtimeProfile).toBe("secrets-only");
+    expect(previewDeployStep.args).toEqual(
+      expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-pr-123"]),
+    );
 
     const productionDryRun = webpressoDeployAdapter.createPlan({
       lane: "prd",
       dryRun: true,
     });
     expect(productionDryRun.requiredCredentials).toEqual([]);
-    expect(productionDryRun.steps[0]?.args?.join(" ")).toContain("deploy-production.ts");
-    expect(productionDryRun.steps[0]?.args).toContain("--dry-run");
+    expect(productionDryRun.steps).toHaveLength(1);
+    const productionDryRunStep = productionDryRun.steps[0];
+    expect(productionDryRunStep?.kind).toBe("command");
+    if (productionDryRunStep?.kind !== "command") throw new Error("expected command step");
+    expect(productionDryRunStep.args).toEqual([
+      expect.stringContaining("deploy-production.ts"),
+      "--dry-run",
+    ]);
+  });
+
+  it("uses explicit health and homepage http checks for live production deploys", () => {
+    const productionDeploy = webpressoDeployAdapter.createPlan({
+      lane: "prd",
+      dryRun: false,
+      releaseVersion: "1.2.3",
+    });
+
+    expect(productionDeploy.releaseVersion).toBe("1.2.3");
+    expect(productionDeploy.steps).toHaveLength(3);
+    expect(productionDeploy.steps[0]).toMatchObject({
+      kind: "command",
+      runtimeProfile: "prd",
+      args: [expect.stringContaining("deploy-production.ts"), "--skip-smoke"],
+    });
+    expect(productionDeploy.steps[1]).toMatchObject({
+      kind: "http-check",
+      id: "production-health",
+      stage: "health",
+      runtimeProfile: "prd",
+      url: "https://ozby.dev/health",
+      retries: 24,
+      intervalMs: 5000,
+    });
+    expect(productionDeploy.steps[2]).toMatchObject({
+      kind: "http-check",
+      id: "production-homepage",
+      stage: "homepage",
+      runtimeProfile: "prd",
+      url: "https://ozby.dev/",
+      retries: 12,
+      intervalMs: 5000,
+    });
   });
 
   it("checks only conflicting manual CNAME records during the custom-domain preflight", () => {
