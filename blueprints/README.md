@@ -19,11 +19,12 @@ Each subdirectory represents a lifecycle state:
 
 Move files with `git mv` so history follows the spec through its lifecycle.
 
-## Active work (2026-06-08)
+## Current state (2026-06-11)
 
-| Blueprint | Path | Purpose |
-| --------- | ---- | ------- |
-| Strict agent-kit dogfood | [`in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | Scaffold landed in commit `d6d5722`, but the repo now tracks the stricter current contract: repo-owned `typescript` / `vitest` / `wrangler` surfaces plus remaining repo-local dry-run, deploy-contract audit, and fresh-clone proof. |
+| Blueprint | State | Path | Purpose |
+| --------- | ----- | ---- | ------- |
+| Strict agent-kit dogfood | in-progress | [`in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | The repo keeps the stricter current contract: repo-owned `typescript` / `vitest` / `wrangler` surfaces plus remaining repo-local dry-run, deploy-contract audit, and fresh-clone proof. |
+| Shared deploy workflow alignment cleanup | completed | [`completed/2026-06-09-ozby-dev-shared-reusable-deploy-workflow-alignment.md`](./completed/2026-06-09-ozby-dev-shared-reusable-deploy-workflow-alignment.md) | Closed the stale “no workflows / no preview lanes” planning drift and aligned QA with the repo’s canonical `wp` verification surface. |
 
 The upstream/parent blueprint lives in agent-kit:
 `webpresso/agent-kit/blueprints/in-progress/2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation.md`,
