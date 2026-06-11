@@ -80,7 +80,7 @@ jobs:
 
   preview:
     needs: resolve
-    uses: webpresso/agent-kit/.github/workflows/cloudflare-preview.yml@148039c9932de794a8449b3dff03e404b5b97839
+    uses: webpresso/agent-kit/.github/workflows/cloudflare-preview.yml@c53f2f2dc6ecce7d6191193609308cc0a1fbac23
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
