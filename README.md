@@ -1,6 +1,56 @@
 # ozby.dev
 
-React personal dev site for Cloudflare Workers. `@webpresso/agent-kit` owns the quality surface (`wp lint` / `wp typecheck` / `wp test`) and the canonical `wp deploy` adapter surface, while Wrangler remains the repo-local provider deployer behind that adapter.
+Personal landing page + blog for Özberk Erçin. React 19 SPA served via Cloudflare Workers Assets.
+
+**Live:** https://ozby.dev · **Preview (main):** https://preview-main.ozby.dev
+
+## Stack
+
+- React 19 + React Router v7 — SPA with `/`, `/writing`, `/writing/:slug`, `/projects/:slug`
+- Cloudflare Workers Assets — `not_found_handling: single-page-application`
+- Blog: `.md` files in `src/content/posts/` → `gray-matter` + `marked` + `highlight.js`
+- Fonts: Geist + Geist Mono (self-hosted via `@fontsource-variable`)
+- Design: zinc palette, CSS custom properties, `prefers-color-scheme` light/dark
+
+## Writing a post
+
+Add a file to `src/content/posts/<slug>.md`:
+
+```markdown
+---
+title: Your Post Title
+date: 2026-06-11
+description: One-line summary shown in post lists.
+published: true
+---
+
+Body content in standard Markdown. Fenced code blocks get syntax highlighting.
+```
+
+## Adding a project
+
+Edit `src/projects.ts` and add an entry to the array:
+
+```ts
+{
+  slug: 'my-project',
+  name: 'my-project',
+  summary: 'One-line description for the projects list.',
+  url: 'https://github.com/ozby/my-project',
+  tech: ['TypeScript', 'Cloudflare Workers'],
+  demoUrl: 'https://my-project.ozby.dev',   // optional
+  why: 'Why you built it, in plain prose.',
+}
+```
+
+## Development
+
+```bash
+pnpm install
+pnpm qa          # lint + typecheck + tests
+pnpm build       # production build
+wrangler dev     # local preview at localhost:8787
+```
 
 ## Secrets + deploy contract
 
