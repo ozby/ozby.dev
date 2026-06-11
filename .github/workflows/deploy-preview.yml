@@ -84,19 +84,19 @@ jobs:
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
-      install_command: pnpm install --frozen-lockfile
+      install_command: vp install --frozen-lockfile
       verify_command: |
-        pnpm run verify:secrets
-        pnpm run lint
-        pnpm run typecheck
-        pnpm run test
-        pnpm run verify:deploy-contract
+        vp run verify:secrets
+        vp run lint
+        vp run typecheck
+        vp run test
+        vp run verify:deploy-contract
       deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
       destroy_command: bun scripts/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
         const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
       runner: ubuntu-latest
-      skip_when_ci_secret_missing: true
+      skip_when_ci_secret_missing: false
     secrets:
       ci_secret_provider_token: ${{ secrets.DOPPLER_SERVICE_TOKEN || secrets.DOPPLER_TOKEN }}
