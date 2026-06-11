@@ -84,7 +84,7 @@ jobs:
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
-      install_command: vp install --frozen-lockfile
+      install_command: pnpm install --frozen-lockfile
       verify_command: |
         vp run verify:secrets
         vp run lint
