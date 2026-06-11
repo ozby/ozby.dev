@@ -6,9 +6,9 @@
   "scripts": {
     "build": "wp exec vite build",
     "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts",
+    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/lib/posts.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && wp typecheck && wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts",
+    "qa": "wp lint && wp typecheck && pnpm run test",
     "postinstall": "test -n \"$CI\" || bun scripts/sync-webpresso-config.ts",
     "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
     "verify:secrets": "bun scripts/verify-secrets-policy.ts && bun scripts/sync-webpresso-config.ts --check-only",
@@ -19,15 +19,22 @@
     "deploy:production:wrangler": "bun scripts/deploy-production.ts"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/geist-mono": "^5.2.8",
     "@webpresso/agent-kit": "latest",
+    "highlight.js": "^11.11.1",
+    "marked": "^18.0.5",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.17.0"
   },
   "devDependencies": {
+    "@types/node": "^22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8",
+    "vite-plus": "^0.1.22",
     "vitest": "^4.1.7",
     "wrangler": "^4.22.0"
   }

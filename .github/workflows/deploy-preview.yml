@@ -84,12 +84,16 @@ jobs:
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
-      install_command: pnpm install --frozen-lockfile
+      install_command: |
+        pnpm install --frozen-lockfile
+        VP_BIN=$(find "$(pwd)/node_modules/.pnpm" -name "vp" -path "*/vite-plus*/bin/vp" -type f 2>/dev/null | head -1)
+        [ -n "$VP_BIN" ] && ln -sf "$VP_BIN" "$(pwd)/node_modules/.bin/vp" || true
+        echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
       verify_command: |
         pnpm run verify:secrets
         pnpm run lint
         pnpm run typecheck
-        pnpm run test
+        pnpm exec vitest run --reporter verbose src/projects.test.ts src/worker.test.ts src/deploy-contract.test.ts src/lib/posts.test.ts
         pnpm run verify:deploy-contract
       deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
       destroy_command: bun scripts/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
@@ -97,6 +101,6 @@ jobs:
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
         const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
       runner: ubuntu-latest
-      skip_when_ci_secret_missing: true
+      skip_when_ci_secret_missing: false
     secrets:
       ci_secret_provider_token: ${{ secrets.DOPPLER_SERVICE_TOKEN || secrets.DOPPLER_TOKEN }}
