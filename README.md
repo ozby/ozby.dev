@@ -57,3 +57,17 @@ repo-local commands here:
 
 - preview: `.github/workflows/deploy-preview.yml`
 - production: `.github/workflows/deploy-production.yml`
+
+
+## Verify
+
+Use the shared `wp` quality surface directly:
+
+```bash
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run qa
+pnpm run deploy:dry-run
+pnpm run verify:deploy-contract
+```

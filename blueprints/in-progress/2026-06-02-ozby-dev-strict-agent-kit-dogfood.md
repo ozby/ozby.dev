@@ -6,7 +6,7 @@ status: in-progress
 complexity: M
 created: "2026-06-02"
 last_updated: "2026-06-05"
-progress: "Scaffold landed 2026-06-02 (commit d6d5722), but the consumer drifted from the current agent-kit contract: `wp deploy` and `wp audit toolchain-isolation` are no longer exposed, while direct `typescript` / `vitest` / `wrangler` devDependencies are now required repo-owned execution surfaces. Phase 2 is now repo-local proof via `wrangler deploy --dry-run`, `wp audit cloudflare-deploy-contract`, and fresh-clone QA. Superseded by master plan ~/.claude/plans/for-all-glistening-moon.md."
+progress: "Scaffold landed 2026-06-02 (commit d6d5722), but the consumer drifted from the current agent-kit contract: `wp deploy` and `wp audit toolchain-isolation` are no longer exposed, while direct `typescript` / `vitest` / `vite` / `wrangler` devDependencies are now required repo-owned execution surfaces. Phase 2 is now repo-local proof via `wrangler deploy --dry-run`, `wp audit cloudflare-deploy-contract`, and fresh-clone QA. Superseded by master plan ~/.claude/plans/for-all-glistening-moon.md."
 depends_on:
   - "webpresso/agent-kit: 2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation"
 tags:
@@ -138,7 +138,7 @@ Run after Task 2.1 against the current agent-kit build. The old `toolchain-isola
 
 - [ ] `wp audit cloudflare-deploy-contract` passes
 - [ ] Fresh clone + install + QA with no global toolchain requirements
-- [ ] Direct devDependencies are limited to repo-owned execution surfaces (`typescript`, `vitest`, `wrangler`) plus React types
+- [ ] Direct devDependencies are limited to repo-owned execution surfaces (`typescript`, `vitest`, `vite`, `wrangler`) plus React types
 
 ## Verification Gates
 

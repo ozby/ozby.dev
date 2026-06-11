@@ -8,7 +8,7 @@
     "typecheck": "wp typecheck",
     "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && wp typecheck && pnpm run test",
+    "qa": "wp lint && wp typecheck && wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts",
     "postinstall": "test -n \"$CI\" || bun scripts/sync-webpresso-config.ts",
     "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
     "verify:secrets": "bun scripts/verify-secrets-policy.ts && bun scripts/sync-webpresso-config.ts --check-only",
@@ -27,6 +27,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.3",
+    "vite": "^8.0.16",
     "vitest": "^4.1.7",
     "wrangler": "^4.22.0"
   }

@@ -110,7 +110,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
       lane: request.lane,
       provider: "cloudflare",
       requiredCredentials: request.dryRun ? [] : ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"],
-      releaseVersion: request.releaseVersion,
+      ...(request.releaseVersion ? { releaseVersion: request.releaseVersion } : {}),
       steps: request.dryRun
         ? [
             {
