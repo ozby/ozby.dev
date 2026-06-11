@@ -1,27 +1,48 @@
-import { createRoot } from "react-dom/client";
-import { projects } from "./projects";
-import "./styles.css";
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
+import 'highlight.js/styles/github-dark.css'
+import { Nav } from './components/Nav'
+import { Footer } from './components/Footer'
+import { Home } from './pages/Home'
+import { Writing } from './pages/Writing'
+import { Post } from './pages/Post'
+import { Project } from './pages/Project'
+import './styles.css'
+
+function NotFound() {
+  return (
+    <div className="not-found">
+      <h1>Page not found</h1>
+      <p>
+        The page you&apos;re looking for doesn&apos;t exist.{' '}
+        <a href="/">Go home</a>
+      </p>
+    </div>
+  )
+}
 
 function App() {
   return (
-    <main className="page">
-      <section className="hero">
-        <p className="eyebrow">ozby.dev</p>
-        <h1>Building agent-native developer tools on real Cloudflare apps.</h1>
-        <p>Personal dev site and strict @webpresso/agent-kit dogfood target.</p>
-      </section>
-      <section className="projects" aria-label="Projects">
-        {projects.map((project) => (
-          <a className="card" href={project.url} key={project.slug}>
-            <h2>{project.name}</h2>
-            <p>{project.summary}</p>
-          </a>
-        ))}
-      </section>
-    </main>
-  );
+    <BrowserRouter>
+      <div className="page">
+        <Nav />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/writing" element={<Writing />} />
+            <Route path="/writing/:slug" element={<Post />} />
+            <Route path="/projects/:slug" element={<Project />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
+  )
 }
 
-const root = document.getElementById("root");
-if (!root) throw new Error("Missing #root");
-createRoot(root).render(<App />);
+const rootEl = document.getElementById('root')
+if (rootEl === null) throw new Error('Missing #root element')
+createRoot(rootEl).render(<App />)
