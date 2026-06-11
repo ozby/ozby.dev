@@ -19,9 +19,15 @@
     "deploy:production:wrangler": "bun scripts/deploy-production.ts"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/geist-mono": "^5.2.8",
     "@webpresso/agent-kit": "latest",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "marked": "^18.0.5",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.17.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
