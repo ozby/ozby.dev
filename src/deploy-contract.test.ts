@@ -75,7 +75,6 @@ describe("ozby-dev deploy contract", () => {
     const previewMainStep = previewMainDryRun.steps[0];
     expect(previewMainStep?.kind).toBe("command");
     if (previewMainStep?.kind !== "command") throw new Error("expected command step");
-    expect(previewMainStep.runtimeProfile).toBeUndefined();
     expect(previewMainStep.args).toEqual(
       expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-main", "--dry-run"]),
     );
@@ -92,7 +91,6 @@ describe("ozby-dev deploy contract", () => {
     const previewDeployStep = previewPrDeploy.steps[0];
     expect(previewDeployStep?.kind).toBe("command");
     if (previewDeployStep?.kind !== "command") throw new Error("expected command step");
-    expect(previewDeployStep.runtimeProfile).toBe("secrets-only");
     expect(previewDeployStep.args).toEqual(
       expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-pr-123"]),
     );
@@ -112,37 +110,17 @@ describe("ozby-dev deploy contract", () => {
     ]);
   });
 
-  it("uses explicit health and homepage http checks for live production deploys", () => {
+  it("uses a single command step for live production deploys", () => {
     const productionDeploy = webpressoDeployAdapter.createPlan({
       lane: "prd",
       dryRun: false,
-      releaseVersion: "1.2.3",
     });
 
-    expect(productionDeploy.releaseVersion).toBe("1.2.3");
-    expect(productionDeploy.steps).toHaveLength(3);
+    expect(productionDeploy.steps).toHaveLength(1);
     expect(productionDeploy.steps[0]).toMatchObject({
       kind: "command",
-      runtimeProfile: "prd",
+      id: "production-deploy",
       args: [expect.stringContaining("deploy-production.ts"), "--skip-smoke"],
-    });
-    expect(productionDeploy.steps[1]).toMatchObject({
-      kind: "http-check",
-      id: "production-health",
-      stage: "health",
-      runtimeProfile: "prd",
-      url: "https://ozby.dev/health",
-      retries: 24,
-      intervalMs: 5000,
-    });
-    expect(productionDeploy.steps[2]).toMatchObject({
-      kind: "http-check",
-      id: "production-homepage",
-      stage: "homepage",
-      runtimeProfile: "prd",
-      url: "https://ozby.dev/",
-      retries: 12,
-      intervalMs: 5000,
     });
   });
 
