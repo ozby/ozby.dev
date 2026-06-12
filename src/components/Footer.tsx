@@ -3,9 +3,6 @@ export function Footer() {
     <footer className="footer">
       <span className="footer-location">Berlin · Çanakkale</span>
       <div className="footer-links">
-        <a href="mailto:ozberk@gmail.com" className="footer-link">
-          Email
-        </a>
         <a
           href="https://github.com/ozby"
           className="footer-link"
