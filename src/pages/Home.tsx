@@ -10,7 +10,7 @@ const stats = [
 ]
 
 const career = [
-  { year: '2024', role: 'Contract — LLM infra & DevEx', note: 'backend, platform, agent harnesses for early-stage AI startups', current: true },
+  { year: '2024', role: 'Contract — LLM & product', note: 'product development, MVP builds, LLM architecture, CI/CD — early-stage AI startups', current: true },
   { year: '2024', role: 'Career break', note: 'SE Asia & the Caribbean, Jan–Jul' },
   { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
   { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
