@@ -10,10 +10,11 @@ const stats = [
 ]
 
 const career = [
-  { year: '2026', role: 'LLM infra & DevEx consultancy', note: 'agent harnesses for early-stage AI startups', current: true },
-  { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams' },
-  { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, acquired 2022' },
-  { year: '2017', role: 'ResearchGate', note: '15M+ users, top-40 Alexa' },
+  { year: '2024', role: 'Contract — LLM infra & DevEx', note: 'backend, platform, agent harnesses for early-stage AI startups', current: true },
+  { year: '2024', role: 'Career break', note: 'SE Asia & the Caribbean, Jan–Jul' },
+  { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
+  { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
+  { year: '2016', role: 'Senior Software Engineer · ResearchGate', note: '15M+ users, top-40 Alexa' },
   { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up, from zero' },
   { year: '2012', role: 'Rocket Internet, GetYourGuide', note: 'the hypergrowth years, Berlin' },
   { year: '2001', role: 'Geocities → PHP → plazmaweb.net', note: 'hosting + Counter-Strike servers, age 15' },
