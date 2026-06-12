@@ -10,18 +10,18 @@ const stats = [
 ]
 
 const career = [
-  { year: '2024', role: 'Contract — LLM & product', note: 'product development, MVP builds, LLM architecture, CI/CD — early-stage AI startups', current: true },
+  { year: '2024', role: 'Contract — LLM & product', note: 'MVP builds, LLM architecture, CI/CD — early-stage AI startups', current: true },
   { year: '2024', role: 'Career break', note: 'SE Asia & the Caribbean, Jan–Jul' },
   { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
   { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
   { year: '2016', role: 'Senior Software Engineer · ResearchGate', note: 'Growth — 100% organic traffic increase in 2 years, 15M+ users, top-40 Alexa' },
-  { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up — zero to MVP, customers shipping within a month; raised €35M Series C; left after 8 months' },
-  { year: '2013', role: 'GetYourGuide', note: 'hypergrowth — navigating the chaos and extreme pace' },
-  { year: '2012', role: 'Rocket Internet · Plinga', note: 'hypergrowth — navigating the chaos and extreme pace' },
-  { year: '2009', role: 'MegaUpload', note: '~10% of global internet traffic — hired after Load2all' },
+  { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up — zero to MVP, first customers shipping in a month; 8 months' },
+  { year: '2013', role: 'GetYourGuide', note: 'hypergrowth — scale, chaos, extreme pace' },
+  { year: '2012', role: 'Rocket Internet · Plinga', note: 'Rocket Internet machine — cloned business, extreme pace' },
+  { year: '2009', role: 'MegaUpload', note: '~10% of global internet traffic at peak — hired after Load2all' },
   { year: '2007', role: 'Load2all', note: 'mass file spreader to hosts like Rapidshare & MegaUpload', url: 'https://www.ghacks.net/2009/11/23/upload-files-to-multiple-file-hosting-services-with-load2all/' },
-  { year: '2005', role: 'Linux, FreeBSD · plazmaweb.net', note: 'hosting + Counter-Strike servers', url: 'https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php' },
-  { year: '2003', role: 'PHP, MySQL · e-muzzik.com', note: 'Turkish music portal', url: 'https://web.archive.org/web/20031208192541/http://e-muzzik.com/' },
+  { year: '2005', role: 'plazmaweb.net', note: 'Linux, FreeBSD hosting + Counter-Strike servers', url: 'https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php' },
+  { year: '2003', role: 'e-muzzik.com', note: 'Turkish music portal — PHP, MySQL', url: 'https://web.archive.org/web/20031208192541/http://e-muzzik.com/' },
   { year: '2001', role: 'Geocities, FrontPage', note: 'first pages, age 10' },
 ]
 
