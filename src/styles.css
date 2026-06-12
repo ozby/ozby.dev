@@ -413,6 +413,16 @@ main {
   color: var(--text);
 }
 
+.career-role-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--muted);
+}
+.career-role-link:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
+}
+
 .career-note {
   font-size: 14px;
   color: var(--text-muted);

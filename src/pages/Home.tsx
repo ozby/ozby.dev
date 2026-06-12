@@ -19,9 +19,9 @@ const career = [
   { year: '2013', role: 'GetYourGuide', note: 'Berlin' },
   { year: '2012', role: 'Rocket Internet · Plinga', note: 'Berlin' },
   { year: '2009', role: 'MegaUpload', note: '' },
-  { year: '2007', role: 'Load2all', note: 'multi-host upload tool' },
-  { year: '2005', role: 'Linux, FreeBSD · plazmaweb.net', note: 'hosting + Counter-Strike servers' },
-  { year: '2003', role: 'PHP, MySQL · e-muzzik.com', note: 'Turkish music portal' },
+  { year: '2007', role: 'Load2all', note: 'multi-host upload tool', url: 'https://www.ghacks.net/2009/11/23/upload-files-to-multiple-file-hosting-services-with-load2all/' },
+  { year: '2005', role: 'Linux, FreeBSD · plazmaweb.net', note: 'hosting + Counter-Strike servers', url: 'https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php' },
+  { year: '2003', role: 'PHP, MySQL · e-muzzik.com', note: 'Turkish music portal', url: 'https://web.archive.org/web/20031208192541/http://e-muzzik.com/' },
   { year: '2001', role: 'Geocities, FrontPage', note: 'first pages, age 10' },
 ]
 
@@ -71,7 +71,11 @@ export function Home() {
           {career.map((entry) => (
             <div key={entry.year} className="career-row">
               <span className={`career-year${entry.current === true ? ' current' : ''}`}>{entry.year}</span>
-              <span className="career-role">{entry.role}</span>
+              {entry.url != null ? (
+                <a className="career-role career-role-link" href={entry.url} target="_blank" rel="noopener noreferrer">{entry.role}</a>
+              ) : (
+                <span className="career-role">{entry.role}</span>
+              )}
               <span className="career-note">{entry.note}</span>
             </div>
           ))}
