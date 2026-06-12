@@ -10,7 +10,7 @@ const stats = [
 ]
 
 const career = [
-  { year: '2025', role: 'Contract — LLM & product', note: 'DevOps, product, LLM infra — AI-first seed-stage companies', current: true },
+  { year: '2025', role: 'Contract — CTO & LLM', note: 'CTO (seed-stage), DevOps, product, LLM infra — AI-first companies', current: true },
   { year: '2024', role: 'Career break', note: 'SE Asia & the Caribbean, Jan–Jul' },
   { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
   { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
