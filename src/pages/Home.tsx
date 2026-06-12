@@ -18,7 +18,7 @@ const career = [
   { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up, from zero' },
   { year: '2013', role: 'GetYourGuide', note: 'Berlin' },
   { year: '2012', role: 'Rocket Internet · Plinga', note: 'Berlin' },
-  { year: '2009', role: 'MegaUpload', note: '' },
+  { year: '2009', role: 'MegaUpload', note: '~10% of global internet traffic — hired after Load2all' },
   { year: '2007', role: 'Load2all', note: 'multi-host upload tool', url: 'https://www.ghacks.net/2009/11/23/upload-files-to-multiple-file-hosting-services-with-load2all/' },
   { year: '2005', role: 'Linux, FreeBSD · plazmaweb.net', note: 'hosting + Counter-Strike servers', url: 'https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php' },
   { year: '2003', role: 'PHP, MySQL · e-muzzik.com', note: 'Turkish music portal', url: 'https://web.archive.org/web/20031208192541/http://e-muzzik.com/' },
