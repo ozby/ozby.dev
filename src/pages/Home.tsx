@@ -15,7 +15,7 @@ const career = [
   { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
   { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
   { year: '2016', role: 'Senior Software Engineer · ResearchGate', note: 'Growth — 100% organic traffic increase in 2 years, 15M+ users, top-40 Alexa' },
-  { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up — zero to MVP, customers shipping within a month; left after 8 months' },
+  { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up — zero to MVP, customers shipping within a month; raised €35M Series C; left after 8 months' },
   { year: '2013', role: 'GetYourGuide', note: 'hypergrowth — navigating the chaos and extreme pace' },
   { year: '2012', role: 'Rocket Internet · Plinga', note: 'hypergrowth — navigating the chaos and extreme pace' },
   { year: '2009', role: 'MegaUpload', note: '~10% of global internet traffic — hired after Load2all' },
