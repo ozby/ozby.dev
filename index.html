@@ -8,6 +8,17 @@
       name="description"
       content="Software engineer, 20+ years. Backend, infrastructure, platform engineering. Berlin."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..900&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        var saved = localStorage.getItem('ozby-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
