@@ -16,8 +16,13 @@ const career = [
   { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
   { year: '2016', role: 'Senior Software Engineer · ResearchGate', note: '15M+ users, top-40 Alexa' },
   { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up, from zero' },
-  { year: '2012', role: 'Rocket Internet, GetYourGuide', note: 'the hypergrowth years, Berlin' },
-  { year: '2001', role: 'Geocities → PHP → plazmaweb.net', note: 'hosting + Counter-Strike servers, age 15' },
+  { year: '2013', role: 'GetYourGuide', note: 'Berlin' },
+  { year: '2012', role: 'Rocket Internet · Plinga', note: 'Berlin' },
+  { year: '2009', role: 'MegaUpload', note: '' },
+  { year: '2007', role: 'Load2all', note: 'multi-host upload tool' },
+  { year: '2005', role: 'Linux, FreeBSD · plazmaweb.net', note: 'hosting + Counter-Strike servers' },
+  { year: '2003', role: 'PHP, MySQL · e-muzzik.com', note: 'Turkish music portal' },
+  { year: '2001', role: 'Geocities, FrontPage', note: 'first pages, age 10' },
 ]
 
 export function Home() {
