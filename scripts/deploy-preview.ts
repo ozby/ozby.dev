@@ -61,7 +61,8 @@ function hasCommand(command: string): boolean {
 }
 
 function runSecretScoped(command: string, commandArgs: string[]) {
-  if (hasCommand("with-secrets")) {
+  // Skip with-secrets if secrets are already injected (e.g. by CI doppler action)
+  if (!process.env.CLOUDFLARE_API_TOKEN && hasCommand("with-secrets")) {
     run("with-secrets", ["--", command, ...commandArgs]);
     return;
   }
