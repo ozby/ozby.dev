@@ -1,0 +1,68 @@
+{
+  "version": "1",
+  "installed": {
+    "tier3Skills": [
+      "base-kit"
+    ]
+  },
+  "hosts": {
+    "selected": [
+      "codex",
+      "claude",
+      "opencode"
+    ],
+    "requiredCapabilities": [
+      "fix",
+      "verify",
+      "testing-philosophy",
+      "plan-refine",
+      "pll",
+      "best-practice-research"
+    ],
+    "visibility": {
+      "codex": {
+        "fix": "visible-after-restart",
+        "verify": "visible-after-restart",
+        "testing-philosophy": "visible-after-restart",
+        "plan-refine": "visible-after-restart",
+        "pll": "visible-after-restart",
+        "best-practice-research": "visible-after-restart"
+      },
+      "claude": {
+        "fix": "visible-after-restart",
+        "verify": "visible-after-restart",
+        "testing-philosophy": "visible-after-restart",
+        "plan-refine": "visible-after-restart",
+        "pll": "visible-after-restart",
+        "best-practice-research": "visible-after-restart"
+      },
+      "opencode": {
+        "fix": "visible-after-restart",
+        "verify": "visible-after-restart",
+        "testing-philosophy": "visible-after-restart",
+        "plan-refine": "visible-after-restart",
+        "pll": "visible-after-restart",
+        "best-practice-research": "visible-after-restart"
+      }
+    }
+  },
+  "audit": {
+    "toolchainIsolation": {
+      "allowDependencies": [
+        "@playwright/test",
+        "@stryker-mutator/core",
+        "@stryker-mutator/typescript-checker",
+        "@stryker-mutator/vitest-runner",
+        "typescript",
+        "vite",
+        "vitest",
+        "wrangler"
+      ]
+    }
+  },
+  "rules": {
+    "overrides": []
+  },
+  "scripts": {},
+  "durablePlanningRoot": ".agent/planning/"
+}

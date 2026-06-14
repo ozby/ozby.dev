@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import { formatDate } from '../lib/format'
-import { posts } from '../lib/posts'
+import { formatDate } from '#lib/format'
+import { posts } from '#lib/posts'
 
 export function Post() {
   const { slug } = useParams<{ slug: string }>()

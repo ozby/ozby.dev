@@ -45,11 +45,13 @@ Edit `src/projects.ts` and add an entry to the array:
 
 ## Development
 
+This repo uses [vite-plus](https://www.npmjs.com/package/vite-plus) (`vp`) as its task runner. pnpm is the underlying package manager — use `vp run` for scripts rather than `pnpm run` directly.
+
 ```bash
 pnpm install
-pnpm qa          # lint + typecheck + tests
-pnpm build       # production build
-wrangler dev     # local preview at localhost:8787
+vp run qa        # lint + typecheck + tests
+vp run build     # production build
+vp run dev       # local preview at localhost:8787
 ```
 
 ## Secrets + deploy contract
@@ -59,7 +61,7 @@ wrangler dev     # local preview at localhost:8787
 - Apply/update that metadata locally with:
 
 ```bash
-pnpm run setup:secrets
+vp run setup:secrets
 ```
 
 - On install, the repo automatically seeds the runtime secret-manager metadata
@@ -71,7 +73,7 @@ pnpm run setup:secrets
 - Dry-run deploy stays secret-free:
 
 ```bash
-pnpm run deploy:dry-run
+vp run deploy:dry-run
 ```
 
 - Preview deploys use additive custom domains:
@@ -87,7 +89,7 @@ pnpm run deploy:dry-run
 - Production deploy uses the same DRY secret-manager contract as the other consumer repos:
 
 ```bash
-pnpm run deploy:production
+vp run deploy:production
 ```
 
 That build + deploy path resolves Cloudflare credentials through the selected
@@ -96,7 +98,7 @@ manager instead of hardcoding repo-local env files or ad hoc provider commands.
 - Verify the repo stays metadata-only with:
 
 ```bash
-pnpm run verify:secrets
+vp run verify:secrets
 ```
 
 ## GitHub deploy workflows
@@ -110,13 +112,11 @@ repo-local commands here:
 
 ## Verify
 
-Use the shared `wp` quality surface directly:
-
 ```bash
-pnpm run lint
-pnpm run typecheck
-pnpm run test
-pnpm run qa
-pnpm run deploy:dry-run
-pnpm run verify:deploy-contract
+vp run lint
+vp run typecheck
+vp run test
+vp run qa
+vp run deploy:dry-run
+vp run verify:deploy-contract
 ```

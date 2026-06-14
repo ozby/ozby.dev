@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import { projects } from '../projects'
-import { renderMarkdown } from '../lib/markdown'
+import { projects } from '#projects'
+import { renderMarkdown } from '#lib/markdown'
 
 export function Project() {
   const { slug } = useParams<{ slug: string }>()
