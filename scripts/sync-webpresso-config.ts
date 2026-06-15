@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { runtimeSecretsConfigPath } from "./lib/git-paths.ts";
 import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./lib/secrets-policy.ts";
 
 const ROOT = process.cwd();
@@ -15,7 +16,7 @@ function parseArgs(argv: string[]): Mode {
 }
 
 function runtimeConfigPath(root: string): string {
-  return path.join(root, ".git", "webpresso", "secrets.json");
+  return runtimeSecretsConfigPath(root);
 }
 
 function readRuntimeConfig(root: string): SecretsConfigMetadata | null {

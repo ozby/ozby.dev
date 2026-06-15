@@ -7,7 +7,7 @@
     "dev": "wp exec wrangler dev",
     "build": "wp exec vite build",
     "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file src/lib/posts.test.ts",
+    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file scripts/lib/git-paths.test.ts --file src/lib/posts.test.ts",
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && vp run test",
     "prepare": "husky",

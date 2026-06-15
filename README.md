@@ -65,7 +65,8 @@ vp run setup:secrets
 ```
 
 - On install, the repo automatically seeds the runtime secret-manager metadata
-  into `.git/webpresso/secrets.json` when it is missing.
+  into the repo's git common dir at `webpresso/secrets.json` (so linked
+  worktrees share the same runtime metadata) when it is missing.
 - Secret-scoped deploy execution prefers the canonical `with-secrets -- <cmd>`
   contract when available, and only falls back to direct Doppler execution when
   that shared runner is not installed on the machine.
