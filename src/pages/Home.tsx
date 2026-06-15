@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { posts } from '../lib/posts'
-import { projects } from '../projects'
+import { posts } from '#lib/posts'
+import { projects } from '#projects'
 
 const stats = [
   { value: '25', label: 'years writing code', accent: true },

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { formatDate } from '../lib/format'
-import { posts } from '../lib/posts'
+import { formatDate } from '#lib/format'
+import { posts } from '#lib/posts'
 
 function getYear(date: string): string {
   return new Date(date).getFullYear().toString()

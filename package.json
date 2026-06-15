@@ -4,38 +4,67 @@
   "type": "module",
   "packageManager": "pnpm@11.1.1",
   "scripts": {
+    "dev": "wp exec wrangler dev",
     "build": "wp exec vite build",
     "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/lib/posts.test.ts",
+    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file src/lib/posts.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && wp typecheck && pnpm run test",
-    "postinstall": "test -n \"$CI\" || bun scripts/sync-webpresso-config.ts",
+    "qa": "wp lint && wp typecheck && vp run test",
+    "prepare": "husky",
+    "postinstall": "test -n \"$CI\" || wp setup && (test -n \"$CI\" || bun scripts/sync-webpresso-config.ts)",
+    "setup:agent": "wp setup",
     "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
-    "verify:secrets": "bun scripts/verify-secrets-policy.ts && bun scripts/sync-webpresso-config.ts --check-only",
+    "verify:secrets": "wp audit no-dev-vars && wp audit secret-provider-quarantine",
     "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
+    "test:mutation": "wp test --mutation",
+    "blueprints:check": "wp audit blueprint-lifecycle",
     "deploy:dry-run": "wp deploy --lane prd --dry-run",
     "deploy:preview": "wp deploy --lane preview_main",
     "deploy:production": "wp deploy --lane prd",
-    "deploy:production:wrangler": "bun scripts/deploy-production.ts"
+    "deploy:production:wrangler": "bun scripts/deploy-production.ts",
+    "verify:paths": "wp audit absolute-path-policy --root .",
+    "audit:secret-provider-quarantine": "WP_SKIP_UPDATE_CHECK=1 wp audit secret-provider-quarantine",
+    "mutation": "wp test --mutation",
+    "e2e": "wp e2e --config playwright.config.ts"
+  },
+  "files": [
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md",
+    "catalog/agent/skills/"
+  ],
+  "imports": {
+    "#*": "./src/*.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/geist-mono": "^5.2.8",
-    "@webpresso/agent-kit": "latest",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-router-dom": "^7.17.0"
   },
   "devDependencies": {
-    "@types/node": "^22",
-    "@types/react": "^19.2.14",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@playwright/test": "latest",
+    "@secretlint/secretlint-rule-preset-recommend": "^9.3.4",
+    "@stryker-mutator/core": "catalog:",
+    "@stryker-mutator/typescript-checker": "catalog:",
+    "@stryker-mutator/vitest-runner": "catalog:",
+    "@types/node": "^22.19.21",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@webpresso/agent-kit": "catalog:",
+    "husky": "^9.1.7",
+    "secretlint": "^9.3.4",
     "typescript": "^6.0.3",
-    "vite": "^8",
-    "vite-plus": "^0.1.22",
-    "vitest": "^4.1.7",
-    "wrangler": "^4.22.0"
+    "vite": "^8.0.16",
+    "vite-plus": "^0.1.24",
+    "vitest": "^4.1.8",
+    "wrangler": "^4.100.0"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
