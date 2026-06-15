@@ -1,0 +1,82 @@
+version: 1
+surfaces:
+  - id: codex-hooks
+    title: Codex hook runtime
+    owner: ozby-dev
+    kind: hook
+    lifecycle: locked
+    paths:
+      - .codex
+      - .github/actions/setup-webpresso/action.yml
+    triggers:
+      - wp setup
+      - wp audit guardrails
+    evidence:
+      - AGENTS.md
+  - id: claude-hooks
+    title: Claude hook runtime
+    owner: ozby-dev
+    kind: hook
+    lifecycle: locked
+    paths:
+      - .claude
+      - .github/actions/setup-webpresso/action.yml
+    triggers:
+      - wp setup
+      - wp audit guardrails
+    evidence:
+      - AGENTS.md
+  - id: generated-agent-surfaces
+    title: Generated agent instructions and skills
+    owner: ozby-dev
+    kind: generated-surface
+    lifecycle: locked
+    paths:
+      - catalog/agent/skills
+      - agent-rules
+      - .agent
+    triggers:
+      - wp setup
+      - wp sync
+      - wp audit guardrails
+    evidence:
+      - catalog/agent/skills/monorepo-navigation/SKILL.md
+  - id: omx-runtime-state
+    title: OMX runtime and workflow state
+    owner: ozby-dev
+    kind: runtime-state
+    lifecycle: governed
+    paths:
+      - .omx
+    triggers:
+      - omx ultragoal checkpoint
+      - omx team status
+    evidence:
+      - AGENTS.md
+  - id: harness-regression-gate
+    title: Reference consumer regression gate
+    owner: ozby-dev
+    kind: regression-gate
+    lifecycle: governed
+    paths:
+      - .github/workflows
+      - scripts
+      - src
+    triggers:
+      - wp audit harness-surfaces
+      - wp audit guardrails
+    evidence:
+      - src/ci-governance-contract.test.ts
+  - id: agent-overlays
+    title: Evidence-backed agent overlays
+    owner: ozby-dev
+    kind: overlay
+    lifecycle: experimental
+    paths:
+      - agent-rules
+      - catalog/agent/skills
+    triggers:
+      - wp sync
+      - wp audit guardrails
+    evidence:
+      - catalog/agent/harness-surfaces.yaml

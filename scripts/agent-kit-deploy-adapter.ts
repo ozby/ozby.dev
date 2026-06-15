@@ -23,6 +23,7 @@ type DeployStep =
       kind: "command";
       id: string;
       label?: string;
+      runtimeProfile?: string;
       command: string;
       args?: string[];
       cwd?: string;
@@ -62,6 +63,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
           {
             kind: "command",
             id: "preview-deploy",
+            runtimeProfile: "none",
             label:
               request.mode === "destroy"
                 ? `Destroy ${request.lane} preview custom domain`
@@ -96,6 +98,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
             {
               kind: "command",
               id: "production-deploy",
+              runtimeProfile: "none",
               label: "Validate ozby.dev production deploy",
               command: "bun",
               args: [resolve(scriptsDir, "deploy-production.ts"), "--dry-run"],
@@ -106,6 +109,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
             {
               kind: "command",
               id: "production-deploy",
+              runtimeProfile: "none",
               label: "Deploy ozby.dev production",
               command: "bun",
               args: [resolve(scriptsDir, "deploy-production.ts"), "--skip-smoke"],

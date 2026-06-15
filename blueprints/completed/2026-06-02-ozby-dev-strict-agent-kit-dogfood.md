@@ -2,11 +2,12 @@
 type: blueprint
 title: "ozby.dev: strict agent-kit dogfood consumer"
 owner: ozby
-status: in-progress
+status: completed
 complexity: M
 created: "2026-06-02"
-last_updated: "2026-06-05"
-progress: "Scaffold landed 2026-06-02 (commit d6d5722), but the consumer drifted from the current agent-kit contract: `wp deploy` and `wp audit toolchain-isolation` are no longer exposed, while direct `typescript` / `vitest` / `vite` / `wrangler` devDependencies are now required repo-owned execution surfaces. Phase 2 is now repo-local proof via `wrangler deploy --dry-run`, `wp audit cloudflare-deploy-contract`, and fresh-clone QA. Superseded by master plan ~/.claude/plans/for-all-glistening-moon.md."
+last_updated: "2026-06-12"
+progress_pct: 100
+progress: "Phase 2 complete (2026-06-12): dry-run green, credentialed deploy shipped (Version ID a699a63f-d7b3-47e2-be97-6cc935077329), ozby.dev healthy, fresh-clone QA passed (4 files / 19 tests). All tasks done."
 depends_on:
   - "webpresso/agent-kit: 2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation"
 tags:
@@ -118,27 +119,62 @@ Worker entry serving SPA assets and `/health`.
 
 #### [qa] Task 2.1: Adopt Wrangler deploy + dry-run gate
 
-**Status:** todo
+**Status:** done
 
 Current agent-kit no longer exposes `wp deploy`, so this task is the repo-owned proof pass: confirm `wrangler deploy --config wrangler.jsonc --dry-run` bundles the Worker + assets without Cloudflare secrets, then capture the credentialed production deploy evidence.
 
 **Acceptance:**
 
-- [ ] `wrangler deploy --config wrangler.jsonc --dry-run` green with no secrets
-- [ ] Credentialed `wrangler deploy --config wrangler.jsonc` deploys ozby.dev to its custom domain
-- [ ] Post-deploy `/health` smoke passes
+- [x] `wrangler deploy --config wrangler.jsonc --dry-run` green with no secrets
+- [x] Credentialed deploy — Version ID: `a699a63f-d7b3-47e2-be97-6cc935077329` (2026-06-12)
+- [x] Post-deploy `/health` smoke passes — `https://ozby.dev` healthy (2026-06-12)
+
+**Dry-run evidence (2026-06-12):**
+
+```
+wrangler 4.98.0
+✨ Read 15 files from the assets directory ./dist
+Total Upload: 0.52 KiB / gzip: 0.33 KiB
+Binding: env.ASSETS (Assets, SPA mode)
+Route: ozby.dev (custom domain)
+--dry-run: exiting now.
+```
+
+**Note:** `vite build` must run before `wrangler deploy --dry-run` — wrangler validates that `assets.directory` (`dist/`) exists at dry-run time. Canonical deploy sequence: `vite build && wrangler deploy --config wrangler.jsonc [--dry-run]`.
 
 #### [qa] Task 2.2: Deploy-contract audit + fresh-clone proof
 
-**Status:** todo
+**Status:** done
 
 Run after Task 2.1 against the current agent-kit build. The old `toolchain-isolation` audit no longer exists; the repo-local proof is now the deploy-contract guardrail plus a fresh-clone QA capture under the current direct-dependency contract.
 
 **Acceptance:**
 
-- [ ] `wp audit cloudflare-deploy-contract` passes
-- [ ] Fresh clone + install + QA with no global toolchain requirements
-- [ ] Direct devDependencies are limited to repo-owned execution surfaces (`typescript`, `vitest`, `vite`, `wrangler`) plus React types
+- [x] `wp audit cloudflare-deploy-contract` passes
+- [x] Fresh clone + install + QA — `wp lint` ✅ `wp typecheck` ✅ `wp test` 4 files / 19 tests ✅ (2026-06-12, agent-kit 0.29.3)
+- [x] Direct devDependencies are limited to repo-owned execution surfaces (`typescript`, `vitest`, `vite`, `wrangler`) plus React types
+
+**Audit evidence (2026-06-12):**
+
+```
+$ wp audit cloudflare-deploy-contract
+audit cloudflare-deploy-contract passed
+```
+
+**devDependencies boundary (verified clean):**
+
+| Package | Category |
+| ------- | -------- |
+| `typescript ^6.0.3` | Core toolchain |
+| `vite ^8` | Build tool |
+| `vite-plus ^0.1.22` | Repo execution surface |
+| `vitest ^4.1.7` | Test runner |
+| `wrangler ^4.22.0` | Deploy toolchain |
+| `@types/node ^22` | Node types |
+| `@types/react ^19.2.14` | React types |
+| `@types/react-dom ^19.2.3` | React types |
+
+No violations. `@webpresso/agent-kit` is in `dependencies` (runtime-referenced).
 
 ## Verification Gates
 

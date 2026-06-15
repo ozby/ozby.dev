@@ -1,6 +1,12 @@
 packages:
   - .
 
+catalog:
+  "@webpresso/agent-kit": ^0.34.4
+  "@stryker-mutator/core": ^9.6.1
+  "@stryker-mutator/vitest-runner": ^9.6.1
+  "@stryker-mutator/typescript-checker": ^9.6.1
+
 allowBuilds:
   better-sqlite3: true
   esbuild: true

@@ -90,11 +90,11 @@ jobs:
         [ -n "$VP_BIN" ] && ln -sf "$VP_BIN" "$(pwd)/node_modules/.bin/vp" || true
         echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
       verify_command: |
-        pnpm run verify:secrets
-        pnpm run lint
-        pnpm run typecheck
-        pnpm exec vitest run --reporter verbose src/projects.test.ts src/worker.test.ts src/deploy-contract.test.ts src/lib/posts.test.ts
-        pnpm run verify:deploy-contract
+        vp run verify:secrets
+        wp lint
+        wp typecheck
+        wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/lib/posts.test.ts
+        wp audit cloudflare-deploy-contract
       deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
       destroy_command: bun scripts/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >
