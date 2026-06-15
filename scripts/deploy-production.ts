@@ -7,6 +7,7 @@ import {
   type SecretsConfigMetadata,
 } from "./lib/secrets-policy.ts";
 import { buildChildEnv } from "./lib/deploy-runner.ts";
+import { runtimeSecretsConfigPath } from "./lib/git-paths.ts";
 
 const ROOT = process.cwd();
 const PRODUCTION_URL = "https://ozby.dev";
@@ -16,13 +17,17 @@ const skipSmoke = args.includes("--skip-smoke");
 const dryRun = args.includes("--dry-run");
 
 function runtimeConfigPath(root: string): string {
-  return path.join(root, ".git", "webpresso", "secrets.json");
+  return runtimeSecretsConfigPath(root);
 }
 
 function readSecretsConfig(root: string): SecretsConfigMetadata {
-  const runtimePath = runtimeConfigPath(root);
-  if (existsSync(runtimePath)) {
-    return parseSecretsConfigMetadata(readFileSync(runtimePath, "utf8"), runtimePath);
+  try {
+    const runtimePath = runtimeConfigPath(root);
+    if (existsSync(runtimePath)) {
+      return parseSecretsConfigMetadata(readFileSync(runtimePath, "utf8"), runtimePath);
+    }
+  } catch {
+    // Fall through to the committed metadata path when git metadata is unavailable.
   }
 
   const committedPath = path.join(root, ".webpresso", "secrets.config.json");
