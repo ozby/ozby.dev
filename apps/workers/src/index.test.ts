@@ -2,12 +2,19 @@ import { describe, expect, it, vi } from "vitest";
 
 import worker, { type WorkerEnv } from "./index";
 
+function createAssetsBinding(response: Response): WorkerEnv["ASSETS"] {
+  return {
+    fetch: vi.fn(async () => response),
+    connect: vi.fn(() => {
+      throw new Error("connect should not be called in these tests");
+    }),
+  };
+}
+
 describe("worker", () => {
   it("returns a no-store health response", async () => {
     const env: WorkerEnv = {
-      ASSETS: {
-        fetch: vi.fn(async () => new Response("asset")),
-      },
+      ASSETS: createAssetsBinding(new Response("asset")),
     };
 
     const response = await worker.fetch(new Request("https://ozby.dev/health"), env);
@@ -24,9 +31,7 @@ describe("worker", () => {
     });
 
     const env: WorkerEnv = {
-      ASSETS: {
-        fetch: vi.fn(async () => assetResponse),
-      },
+      ASSETS: createAssetsBinding(assetResponse),
     };
 
     const request = new Request("https://ozby.dev/projects");
