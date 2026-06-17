@@ -223,7 +223,7 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
     expect(previewWorkflow).toContain("mode: ${{ needs.resolve.outputs.mode }}");
-    expect(previewWorkflow).toContain("DOPPLER_SERVICE_TOKEN");
+    expect(previewWorkflow).toContain("CI_SECRET_PROVIDER_TOKEN");
 
     expect(productionWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deploySha}`,

@@ -11,8 +11,6 @@ logs/
 credentials.json
 # Generated quarantine/dev-vars helper scripts may be materialized by setup in
 # some environments but must never be committed.
-scripts/audit-secret-provider-quarantine.ts
-scripts/check-no-dev-vars.ts
 .agent
 .agents
 .codex

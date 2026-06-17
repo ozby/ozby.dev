@@ -2,10 +2,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import {
-  parseSecretsConfigMetadata,
-  type SecretsConfigMetadata,
-} from "./secrets-policy.ts";
+import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./secrets-policy.ts";
 import { runtimeSecretsConfigPath } from "./git-paths.ts";
 import { buildChildEnv, findRepoRoot } from "./deploy-runner.ts";
 
@@ -56,10 +53,7 @@ function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = pr
   }
 }
 
-function runWorkersWrangler(
-  wranglerArgs: string[],
-  env: NodeJS.ProcessEnv = process.env,
-) {
+function runWorkersWrangler(wranglerArgs: string[], env: NodeJS.ProcessEnv = process.env) {
   run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
 }
 
@@ -72,39 +66,17 @@ function requireCommand(name: string, hint: string): void {
   }
 }
 
-function hasCommand(name: string): boolean {
-  const result = spawnSync("command", ["-v", name], { encoding: "utf8", shell: true });
-  return result.status === 0;
-}
-
 function runWithSecrets(
-  config: SecretsConfigMetadata,
   envProfile: string,
   command: string,
   commandArgs: string[],
   env: NodeJS.ProcessEnv = process.env,
 ) {
-  if (hasCommand("with-secrets")) {
-    run("with-secrets", ["--env-profile", envProfile, "--", command, ...commandArgs], env);
-    return;
-  }
-
-  if (config.manager !== "doppler") {
-    throw new Error(
-      `Unsupported secret manager "${config.manager}" in ozby-dev deploy runner. ` +
-        "Current DRY runner only supports Doppler metadata.",
-    );
-  }
-
   requireCommand(
-    "doppler",
-    "Install Doppler CLI and authenticate before deploying, or install `with-secrets`.",
+    "with-secrets",
+    "Install Webpresso tooling so the repo-local `with-secrets` secret-provider wrapper is available.",
   );
-  run(
-    "doppler",
-    ["run", "--project", config.projectId, "--config", envProfile, "--", command, ...commandArgs],
-    env,
-  );
+  run("with-secrets", ["--env-profile", envProfile, "--", command, ...commandArgs], env);
 }
 
 function waitForHttp(url: string, attempts: number, delaySeconds: number): void {
@@ -131,8 +103,7 @@ process.exit(1);
 }
 
 function verifyReleaseVersion(): void {
-  const releaseVersion =
-    process.env.RELEASE_VERSION ?? process.env.RELEASE_VERSION_INPUT ?? "";
+  const releaseVersion = process.env.RELEASE_VERSION ?? process.env.RELEASE_VERSION_INPUT ?? "";
   if (releaseVersion.length === 0) return;
   if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(releaseVersion)) {
     throw new Error(`Invalid semantic release version: ${releaseVersion}`);
@@ -140,7 +111,7 @@ function verifyReleaseVersion(): void {
 }
 
 export function main(): void {
-  const secretsConfig = readSecretsConfig(ROOT);
+  readSecretsConfig(ROOT);
   verifyReleaseVersion();
 
   if (!skipBuild) {
@@ -158,10 +129,8 @@ export function main(): void {
     process.exit(0);
   }
 
-  console.log(
-    `\n▶ Deploying ozby.dev via ${hasCommand("with-secrets") ? "with-secrets" : `${secretsConfig.manager}/${secretsConfig.projectId}`}…\n`,
-  );
-  runWithSecrets(secretsConfig, "prd", "pnpm", [
+  console.log(`\n▶ Deploying ozby.dev via the configured Webpresso secret-provider wrapper…\n`);
+  runWithSecrets("prd", "pnpm", [
     "--dir",
     "apps/workers",
     "exec",
@@ -172,7 +141,9 @@ export function main(): void {
   ]);
 
   if (skipSmoke) {
-    console.log(`\n✅ Production deploy finished (smoke skipped). Verify: ${PRODUCTION_URL}/health\n`);
+    console.log(
+      `\n✅ Production deploy finished (smoke skipped). Verify: ${PRODUCTION_URL}/health\n`,
+    );
     process.exit(0);
   }
 

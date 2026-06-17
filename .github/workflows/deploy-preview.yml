@@ -103,4 +103,4 @@ jobs:
       runner: ubicloud-standard-2
       skip_when_ci_secret_missing: false
     secrets:
-      ci_secret_provider_token: ${{ secrets.DOPPLER_SERVICE_TOKEN || secrets.DOPPLER_TOKEN }}
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}
