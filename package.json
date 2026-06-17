@@ -47,7 +47,6 @@
     "@stryker-mutator/vitest-runner": "catalog:",
     "@types/node": "catalog:",
     "@webpresso/agent-config": "catalog:",
-    "@webpresso/agent-kit": "catalog:",
     "husky": "^9.1.7",
     "secretlint": "^9.3.4",
     "typescript": "catalog:",

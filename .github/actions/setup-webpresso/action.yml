@@ -1,8 +1,8 @@
 name: Set up Webpresso tooling
 description: >
   Install shared Webpresso CLIs needed by the base-kit workflow surface.
-  Resolves @webpresso/agent-kit from package.json and installs vite-plus only
-  when the consumer repo explicitly catalogs it.
+  Resolves the global wp CLI version from the workspace catalog and installs
+  vite-plus only when the consumer repo explicitly catalogs it.
 runs:
   using: composite
   steps:

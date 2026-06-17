@@ -2,12 +2,14 @@ version: 1
 surfaces:
   - id: codex-hooks
     title: Codex hook runtime
-    owner: ozby-dev
+    owner: agent-kit
     kind: hook
     lifecycle: locked
     paths:
-      - .codex
-      - .github/actions/setup-webpresso/action.yml
+      - path: .codex
+        status: projected
+      - path: .github/actions/setup-webpresso/action.yml
+        status: concrete
     triggers:
       - wp setup
       - wp audit guardrails
@@ -15,12 +17,14 @@ surfaces:
       - AGENTS.md
   - id: claude-hooks
     title: Claude hook runtime
-    owner: ozby-dev
+    owner: agent-kit
     kind: hook
     lifecycle: locked
     paths:
-      - .claude
-      - .github/actions/setup-webpresso/action.yml
+      - path: .claude
+        status: projected
+      - path: .github/actions/setup-webpresso/action.yml
+        status: concrete
     triggers:
       - wp setup
       - wp audit guardrails
@@ -28,26 +32,68 @@ surfaces:
       - AGENTS.md
   - id: generated-agent-surfaces
     title: Generated agent instructions and skills
-    owner: ozby-dev
+    owner: agent-kit
     kind: generated-surface
     lifecycle: locked
     paths:
-      - catalog/agent/skills
-      - agent-rules
-      - .agent
+      - path: catalog/agent/skills
+        status: concrete
+      - path: agent-rules
+        status: concrete
+      - path: .agent
+        status: projected
     triggers:
       - wp setup
       - wp sync
       - wp audit guardrails
     evidence:
       - catalog/agent/skills/monorepo-navigation/SKILL.md
+  - id: permission-policy
+    title: Prompt-time permission and deny policy
+    owner: agent-kit
+    kind: policy
+    lifecycle: locked
+    paths:
+      - path: .codex/hooks.json
+        status: concrete
+      - path: .codex/managed-hooks/wp-pretool-guard.sh
+        status: concrete
+      - path: .claude/settings.json
+        status: concrete
+    triggers:
+      - wp setup
+      - wp audit guardrails
+      - git commit
+    evidence:
+      - .github/actions/setup-webpresso/action.yml
+      - AGENTS.md
+  - id: secret-gate
+    title: Secret-provider quarantine and no-dev-vars enforcement
+    owner: agent-kit
+    kind: secret-gate
+    lifecycle: locked
+    paths:
+      - path: .github/workflows/ci.yml
+        status: concrete
+      - path: .husky/pre-commit
+        status: concrete
+      - path: infra/src/deploy
+        status: concrete
+    triggers:
+      - wp audit no-dev-vars
+      - wp audit secret-provider-quarantine
+      - vp run verify:secrets
+    evidence:
+      - package.json
+      - test/ci-governance-contract.test.ts
   - id: omx-runtime-state
     title: OMX runtime and workflow state
-    owner: ozby-dev
+    owner: oh-my-codex
     kind: runtime-state
     lifecycle: governed
     paths:
-      - .omx
+      - path: .omx
+        status: projected
     triggers:
       - omx ultragoal checkpoint
       - omx team status
@@ -55,16 +101,22 @@ surfaces:
       - AGENTS.md
   - id: harness-regression-gate
     title: Reference consumer regression gate
-    owner: ozby-dev
+    owner: agent-kit
     kind: regression-gate
     lifecycle: governed
     paths:
-      - .github/workflows
-      - apps/workers
-      - infra
-      - infra/src/deploy
-      - test
-      - apps/client/src
+      - path: .github/workflows
+        status: concrete
+      - path: apps/workers
+        status: concrete
+      - path: infra
+        status: concrete
+      - path: infra/src/deploy
+        status: concrete
+      - path: test
+        status: concrete
+      - path: apps/client/src
+        status: concrete
     triggers:
       - wp audit harness-surfaces
       - wp audit guardrails
@@ -72,12 +124,14 @@ surfaces:
       - test/ci-governance-contract.test.ts
   - id: agent-overlays
     title: Evidence-backed agent overlays
-    owner: ozby-dev
+    owner: agent-kit
     kind: overlay
     lifecycle: experimental
     paths:
-      - agent-rules
-      - catalog/agent/skills
+      - path: agent-rules
+        status: concrete
+      - path: catalog/agent/skills
+        status: concrete
     triggers:
       - wp sync
       - wp audit guardrails
