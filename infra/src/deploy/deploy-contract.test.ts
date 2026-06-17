@@ -9,10 +9,7 @@ import {
   buildCloudflareDnsRecordsUrl,
   getConflictingCustomDomainCnameRecords,
 } from "./custom-domain-preflight.ts";
-import {
-  canonicalPreviewLaneToDashed,
-  resolvePreviewLane,
-} from "./deploy-lanes.ts";
+import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 
@@ -73,15 +70,30 @@ describe("ozby-dev deploy contract", () => {
     expect(() => readRepoFile("scripts/deploy-preview.ts")).toThrow();
     expect(() => readRepoFile("infra/src/deploy/deploy-production.ts")).not.toThrow();
     expect(() => readRepoFile("scripts/deploy-production.ts")).toThrow();
-    expect(readRepoFile("infra/src/deploy/deploy-production.ts")).not.toContain("../../../scripts/");
+    expect(readRepoFile("infra/src/deploy/deploy-production.ts")).not.toContain(
+      "../../../scripts/",
+    );
   });
 
-  it("uses wp deploy as the canonical package deploy surface", async () => {
-    const pkg = JSON.parse(readRepoFile("package.json")) as { scripts: Record<string, string> };
+  it("uses wp deploy as the canonical package deploy surface and changesets for release orchestration", async () => {
+    const pkg = JSON.parse(readRepoFile("package.json")) as {
+      version: string;
+      scripts: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
 
+    expect(pkg.version).toBe("0.1.0");
     expect(pkg.scripts["deploy:dry-run"]).toBe("wp deploy --lane prd --dry-run");
     expect(pkg.scripts["deploy:preview"]).toBe("wp deploy --lane preview_main");
     expect(pkg.scripts["deploy:production"]).toBe("wp deploy --lane prd");
+    expect(pkg.scripts["changeset"]).toBe("changeset");
+    expect(pkg.scripts["changeset:status"]).toBe("changeset status");
+    expect(pkg.scripts["version"]).toBe(
+      "changeset version && bun scripts/sync-release-metadata-version.ts",
+    );
+    expect(pkg.scripts["release:publish"]).toBe("bun scripts/release-publish.ts");
+    expect(pkg.devDependencies?.["@changesets/cli"]).toBeDefined();
+    expect(() => readRepoFile(".changeset/config.json")).not.toThrow();
   });
 
   it("uses pnpm-backed workspace builds inside infra deploy entrypoints", () => {
@@ -94,7 +106,9 @@ describe("ozby-dev deploy contract", () => {
     expect(productionDeploy).toContain(
       'run("pnpm", ["--filter", "@ozby-dev/workers", "run", "build"])',
     );
-    expect(previewDeploy).toContain('run("pnpm", ["--filter", "@ozby-dev/client", "run", "build"])');
+    expect(previewDeploy).toContain(
+      'run("pnpm", ["--filter", "@ozby-dev/client", "run", "build"])',
+    );
   });
 
   it("consumes infra deploy helpers through the infra package surface instead of a root alias", () => {
@@ -119,7 +133,12 @@ describe("ozby-dev deploy contract", () => {
     expect(previewMainStep?.kind).toBe("command");
     if (previewMainStep?.kind !== "command") throw new Error("expected command step");
     expect(previewMainStep.args).toEqual(
-      expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-main", "--dry-run"]),
+      expect.arrayContaining([
+        expect.stringContaining("deploy-preview.ts"),
+        "--lane",
+        "preview-main",
+        "--dry-run",
+      ]),
     );
 
     const previewPrDeploy = webpressoDeployAdapter.createPlan({
@@ -135,7 +154,11 @@ describe("ozby-dev deploy contract", () => {
     expect(previewDeployStep?.kind).toBe("command");
     if (previewDeployStep?.kind !== "command") throw new Error("expected command step");
     expect(previewDeployStep.args).toEqual(
-      expect.arrayContaining([expect.stringContaining("deploy-preview.ts"), "--lane", "preview-pr-123"]),
+      expect.arrayContaining([
+        expect.stringContaining("deploy-preview.ts"),
+        "--lane",
+        "preview-pr-123",
+      ]),
     );
 
     const productionDryRun = webpressoDeployAdapter.createPlan({
@@ -187,13 +210,15 @@ describe("ozby-dev deploy contract", () => {
     );
   });
 
-  it("uses thin caller workflows pinned to the shared reusable workflow commit", () => {
+  it("uses thin caller workflows pinned to the shared reusable workflow commits", () => {
     const previewWorkflow = readRepoFile(".github/workflows/deploy-preview.yml");
     const productionWorkflow = readRepoFile(".github/workflows/deploy-production.yml");
-    const sha = "5bbbe43e6f152b802bcce655a8dadeb661f908b5";
+    const releaseWorkflow = readRepoFile(".github/workflows/release.yml");
+    const deploySha = "5bbbe43e6f152b802bcce655a8dadeb661f908b5";
+    const releaseSha = "22f93ddf4f58ed253e29c81d3e0a1d3fcdc6f3e3";
 
     expect(previewWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${sha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deploySha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
@@ -201,11 +226,21 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("DOPPLER_SERVICE_TOKEN");
 
     expect(productionWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${sha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deploySha}`,
     );
-    expect(productionWorkflow).toContain('tags: ["v*"]');
-    expect(productionWorkflow).not.toContain("workflow_dispatch:");
-    expect(productionWorkflow).toContain("resolve-release");
+    expect(productionWorkflow).not.toContain('tags: ["v*"]');
+    expect(productionWorkflow).toContain("workflow_dispatch:");
+    expect(productionWorkflow).toContain("release_version:");
+
+    expect(releaseWorkflow).toContain(
+      `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseSha}`,
+    );
+    expect(releaseWorkflow).toContain("version_command: pnpm run version");
+    expect(releaseWorkflow).toContain("publish_command: pnpm run release:publish");
+    expect(releaseWorkflow).toContain("cloudflare-production.yml@");
+    expect(releaseWorkflow).toContain(
+      "release_version: ${{ needs.release.outputs.release_version }}",
+    );
   });
 
   it("documents preview domains and the mandatory custom-domain conflict preflight", () => {
