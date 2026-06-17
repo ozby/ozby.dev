@@ -54,6 +54,14 @@ describe("ozby-dev CI governance contract", () => {
     }
   });
 
+  it("deletes regenerated local-only helper scripts before running guardrails in CI", () => {
+    const ci = readRepoFile(".github/workflows/ci.yml");
+
+    expect(ci).toContain(
+      "rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts",
+    );
+  });
+
   it("skips full wp setup during CI installs so the gitignored artifacts are never regenerated in CI", () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
