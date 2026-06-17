@@ -16,7 +16,7 @@ concurrency:
 jobs:
   wp-check:
     name: wp-check
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
@@ -57,7 +57,7 @@ jobs:
 
   mutation:
     if: ${{ github.event_name == 'push' }}
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
@@ -73,6 +73,4 @@ jobs:
         with:
           bun-version: latest
       - run: pnpm install --frozen-lockfile
-      - run: wp test --affected
-        env:
-          GITHUB_BASE_REF: main
+      - run: wp test --mutation
