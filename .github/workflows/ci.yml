@@ -31,13 +31,17 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
-      - run: pnpm install --frozen-lockfile
+      - run: vp install --frozen-lockfile
       - run: WP_SKIP_UPDATE_CHECK=1 wp setup
+      - run: git checkout -- package.json .gitignore AGENTS.md
       - run: rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts
-      - run: wp audit guardrails
+      - run: wp audit hook-vendor-drift
+      - run: wp audit harness-surfaces
       - run: wp audit architecture-drift --root .
-      - run: pnpm run qa
-      - run: pnpm run blueprints:check
+      - run: wp lint
+      - run: wp typecheck
+      - run: vp run test
+      - run: wp audit blueprint-lifecycle
 
       - name: Validate Lore commits
         run: |
@@ -72,5 +76,5 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
-      - run: pnpm install --frozen-lockfile
+      - run: vp install --frozen-lockfile
       - run: wp test --mutation
