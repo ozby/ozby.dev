@@ -235,8 +235,8 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseSha}`,
     );
-    expect(releaseWorkflow).toContain("version_command: pnpm run version");
-    expect(releaseWorkflow).toContain("publish_command: pnpm run release:publish");
+    expect(releaseWorkflow).toContain("version_command: vp run version");
+    expect(releaseWorkflow).toContain("publish_command: vp run release:publish");
     expect(releaseWorkflow).toContain("cloudflare-production.yml@");
     expect(releaseWorkflow).toContain(
       "release_version: ${{ needs.release.outputs.release_version }}",

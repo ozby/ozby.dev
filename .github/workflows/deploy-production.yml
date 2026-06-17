@@ -16,13 +16,16 @@ jobs:
   deploy:
     uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@d4fbb7b4449ff74d349aec7506eac8d84d3fea25
     with:
-      install_command: pnpm install --frozen-lockfile
+      install_command: |
+        eval "$(node ./scripts/resolve-webpresso-cli-versions.js)"
+        npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
+        vp install --frozen-lockfile
       verify_command: |
-        pnpm run verify:secrets
-        pnpm run lint
-        pnpm run typecheck
-        pnpm run test
-        pnpm run verify:deploy-contract
+        vp run verify:secrets
+        wp lint
+        wp typecheck
+        vp run test
+        wp audit cloudflare-deploy-contract
       deploy_command: bun infra/src/deploy/deploy-production.ts --skip-smoke
       smoke_command: >
         node --input-type=module --eval "const urls=['https://ozby.dev/health','https://ozby.dev/'];
