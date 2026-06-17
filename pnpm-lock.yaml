@@ -18,9 +18,12 @@ catalogs:
     '@types/node':
       specifier: ^22.19.21
       version: 22.19.21
+    '@webpresso/agent-config':
+      specifier: ^0.1.4
+      version: 0.1.4
     '@webpresso/agent-kit':
-      specifier: ^1.1.0
-      version: 1.1.0
+      specifier: ^2.0.0
+      version: 2.0.0
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
@@ -59,9 +62,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.21
+      '@webpresso/agent-config':
+        specifier: 'catalog:'
+        version: 0.1.4(@cloudflare/vitest-pool-workers@0.16.15(@vitest/runner@4.1.8)(@vitest/snapshot@4.1.8)(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))))(@playwright/test@1.60.0)(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(@stryker-mutator/typescript-checker@9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(typescript@6.0.3))(@stryker-mutator/vitest-runner@9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))))(@types/node@22.19.21)(better-sqlite3@12.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(typescript@6.0.3)(wrangler@4.100.0)(yaml@2.9.0)
       '@webpresso/agent-kit':
         specifier: 'catalog:'
-        version: 1.1.0(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(oxlint-tsgolint@0.23.0)(valibot@1.4.1(typescript@6.0.3))
+        version: 2.0.0(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(oxlint-tsgolint@0.23.0)(valibot@1.4.1(typescript@6.0.3))
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -2232,40 +2238,70 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@webpresso/agent-kit-runtime-darwin-arm64@1.1.0':
-    resolution: {integrity: sha512-m6IQ35cBnOMe9vEFN1mF3ZAxgLVjrmYTO3ZGjSg1vFUs64ii0MxieJWGg07xgAtaO0gjzpmm0YzKsO83C1W9vw==}
+  '@webpresso/agent-config@0.1.4':
+    resolution: {integrity: sha512-GQX6Ll8jXaqERcTunMV4oopHpR9zXOMQK6ITTkzxdlmQzLhZHqK0+TikwmE1pKUwCFzTW3yKYq4gu9p2ldyoAw==}
+    engines: {node: '>=24'}
+    peerDependencies:
+      '@cloudflare/vitest-pool-workers': '*'
+      '@playwright/test': '*'
+      '@stryker-mutator/core': '*'
+      '@stryker-mutator/typescript-checker': '*'
+      '@stryker-mutator/vitest-runner': '*'
+      better-sqlite3: '*'
+      wrangler: '*'
+    peerDependenciesMeta:
+      '@cloudflare/vitest-pool-workers':
+        optional: true
+      '@playwright/test':
+        optional: true
+      '@stryker-mutator/core':
+        optional: true
+      '@stryker-mutator/typescript-checker':
+        optional: true
+      '@stryker-mutator/vitest-runner':
+        optional: true
+      better-sqlite3:
+        optional: true
+      wrangler:
+        optional: true
+
+  '@webpresso/agent-kit-runtime-darwin-arm64@2.0.0':
+    resolution: {integrity: sha512-GOIQ+7rDlaDmSFTrr029CTyrcAzVqu05L78CLL6AcfJ9IZypjpRHXjsH8HPipt+3pI7cFZC533eqJRb3taZfnw==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
 
-  '@webpresso/agent-kit-runtime-darwin-x64@1.1.0':
-    resolution: {integrity: sha512-YA4PX7Tj+fj8dewQsYk77T9OZkTsRbwPW5V60RGCA7wX5VFUlRJs+xjhVMmYrTT+pXRmI7ln8aTe4zbz56WW+A==}
+  '@webpresso/agent-kit-runtime-darwin-x64@2.0.0':
+    resolution: {integrity: sha512-JhuHlksZvmHMjT66stQqTZaL5H6LxOLlzQWJpPA95M0PXiCzlVKN/Af3DvYdzVNY1v1WpA1ahDQV81YnAIfkuw==}
     cpu: [x64]
     os: [darwin]
     hasBin: true
 
-  '@webpresso/agent-kit-runtime-linux-arm64@1.1.0':
-    resolution: {integrity: sha512-X7vk6tctXBVFl9zWg7hFvLwtECwzVZhPToyXc5o0y4ycFvHvNFOYNweMLzAX8L0DyjIz5ybK73LL4kVOmG2ZGA==}
+  '@webpresso/agent-kit-runtime-linux-arm64@2.0.0':
+    resolution: {integrity: sha512-pdiQ1zj0vXT9oOuEevg0zrz4bK9c0DTi8qUCytRvNxDWiNSsxJdTTClRVtc+0GFIL6Yxnn9ikiA5Ln+hkuyH7w==}
     cpu: [arm64]
     os: [linux]
     hasBin: true
 
-  '@webpresso/agent-kit-runtime-linux-x64@1.1.0':
-    resolution: {integrity: sha512-OnrQVu9v0I0vY0C8APfo1j7F3CBS3L01kVlzmbj06i4Y1e8/NGZol28CwKL6JNxGzXiwVWpWVPEgdsnkR7E/xw==}
+  '@webpresso/agent-kit-runtime-linux-x64@2.0.0':
+    resolution: {integrity: sha512-cb4lU7S9VbKy2IPPBiV3yV1EgGtZSxVGr8GnIg8sUGCnqNyxuQ1+3SoMnQp3cKrVJ8nkiq4ysl2nx9GbNHzPBA==}
     cpu: [x64]
     os: [linux]
     hasBin: true
 
-  '@webpresso/agent-kit-runtime-windows-x64@1.1.0':
-    resolution: {integrity: sha512-ZPwXqJCz0frfrL73/fDbPOsXHzH0gbWd5nr1Dn5XQeb24bLU3lOxUNNQNbdqAdRpThXn4nElAFmWhmPGVLp4JA==}
+  '@webpresso/agent-kit-runtime-windows-x64@2.0.0':
+    resolution: {integrity: sha512-QqiKaPWlLQJRuAoiz1lDA3+3EPdvsXMizxHiDT95bJJUlztpwKoG9Th0V7brfIbxxUSWDpVmZHawzR20Z8LhyQ==}
     cpu: [x64]
     os: [win32]
     hasBin: true
 
-  '@webpresso/agent-kit@1.1.0':
-    resolution: {integrity: sha512-hyyNdpGXHLfXaWagCgZ2knICMlEIpIR7jKoEnGe7iObGjTsQdAIX3/JN+4c9TXUYMeSU5OblT+F5uUf5EhtRKA==}
+  '@webpresso/agent-kit@2.0.0':
+    resolution: {integrity: sha512-38OeqiSQ3maeTPYcHwF2xpL8qhfqC3KgHiAPR+F3PabCTwzOF9cvd/5+zz0smMPkvzj7vy0lNYHILqN7kxFfxg==}
     engines: {node: '>=24'}
     hasBin: true
+
+  '@webpresso/cli-contract@0.2.0':
+    resolution: {integrity: sha512-ZAXpY1zWsz9iXVHQXxMCjxgO+2ZE3M+st9wmj4nAoIPwPZr1XGbK+VA6ov2Yyv4Cs4ayBtT785sSG/LP17O9yA==}
 
   JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -6850,27 +6886,79 @@ snapshots:
   '@voidzero-dev/vite-plus-win32-x64-msvc@0.1.24':
     optional: true
 
-  '@webpresso/agent-kit-runtime-darwin-arm64@1.1.0':
+  '@webpresso/agent-config@0.1.4(@cloudflare/vitest-pool-workers@0.16.15(@vitest/runner@4.1.8)(@vitest/snapshot@4.1.8)(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))))(@playwright/test@1.60.0)(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(@stryker-mutator/typescript-checker@9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(typescript@6.0.3))(@stryker-mutator/vitest-runner@9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))))(@types/node@22.19.21)(better-sqlite3@12.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(typescript@6.0.3)(wrangler@4.100.0)(yaml@2.9.0)':
+    dependencies:
+      '@vitejs/plugin-react': 6.0.2(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))
+      vite: 8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0)
+      vite-plus: 0.1.24(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
+      vitest: 4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))
+    optionalDependencies:
+      '@cloudflare/vitest-pool-workers': 0.16.15(@vitest/runner@4.1.8)(@vitest/snapshot@4.1.8)(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0)))
+      '@playwright/test': 1.60.0
+      '@stryker-mutator/core': 9.6.1(@types/node@22.19.21)
+      '@stryker-mutator/typescript-checker': 9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(typescript@6.0.3)
+      '@stryker-mutator/vitest-runner': 9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0)))
+      better-sqlite3: 12.10.1
+      wrangler: 4.100.0
+    transitivePeerDependencies:
+      - '@arethetypeswrong/core'
+      - '@edge-runtime/vm'
+      - '@opentelemetry/api'
+      - '@rolldown/plugin-babel'
+      - '@tsdown/css'
+      - '@tsdown/exe'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - '@vitest/browser-playwright'
+      - '@vitest/browser-preview'
+      - '@vitest/browser-webdriverio'
+      - '@vitest/coverage-istanbul'
+      - '@vitest/coverage-v8'
+      - '@vitest/ui'
+      - babel-plugin-react-compiler
+      - bufferutil
+      - esbuild
+      - happy-dom
+      - jiti
+      - jsdom
+      - less
+      - msw
+      - publint
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - svelte
+      - terser
+      - tsx
+      - typescript
+      - unplugin-unused
+      - unrun
+      - utf-8-validate
+      - yaml
+
+  '@webpresso/agent-kit-runtime-darwin-arm64@2.0.0':
     optional: true
 
-  '@webpresso/agent-kit-runtime-darwin-x64@1.1.0':
+  '@webpresso/agent-kit-runtime-darwin-x64@2.0.0':
     optional: true
 
-  '@webpresso/agent-kit-runtime-linux-arm64@1.1.0':
+  '@webpresso/agent-kit-runtime-linux-arm64@2.0.0':
     optional: true
 
-  '@webpresso/agent-kit-runtime-linux-x64@1.1.0':
+  '@webpresso/agent-kit-runtime-linux-x64@2.0.0':
     optional: true
 
-  '@webpresso/agent-kit-runtime-windows-x64@1.1.0':
+  '@webpresso/agent-kit-runtime-windows-x64@2.0.0':
     optional: true
 
-  '@webpresso/agent-kit@1.1.0(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(oxlint-tsgolint@0.23.0)(valibot@1.4.1(typescript@6.0.3))':
+  '@webpresso/agent-kit@2.0.0(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(oxlint-tsgolint@0.23.0)(valibot@1.4.1(typescript@6.0.3))':
     dependencies:
       '@manypkg/find-root': 3.1.0
       '@modelcontextprotocol/sdk': 1.29.0(zod@4.4.3)
       '@secretlint/secretlint-rule-preset-recommend': 13.0.2
       '@vitejs/plugin-react': 6.0.2(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0))
+      '@webpresso/cli-contract': 0.2.0
       better-sqlite3: 12.10.1
       cac: 7.0.0
       env-paths: 4.0.0
@@ -6900,11 +6988,11 @@ snapshots:
       '@stryker-mutator/core': 9.6.1(@types/node@22.19.21)
       '@stryker-mutator/typescript-checker': 9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(typescript@6.0.3)
       '@stryker-mutator/vitest-runner': 9.6.1(@stryker-mutator/core@9.6.1(@types/node@22.19.21))(vitest@4.1.8(@types/node@22.19.21)(vite@8.0.16(@types/node@22.19.21)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)(yaml@2.9.0)))
-      '@webpresso/agent-kit-runtime-darwin-arm64': 1.1.0
-      '@webpresso/agent-kit-runtime-darwin-x64': 1.1.0
-      '@webpresso/agent-kit-runtime-linux-arm64': 1.1.0
-      '@webpresso/agent-kit-runtime-linux-x64': 1.1.0
-      '@webpresso/agent-kit-runtime-windows-x64': 1.1.0
+      '@webpresso/agent-kit-runtime-darwin-arm64': 2.0.0
+      '@webpresso/agent-kit-runtime-darwin-x64': 2.0.0
+      '@webpresso/agent-kit-runtime-linux-arm64': 2.0.0
+      '@webpresso/agent-kit-runtime-linux-x64': 2.0.0
+      '@webpresso/agent-kit-runtime-windows-x64': 2.0.0
       wrangler: 4.100.0
     transitivePeerDependencies:
       - '@arethetypeswrong/core'
@@ -6948,6 +7036,8 @@ snapshots:
       - unrun
       - utf-8-validate
       - valibot
+
+  '@webpresso/cli-contract@0.2.0': {}
 
   JSONStream@1.3.5:
     dependencies:
