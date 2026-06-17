@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import worker, { type WorkerEnv } from "./worker";
+import worker, { type WorkerEnv } from "./index";
 
 describe("worker", () => {
   it("returns a no-store health response", async () => {

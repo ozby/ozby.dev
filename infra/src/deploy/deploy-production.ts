@@ -5,11 +5,11 @@ import path from "node:path";
 import {
   parseSecretsConfigMetadata,
   type SecretsConfigMetadata,
-} from "./lib/secrets-policy.ts";
-import { buildChildEnv } from "./lib/deploy-runner.ts";
-import { runtimeSecretsConfigPath } from "./lib/git-paths.ts";
+} from "./secrets-policy.ts";
+import { runtimeSecretsConfigPath } from "./git-paths.ts";
+import { buildChildEnv, findRepoRoot } from "./deploy-runner.ts";
 
-const ROOT = process.cwd();
+const ROOT = findRepoRoot(process.cwd());
 const PRODUCTION_URL = "https://ozby.dev";
 const args = process.argv.slice(2);
 const skipBuild = args.includes("--skip-build");
@@ -20,14 +20,16 @@ function runtimeConfigPath(root: string): string {
   return runtimeSecretsConfigPath(root);
 }
 
-function readSecretsConfig(root: string): SecretsConfigMetadata {
+export function readSecretsConfig(root: string): SecretsConfigMetadata {
+  let runtimePath: string | null = null;
   try {
-    const runtimePath = runtimeConfigPath(root);
-    if (existsSync(runtimePath)) {
-      return parseSecretsConfigMetadata(readFileSync(runtimePath, "utf8"), runtimePath);
-    }
+    runtimePath = runtimeConfigPath(root);
   } catch {
     // Fall through to the committed metadata path when git metadata is unavailable.
+  }
+
+  if (runtimePath && existsSync(runtimePath)) {
+    return parseSecretsConfigMetadata(readFileSync(runtimePath, "utf8"), runtimePath);
   }
 
   const committedPath = path.join(root, ".webpresso", "secrets.config.json");
@@ -52,6 +54,13 @@ function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = pr
       `"${[command, ...commandArgs].join(" ")}" exited with status ${result.status ?? 1}`,
     );
   }
+}
+
+function runWorkersWrangler(
+  wranglerArgs: string[],
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
 }
 
 function requireCommand(name: string, hint: string): void {
@@ -130,36 +139,50 @@ function verifyReleaseVersion(): void {
   }
 }
 
-const secretsConfig = readSecretsConfig(ROOT);
-verifyReleaseVersion();
+export function main(): void {
+  const secretsConfig = readSecretsConfig(ROOT);
+  verifyReleaseVersion();
 
-if (!skipBuild) {
-  console.log("\n▶ Building ozby.dev…\n");
-  run("pnpm", ["run", "build"]);
+  if (!skipBuild) {
+    console.log("\n▶ Building ozby.dev…\n");
+    run("pnpm", ["--filter", "@ozby-dev/workers", "run", "build"]);
+  }
+
+  console.log("\n▶ Verifying deploy contract…\n");
+  run("pnpm", ["run", "verify:deploy-contract"]);
+
+  if (dryRun) {
+    console.log("\n▶ Validating Wrangler deploy (dry-run, no secrets)…\n");
+    runWorkersWrangler(["deploy", "--config", "wrangler.jsonc", "--dry-run"]);
+    console.log("\n✅ Dry-run deploy contract validated.\n");
+    process.exit(0);
+  }
+
+  console.log(
+    `\n▶ Deploying ozby.dev via ${hasCommand("with-secrets") ? "with-secrets" : `${secretsConfig.manager}/${secretsConfig.projectId}`}…\n`,
+  );
+  runWithSecrets(secretsConfig, "prd", "pnpm", [
+    "--dir",
+    "apps/workers",
+    "exec",
+    "wrangler",
+    "deploy",
+    "--config",
+    "wrangler.jsonc",
+  ]);
+
+  if (skipSmoke) {
+    console.log(`\n✅ Production deploy finished (smoke skipped). Verify: ${PRODUCTION_URL}/health\n`);
+    process.exit(0);
+  }
+
+  console.log("\n▶ Post-deploy smoke…\n");
+  waitForHttp(`${PRODUCTION_URL}/health`, 24, 5);
+  waitForHttp(`${PRODUCTION_URL}/`, 12, 5);
+
+  console.log(`\n✅ Production deploy healthy at ${PRODUCTION_URL}\n`);
 }
 
-console.log("\n▶ Verifying deploy contract…\n");
-run("pnpm", ["run", "verify:deploy-contract"]);
-
-if (dryRun) {
-  console.log("\n▶ Validating Wrangler deploy (dry-run, no secrets)…\n");
-  run("wrangler", ["deploy", "--config", "wrangler.jsonc", "--dry-run"]);
-  console.log("\n✅ Dry-run deploy contract validated.\n");
-  process.exit(0);
+if (import.meta.main) {
+  main();
 }
-
-console.log(
-  `\n▶ Deploying ozby.dev via ${hasCommand("with-secrets") ? "with-secrets" : `${secretsConfig.manager}/${secretsConfig.projectId}`}…\n`,
-);
-runWithSecrets(secretsConfig, "prd", "wrangler", ["deploy", "--config", "wrangler.jsonc"]);
-
-if (skipSmoke) {
-  console.log(`\n✅ Production deploy finished (smoke skipped). Verify: ${PRODUCTION_URL}/health\n`);
-  process.exit(0);
-}
-
-console.log("\n▶ Post-deploy smoke…\n");
-waitForHttp(`${PRODUCTION_URL}/health`, 24, 5);
-waitForHttp(`${PRODUCTION_URL}/`, 12, 5);
-
-console.log(`\n✅ Production deploy healthy at ${PRODUCTION_URL}\n`);

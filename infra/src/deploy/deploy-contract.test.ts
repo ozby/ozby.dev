@@ -4,17 +4,17 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { webpressoDeployAdapter } from "../scripts/agent-kit-deploy-adapter.ts";
+import { webpressoDeployAdapter } from "./agent-kit-deploy-adapter.ts";
 import {
   buildCloudflareDnsRecordsUrl,
   getConflictingCustomDomainCnameRecords,
-} from "../scripts/lib/custom-domain-preflight.ts";
+} from "./custom-domain-preflight.ts";
 import {
   canonicalPreviewLaneToDashed,
   resolvePreviewLane,
-} from "../scripts/lib/deploy-lanes.ts";
+} from "./deploy-lanes.ts";
 
-const repoRoot = fileURLToPath(new URL("../", import.meta.url));
+const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -22,7 +22,7 @@ function readRepoFile(path: string): string {
 
 describe("ozby-dev deploy contract", () => {
   it("declares preview_main / preview_pr / prd Cloudflare lane metadata", async () => {
-    const { default: agentKitConfig } = await import("../agent-kit.config");
+    const { default: agentKitConfig } = await import("../../../agent-kit.config.ts");
     const cloudflare = agentKitConfig.deploy.cloudflare;
 
     expect(cloudflare.lanes.dev).toMatchObject({ wranglerEnvName: "dev" });
@@ -57,12 +57,55 @@ describe("ozby-dev deploy contract", () => {
     });
   });
 
+  it("keeps the canonical split workspace topology and infra-owned deploy surface", () => {
+    expect(readRepoFile("pnpm-workspace.yaml")).toContain('"apps/*"');
+    expect(readRepoFile("pnpm-workspace.yaml")).toContain('"infra"');
+    expect(() => readRepoFile("apps/client/package.json")).not.toThrow();
+    expect(() => readRepoFile("apps/workers/package.json")).not.toThrow();
+    expect(() => readRepoFile("infra/package.json")).not.toThrow();
+
+    expect(() => readRepoFile("apps/workers/wrangler.jsonc")).not.toThrow();
+    expect(() => readRepoFile("apps/workers/worker-configuration.d.ts")).not.toThrow();
+    expect(() => readRepoFile("wrangler.jsonc")).toThrow();
+    expect(() => readRepoFile("infra/src/deploy/agent-kit-deploy-adapter.ts")).not.toThrow();
+    expect(() => readRepoFile("scripts/agent-kit-deploy-adapter.ts")).toThrow();
+    expect(() => readRepoFile("infra/src/deploy/deploy-preview.ts")).not.toThrow();
+    expect(() => readRepoFile("scripts/deploy-preview.ts")).toThrow();
+    expect(() => readRepoFile("infra/src/deploy/deploy-production.ts")).not.toThrow();
+    expect(() => readRepoFile("scripts/deploy-production.ts")).toThrow();
+    expect(readRepoFile("infra/src/deploy/deploy-production.ts")).not.toContain("../../../scripts/");
+  });
+
   it("uses wp deploy as the canonical package deploy surface", async () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as { scripts: Record<string, string> };
 
     expect(pkg.scripts["deploy:dry-run"]).toBe("wp deploy --lane prd --dry-run");
     expect(pkg.scripts["deploy:preview"]).toBe("wp deploy --lane preview_main");
     expect(pkg.scripts["deploy:production"]).toBe("wp deploy --lane prd");
+  });
+
+  it("uses pnpm-backed workspace builds inside infra deploy entrypoints", () => {
+    const productionDeploy = readRepoFile("infra/src/deploy/deploy-production.ts");
+    const previewDeploy = readRepoFile("infra/src/deploy/deploy-preview.ts");
+
+    expect(productionDeploy).not.toContain('run("vp"');
+    expect(previewDeploy).not.toContain('run("vp"');
+    expect(productionDeploy).not.toContain('run("pnpm", ["run", "build"])');
+    expect(productionDeploy).toContain(
+      'run("pnpm", ["--filter", "@ozby-dev/workers", "run", "build"])',
+    );
+    expect(previewDeploy).toContain('run("pnpm", ["--filter", "@ozby-dev/client", "run", "build"])');
+  });
+
+  it("consumes infra deploy helpers through the infra package surface instead of a root alias", () => {
+    const pkg = JSON.parse(readRepoFile("package.json")) as {
+      devDependencies?: Record<string, string>;
+    };
+    const syncScript = readRepoFile("infra/src/deploy/sync-webpresso-config.ts");
+
+    expect(pkg.devDependencies?.["@ozby-dev/infra"]).toBe(undefined);
+    expect(syncScript).toContain('from "./git-paths.ts"');
+    expect(syncScript).toContain('from "./secrets-policy.ts"');
   });
 
   it("builds preview dry-run and deploy plans through the local preview script", () => {

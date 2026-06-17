@@ -1,6 +1,6 @@
 export const agentKitConfig = {
   deploy: {
-    adapterModule: "./scripts/agent-kit-deploy-adapter.ts",
+    adapterModule: "./infra/src/deploy/agent-kit-deploy-adapter.ts",
     cloudflare: {
       lanes: {
         dev: { wranglerEnvName: "dev" },

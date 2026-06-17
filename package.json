@@ -4,16 +4,16 @@
   "type": "module",
   "packageManager": "pnpm@11.1.1",
   "scripts": {
-    "dev": "wp exec wrangler dev",
-    "build": "wp exec vite build",
-    "typecheck": "wp typecheck",
-    "test": "wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file scripts/lib/git-paths.test.ts --file src/lib/posts.test.ts",
+    "dev": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers dev",
+    "build": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers build",
+    "typecheck": "vp run --filter @ozby-dev/client check-types && vp run --filter @ozby-dev/workers check-types && vp run --filter @ozby-dev/infra check-types && wp typecheck",
+    "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && wp test --file test/ci-governance-contract.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && wp typecheck && vp run test",
+    "qa": "wp lint && pnpm run typecheck && pnpm run test",
     "prepare": "husky",
-    "postinstall": "test -n \"$CI\" || wp setup && (test -n \"$CI\" || bun scripts/sync-webpresso-config.ts)",
+    "postinstall": "test -n \"$CI\" || wp setup && (test -n \"$CI\" || bun infra/src/deploy/sync-webpresso-config.ts)",
     "setup:agent": "wp setup",
-    "setup:secrets": "bun scripts/sync-webpresso-config.ts --force",
+    "setup:secrets": "bun infra/src/deploy/sync-webpresso-config.ts --force",
     "verify:secrets": "wp audit no-dev-vars && wp audit secret-provider-quarantine",
     "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
     "test:mutation": "wp test --mutation",
@@ -21,7 +21,7 @@
     "deploy:dry-run": "wp deploy --lane prd --dry-run",
     "deploy:preview": "wp deploy --lane preview_main",
     "deploy:production": "wp deploy --lane prd",
-    "deploy:production:wrangler": "bun scripts/deploy-production.ts",
+    "deploy:production:wrangler": "bun infra/src/deploy/deploy-production.ts",
     "verify:paths": "wp audit absolute-path-policy --root .",
     "audit:secret-provider-quarantine": "WP_SKIP_UPDATE_CHECK=1 wp audit secret-provider-quarantine",
     "mutation": "wp test --mutation",
@@ -32,18 +32,7 @@
     "THIRD-PARTY-NOTICES.md",
     "catalog/agent/skills/"
   ],
-  "imports": {
-    "#*": "./src/*.ts"
-  },
-  "dependencies": {
-    "@fontsource-variable/geist": "^5.2.9",
-    "@fontsource-variable/geist-mono": "^5.2.8",
-    "highlight.js": "^11.11.1",
-    "marked": "^18.0.5",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-router-dom": "^7.17.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
@@ -52,17 +41,13 @@
     "@stryker-mutator/core": "catalog:",
     "@stryker-mutator/typescript-checker": "catalog:",
     "@stryker-mutator/vitest-runner": "catalog:",
-    "@types/node": "^22.19.21",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
+    "@types/node": "catalog:",
     "@webpresso/agent-kit": "catalog:",
     "husky": "^9.1.7",
     "secretlint": "^9.3.4",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.16",
+    "typescript": "catalog:",
     "vite-plus": "^0.1.24",
-    "vitest": "^4.1.8",
-    "wrangler": "^4.100.0"
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=24"

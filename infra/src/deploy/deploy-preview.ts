@@ -1,0 +1,206 @@
+#!/usr/bin/env bun
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { spawnSync } from "node:child_process";
+
+import { assertNoConflictingCustomDomainCname } from "./custom-domain-preflight.ts";
+import { findRepoRoot } from "./deploy-runner.ts";
+import { resolvePreviewLane } from "./deploy-lanes.ts";
+
+type WranglerConfig = {
+  readonly $schema?: string;
+  readonly main: string;
+  readonly tsconfig?: string;
+  readonly compatibility_date: string;
+  readonly assets: {
+    readonly directory: string;
+    readonly binding: string;
+    readonly not_found_handling: string;
+  };
+};
+
+const args = process.argv.slice(2);
+const destroy = args.includes("--destroy");
+const dryRun = args.includes("--dry-run");
+const skipBuild = args.includes("--skip-build");
+const laneArg = args[args.indexOf("--lane") + 1];
+
+if (!laneArg) {
+  throw new Error("Usage: deploy-preview.ts --lane preview-main|preview-pr-<n> [--dry-run] [--destroy]");
+}
+
+if (destroy && dryRun) {
+  throw new Error("--destroy and --dry-run cannot be combined");
+}
+
+const repoRoot = findRepoRoot(process.cwd());
+const workersRoot = join(repoRoot, "apps", "workers");
+const lane = resolvePreviewLane(laneArg);
+const baseConfig = JSON.parse(readFileSync(join(workersRoot, "wrangler.jsonc"), "utf8")) as WranglerConfig;
+
+function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = process.env) {
+  const result = spawnSync(command, commandArgs, {
+    stdio: "inherit",
+    env,
+    shell: false,
+    cwd: repoRoot,
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(
+      `"${[command, ...commandArgs].join(" ")}" exited with status ${result.status ?? 1}`,
+    );
+  }
+}
+
+function runWorkersWrangler(
+  wranglerArgs: string[],
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
+}
+
+function hasCommand(command: string): boolean {
+  const result = spawnSync("command", ["-v", command], {
+    shell: true,
+    stdio: "ignore",
+  });
+  return result.status === 0;
+}
+
+function runSecretScoped(command: string, commandArgs: string[]) {
+  // Skip with-secrets if secrets are already injected (e.g. by CI doppler action)
+  if (!process.env.CLOUDFLARE_API_TOKEN && hasCommand("with-secrets")) {
+    run("with-secrets", ["--", command, ...commandArgs]);
+    return;
+  }
+  run(command, commandArgs);
+}
+
+function loadPreviewCredentials(): {
+  zoneId: string;
+  apiToken: string;
+} {
+  const zoneId = process.env.CLOUDFLARE_ZONE_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (zoneId && apiToken) {
+    return { zoneId, apiToken };
+  }
+
+  if (hasCommand("with-secrets")) {
+    const tempDir = mkdtempSync(join(tmpdir(), "ozby-dev-preview-creds-"));
+    const credentialsPath = join(tempDir, "credentials.json");
+    const result = spawnSync(
+      "with-secrets",
+      [
+        "--",
+        "node",
+        "--input-type=module",
+        "--eval",
+        'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({zoneId:process.env.CLOUDFLARE_ZONE_ID||"",apiToken:process.env.CLOUDFLARE_API_TOKEN||""}), { mode: 0o600 });',
+        credentialsPath,
+      ],
+      {
+        cwd: repoRoot,
+        shell: false,
+      },
+    );
+    try {
+      if (result.error) throw result.error;
+      if (result.status === 0) {
+        const parsed = JSON.parse(readFileSync(credentialsPath, "utf8")) as {
+          zoneId?: string;
+          apiToken?: string;
+        };
+        if (parsed.zoneId && parsed.apiToken) {
+          return { zoneId: parsed.zoneId, apiToken: parsed.apiToken };
+        }
+        throw new Error(
+          `with-secrets did not return both CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN for preview deploy preflight.`,
+        );
+      }
+      throw new Error(
+        `with-secrets failed while resolving preview deploy credentials: ${(result.stderr?.toString() || "unknown error").trim()}`,
+      );
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  }
+
+  throw new Error(
+    "Preview deploy requires CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN for the custom-domain conflict preflight.",
+  );
+}
+
+function writePreviewConfig(): string {
+  const tempDir = mkdtempSync(join(tmpdir(), "ozby-dev-preview-"));
+  const configPath = join(tempDir, "wrangler.preview.jsonc");
+  const previewConfig = {
+    $schema: baseConfig.$schema,
+    name: lane.workerName,
+    main: join(workersRoot, baseConfig.main),
+    tsconfig: baseConfig.tsconfig ? join(workersRoot, baseConfig.tsconfig) : undefined,
+    compatibility_date: baseConfig.compatibility_date,
+    assets: {
+      ...baseConfig.assets,
+      directory: join(workersRoot, baseConfig.assets.directory),
+    },
+    routes: [{ pattern: lane.hostname, custom_domain: true }],
+  };
+  writeFileSync(configPath, `${JSON.stringify(previewConfig, null, 2)}\n`, { mode: 0o600 });
+  return configPath;
+}
+
+async function runDnsPreflight(): Promise<void> {
+  const { zoneId, apiToken } = loadPreviewCredentials();
+  await assertNoConflictingCustomDomainCname({
+    hostname: lane.hostname,
+    zoneId,
+    apiToken,
+  });
+}
+
+if (destroy) {
+  console.log(`\n▶ Destroying preview Worker ${lane.workerName}\n`);
+  runSecretScoped("pnpm", [
+    "--dir",
+    "apps/workers",
+    "exec",
+    "wrangler",
+    "delete",
+    "--name",
+    lane.workerName,
+  ]);
+  process.exit(0);
+}
+
+if (!skipBuild) {
+  console.log(`\n▶ Building ${lane.hostname} preview assets…\n`);
+  run("pnpm", ["--filter", "@ozby-dev/client", "run", "build"]);
+}
+
+const previewConfigPath = writePreviewConfig();
+
+if (dryRun) {
+  console.log(`\n▶ Validating preview lane ${lane.lane} without publishing\n`);
+  runWorkersWrangler(["deploy", "--config", previewConfigPath, "--dry-run"]);
+  console.log(`\n✅ Preview dry-run validated: ${lane.url}\n`);
+  process.exit(0);
+}
+
+console.log(`\n▶ Checking for conflicting custom-domain CNAMEs on ${lane.hostname}\n`);
+await runDnsPreflight();
+
+console.log(`\n▶ Deploying preview Worker ${lane.workerName}\n`);
+runSecretScoped("pnpm", [
+  "--dir",
+  "apps/workers",
+  "exec",
+  "wrangler",
+  "deploy",
+  "--config",
+  previewConfigPath,
+]);
+
+console.log(`\n✅ Preview deployed: ${lane.url}\n`);

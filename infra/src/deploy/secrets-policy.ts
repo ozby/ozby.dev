@@ -1,5 +1,3 @@
-export const SECRETS_CONFIG_PATH = ".webpresso/secrets.config.json";
-
 export const SECRET_VALUE_PATTERN =
   /(?:^|[\s"'`=:])(?:(?:sk|pk)(?=[-_0-9])|ghp|gho|ghu|ghs|ghr|dp\.st|napi_|pplx-|ctx7sk-)[-_a-zA-Z0-9./+=]{8,}/u;
 

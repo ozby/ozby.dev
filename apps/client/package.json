@@ -1,0 +1,32 @@
+{
+  "name": "@ozby-dev/client",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#*": "./src/*.ts"
+  },
+  "scripts": {
+    "dev": "wp exec vite",
+    "build": "wp exec vite build",
+    "test": "wp test --file vitest.config.ts",
+    "check-types": "wp typecheck",
+    "lint": "wp lint"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.2.9",
+    "@fontsource-variable/geist-mono": "^5.2.8",
+    "highlight.js": "^11.11.1",
+    "marked": "^18.0.5",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "catalog:",
+    "vite": "^8.0.16",
+    "vitest": "catalog:"
+  }
+}

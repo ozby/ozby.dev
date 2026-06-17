@@ -34,12 +34,12 @@ jobs:
     with:
       install_command: pnpm install --frozen-lockfile
       verify_command: |
-        vp run verify:secrets
-        wp lint
-        wp typecheck
-        wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file src/lib/posts.test.ts
-        wp audit cloudflare-deploy-contract
-      deploy_command: bun scripts/deploy-production.ts --skip-smoke
+        pnpm run verify:secrets
+        pnpm run lint
+        pnpm run typecheck
+        pnpm run test
+        pnpm run verify:deploy-contract
+      deploy_command: bun infra/src/deploy/deploy-production.ts --skip-smoke
       smoke_command: >
         node --input-type=module --eval "const urls=['https://ozby.dev/health','https://ozby.dev/'];
         const wait=async(url,attempts)=>{for(let i=0;i<attempts;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev prod smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);};

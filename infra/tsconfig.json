@@ -1,0 +1,14 @@
+{
+  "extends": "@webpresso/agent-kit/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "release-metadata.production.json"
+  ]
+}

@@ -1,10 +1,4 @@
-type AssetsBinding = {
-  fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
-};
-
-export type WorkerEnv = {
-  ASSETS: AssetsBinding;
-};
+export type WorkerEnv = Pick<Env, "ASSETS">;
 
 const healthHeaders = {
   "cache-control": "no-store",
@@ -12,7 +6,7 @@ const healthHeaders = {
 } as const;
 
 export default {
-  async fetch(request: Request, env: WorkerEnv): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
     if (request.method === "GET" && url.pathname === "/health") {

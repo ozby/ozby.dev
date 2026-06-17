@@ -8,7 +8,7 @@ export default {
     break: 0,
   },
   vitest: {
-    ...(typescriptBaseConfig.vitest ?? {}),
+    ...typescriptBaseConfig.vitest,
     configFile: 'vitest.config.ts',
   },
 }

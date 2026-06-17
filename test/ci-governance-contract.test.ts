@@ -14,18 +14,24 @@ function readRepoFile(path: string): string {
  * Pins the CI hook-materialization contract.
  *
  * The `wp audit guardrails > agents` audit fails CLOSED when the managed
- * Claude/Codex hooks are absent, so CI must hydrate them. Current guardrails
- * also need the broader generated surface refresh from `wp setup`, but CI must
- * immediately clean ignored consumer projections (`agent-rules/`, `agent-skills/`)
- * before running audits so stale generated placeholders never enter the guardrail
- * surface.
+ * Claude/Codex hooks are absent, so CI must hydrate them. But a full
+ * `wp setup` in CI regenerates gitignored artifacts that fail OTHER
+ * guardrails:
+ *   - `agent-skills/<slug>/SKILL.md` with stale frontmatter -> `skills` audit
+ *   - `scripts/audit-secret-provider-quarantine.ts` (literal banned patterns)
+ *     -> `secret-provider-quarantine` audit
+ *
+ * The only correct path is the manifest-driven `wp setup --restore-hooks`,
+ * which materializes hooks ONLY. These assertions fail against every wrong
+ * variant we hit historically (bare `wp setup`, `wp setup --with agent-hooks`,
+ * and dropping hook generation entirely), so the discover-in-CI loop cannot
+ * recur — a regression turns the local `pnpm test` red before push.
  */
 describe("ozby-dev CI governance contract", () => {
-  it("hydrates hooks and generated surfaces via full wp setup, then cleans ignored projections before audit", () => {
+  it("hydrates managed hooks via the manifest-only restore path, never full wp setup", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
 
-    expect(ci).toContain("wp setup");
-    expect(ci).toContain("git clean -fdX agent-rules agent-skills");
+    expect(ci).toContain("wp setup --restore-hooks");
 
     const wpSetupSteps = ci
       .split("\n")
@@ -34,7 +40,9 @@ describe("ozby-dev CI governance contract", () => {
 
     expect(wpSetupSteps.length).toBeGreaterThan(0);
     for (const step of wpSetupSteps) {
-      expect(step).toContain("wp setup");
+      // Every wp-setup invocation in CI must be the restore-hooks variant.
+      expect(step).toContain("wp setup --restore-hooks");
+      expect(step).not.toContain("wp setup --with");
     }
   });
 
@@ -52,14 +60,14 @@ describe("ozby-dev CI governance contract", () => {
       codex?: unknown;
     };
 
-    expect(manifest.claude).toBeDefined();
-    expect(manifest.codex).toBeDefined();
+    expect(manifest).toHaveProperty("claude");
+    expect(manifest).toHaveProperty("codex");
   });
 
-  it("does not keep the old quarantine helper script ignore workaround once audits are repo-owned", () => {
+  it("keeps the quarantine-tripping generated helper scripts gitignored (never committed)", () => {
     const gitignore = readRepoFile(".gitignore");
 
-    expect(gitignore).not.toContain("scripts/audit-secret-provider-quarantine.ts");
-    expect(gitignore).not.toContain("scripts/check-no-dev-vars.ts");
+    expect(gitignore).toContain("scripts/audit-secret-provider-quarantine.ts");
+    expect(gitignore).toContain("scripts/check-no-dev-vars.ts");
   });
 });
