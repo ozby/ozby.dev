@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import path, { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 import { assertNoConflictingCustomDomainCname } from "./custom-domain-preflight.ts";
@@ -134,17 +134,20 @@ function loadPreviewCredentials(): {
 }
 
 function writePreviewConfig(): string {
-  const tempDir = mkdtempSync(join(tmpdir(), "ozby-dev-preview-"));
+  const tempDir = mkdtempSync(join(workersRoot, ".ozby-dev-preview-"));
   const configPath = join(tempDir, "wrangler.preview.jsonc");
+  const relativeFromConfig = (targetPath: string) => {
+    const relativePath = path.relative(tempDir, targetPath);
+    return relativePath.startsWith(".") ? relativePath : `./${relativePath}`;
+  };
   const previewConfig = {
     $schema: baseConfig.$schema,
     name: lane.workerName,
-    main: join(workersRoot, baseConfig.main),
-    tsconfig: baseConfig.tsconfig ? join(workersRoot, baseConfig.tsconfig) : undefined,
+    main: relativeFromConfig(join(workersRoot, baseConfig.main)),
     compatibility_date: baseConfig.compatibility_date,
     assets: {
       ...baseConfig.assets,
-      directory: join(workersRoot, baseConfig.assets.directory),
+      directory: relativeFromConfig(join(workersRoot, baseConfig.assets.directory)),
     },
     routes: [{ pattern: lane.hostname, custom_domain: true }],
   };
@@ -181,26 +184,29 @@ if (!skipBuild) {
 }
 
 const previewConfigPath = writePreviewConfig();
+try {
+  if (dryRun) {
+    console.log(`\n▶ Validating preview lane ${lane.lane} without publishing\n`);
+    runWorkersWrangler(["deploy", "--config", previewConfigPath, "--dry-run"]);
+    console.log(`\n✅ Preview dry-run validated: ${lane.url}\n`);
+    process.exit(0);
+  }
 
-if (dryRun) {
-  console.log(`\n▶ Validating preview lane ${lane.lane} without publishing\n`);
-  runWorkersWrangler(["deploy", "--config", previewConfigPath, "--dry-run"]);
-  console.log(`\n✅ Preview dry-run validated: ${lane.url}\n`);
-  process.exit(0);
+  console.log(`\n▶ Checking for conflicting custom-domain CNAMEs on ${lane.hostname}\n`);
+  await runDnsPreflight();
+
+  console.log(`\n▶ Deploying preview Worker ${lane.workerName}\n`);
+  runSecretScoped("pnpm", [
+    "--dir",
+    "apps/workers",
+    "exec",
+    "wrangler",
+    "deploy",
+    "--config",
+    previewConfigPath,
+  ]);
+
+  console.log(`\n✅ Preview deployed: ${lane.url}\n`);
+} finally {
+  rmSync(path.dirname(previewConfigPath), { recursive: true, force: true });
 }
-
-console.log(`\n▶ Checking for conflicting custom-domain CNAMEs on ${lane.hostname}\n`);
-await runDnsPreflight();
-
-console.log(`\n▶ Deploying preview Worker ${lane.workerName}\n`);
-runSecretScoped("pnpm", [
-  "--dir",
-  "apps/workers",
-  "exec",
-  "wrangler",
-  "deploy",
-  "--config",
-  previewConfigPath,
-]);
-
-console.log(`\n✅ Preview deployed: ${lane.url}\n`);
