@@ -214,8 +214,8 @@ describe("ozby-dev deploy contract", () => {
     const previewWorkflow = readRepoFile(".github/workflows/deploy-preview.yml");
     const productionWorkflow = readRepoFile(".github/workflows/deploy-production.yml");
     const releaseWorkflow = readRepoFile(".github/workflows/release.yml");
-    const deploySha = "5bbbe43e6f152b802bcce655a8dadeb661f908b5";
-    const releaseSha = "3f0136f88a488bc0894ab81ab3c8544b2e8dabf2";
+    const deploySha = "d4fbb7b4449ff74d349aec7506eac8d84d3fea25";
+    const releaseSha = "d4fbb7b4449ff74d349aec7506eac8d84d3fea25";
 
     expect(previewWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deploySha}`,
