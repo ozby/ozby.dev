@@ -78,7 +78,6 @@ vp run deploy:dry-run
 ```
 
 - Preview deploys use additive custom domains:
-
   - `https://preview-main.ozby.dev`
   - `https://preview-pr-<n>.ozby.dev`
 
@@ -109,7 +108,8 @@ This repo now uses thin caller workflows that delegate to the shared
 repo-local commands here:
 
 - preview: `.github/workflows/deploy-preview.yml`
-- production: `.github/workflows/deploy-production.yml`
+- release orchestration: `.github/workflows/release.yml`
+- production hotfix/manual rerun: `.github/workflows/deploy-production.yml`
 
 ## Verify
 
