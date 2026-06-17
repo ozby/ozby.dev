@@ -85,16 +85,15 @@ jobs:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
       install_command: |
-        pnpm install --frozen-lockfile
-        VP_BIN=$(find "$(pwd)/node_modules/.pnpm" -name "vp" -path "*/vite-plus*/bin/vp" -type f 2>/dev/null | head -1)
-        [ -n "$VP_BIN" ] && ln -sf "$VP_BIN" "$(pwd)/node_modules/.bin/vp" || true
-        echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
+        eval "$(node ./scripts/resolve-webpresso-cli-versions.js)"
+        npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
+        vp install --frozen-lockfile
       verify_command: |
-        pnpm run verify:secrets
-        pnpm run lint
-        pnpm run typecheck
-        pnpm run test
-        pnpm run verify:deploy-contract
+        vp run verify:secrets
+        vp run lint
+        vp run typecheck
+        vp run test
+        vp run verify:deploy-contract
       deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
       destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >

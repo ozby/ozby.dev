@@ -16,6 +16,11 @@ being present does not mean the release claim is green: required rows must be
 | resume injection | generated setup surfaces | degraded | docs/bench/reference-parity-matrix.md | yes | open |
 | tool discovery | tracked catalog skills | degraded | docs/bench/reference-parity-matrix.md | yes | open |
 | indexed search | content and route indexing | degraded | docs/bench/reference-parity-matrix.md | yes | passed |
+| routing injection | generated setup surfaces | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| pretool session redirect | generated setup surfaces | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| posttool broad capture | generated setup surfaces | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| registry/routing consistency | CI setup + guardrail lane | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| repair path evidence | CI setup + guardrail lane | degraded | docs/bench/reference-parity-matrix.md | yes | open |
 | host setup smoke | CI setup + guardrail lane | degraded | docs/bench/reference-parity-matrix.md | yes | passed |
 | benchmark thresholds | quality smoke placeholder | degraded | docs/bench/reference-parity-matrix.md | yes | open |
 | release claim gating | deploy contract audit lane | degraded | docs/bench/reference-parity-matrix.md | yes | open |

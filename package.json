@@ -1,15 +1,20 @@
 {
   "name": "ozby-dev",
+  "version": "0.1.0",
   "private": true,
+  "files": [
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md",
+    "catalog/agent/skills/"
+  ],
   "type": "module",
-  "packageManager": "pnpm@11.1.1",
   "scripts": {
     "dev": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers dev",
     "build": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers build",
     "typecheck": "vp run --filter @ozby-dev/client check-types && vp run --filter @ozby-dev/workers check-types && vp run --filter @ozby-dev/infra check-types && wp typecheck",
     "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && wp test --file test/ci-governance-contract.test.ts",
     "lint": "wp lint",
-    "qa": "wp lint && pnpm run typecheck && pnpm run test",
+    "qa": "wp lint && wp typecheck && vp run test",
     "prepare": "husky",
     "postinstall": "test -n \"$CI\" || wp setup && (test -n \"$CI\" || bun infra/src/deploy/sync-webpresso-config.ts)",
     "setup:agent": "wp setup",
@@ -31,13 +36,9 @@
     "version": "changeset version && bun scripts/sync-release-metadata-version.ts",
     "release:publish": "bun scripts/release-publish.ts"
   },
-  "files": [
-    "LICENSE",
-    "THIRD-PARTY-NOTICES.md",
-    "catalog/agent/skills/"
-  ],
   "dependencies": {},
   "devDependencies": {
+    "@changesets/cli": "^2.29.5",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@playwright/test": "latest",
@@ -46,16 +47,15 @@
     "@stryker-mutator/typescript-checker": "catalog:",
     "@stryker-mutator/vitest-runner": "catalog:",
     "@types/node": "catalog:",
-    "@webpresso/agent-kit": "catalog:",
+    "@webpresso/agent-config": "catalog:",
     "husky": "^9.1.7",
     "secretlint": "^9.3.4",
     "typescript": "catalog:",
     "vite-plus": "^0.1.24",
-    "vitest": "catalog:",
-    "@changesets/cli": "^2.29.5"
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=24"
   },
-  "version": "0.1.0"
+  "packageManager": "pnpm@11.1.1"
 }

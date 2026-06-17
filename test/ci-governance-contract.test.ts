@@ -27,10 +27,13 @@ describe("ozby-dev CI governance contract", () => {
 
     expect(ci).toContain("wp-check:");
     expect(ci).toContain("name: wp-check");
-    expect(ci).toContain("wp audit guardrails");
+    expect(ci).toContain("wp audit hook-vendor-drift");
+    expect(ci).toContain("wp audit harness-surfaces");
     expect(ci).toContain("wp audit architecture-drift --root .");
-    expect(ci).toContain("pnpm run qa");
-    expect(ci).toContain("pnpm run blueprints:check");
+    expect(ci).toContain("wp lint");
+    expect(ci).toContain("wp typecheck");
+    expect(ci).toContain("vp run test");
+    expect(ci).toContain("wp audit blueprint-lifecycle");
     expect(ci).toContain("wp test --mutation");
     expect(ci).not.toContain("wp test --affected");
   });
@@ -52,6 +55,8 @@ describe("ozby-dev CI governance contract", () => {
       expect(step).not.toContain("wp setup --with");
       expect(step).not.toContain("wp setup --restore-hooks");
     }
+
+    expect(ci).toContain("git checkout -- package.json .gitignore AGENTS.md");
   });
 
   it("deletes regenerated local-only helper scripts before running guardrails in CI", () => {

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "typegen": "wp exec wrangler types",
-    "prebuild": "pnpm run typegen && pnpm --filter @ozby-dev/client run build",
+    "prebuild": "wp exec wrangler types && vp run --filter @ozby-dev/client build",
     "dev": "wp exec wrangler dev --config wrangler.jsonc",
     "build": "wp exec wrangler deploy --config wrangler.jsonc --dry-run",
     "test": "wp test --file vitest.config.ts",
