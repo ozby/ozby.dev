@@ -60,13 +60,16 @@ surfaces:
     lifecycle: governed
     paths:
       - .github/workflows
-      - scripts
-      - src
+      - apps/workers
+      - infra
+      - infra/src/deploy
+      - test
+      - apps/client/src
     triggers:
       - wp audit harness-surfaces
       - wp audit guardrails
     evidence:
-      - src/ci-governance-contract.test.ts
+      - test/ci-governance-contract.test.ts
   - id: agent-overlays
     title: Evidence-backed agent overlays
     owner: ozby-dev

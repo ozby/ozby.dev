@@ -31,21 +31,16 @@ jobs:
         with:
           bun-version: latest
       - run: pnpm install --frozen-lockfile
-      - run: echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
-      - run: WP_SKIP_UPDATE_CHECK=1 wp setup
-      - run: git clean -fdX agent-rules agent-skills
-      - run: rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts
+      - run: WP_SKIP_UPDATE_CHECK=1 wp setup --restore-hooks
       - run: wp audit guardrails
-      - run: wp lint
-      - run: wp typecheck
-      - run: wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/ci-governance-contract.test.ts --file src/lib/posts.test.ts
-      - run: wp audit blueprint-lifecycle
+      - run: pnpm run qa
+      - run: pnpm run blueprints:check
 
       - name: Validate Lore commits
         run: |
           BASE=${{ github.base_ref || 'main' }}
           git fetch origin "$BASE" --depth=50 2>/dev/null || true
-          COMMITS=$(git rev-list --no-merges "origin/$BASE..HEAD" 2>/dev/null || true)
+          COMMITS=$(git log "origin/$BASE..HEAD" --no-merges --format="%H" 2>/dev/null || true)
           if [ -z "$COMMITS" ]; then
             echo "No branch commits to validate."
             exit 0
@@ -75,7 +70,6 @@ jobs:
         with:
           bun-version: latest
       - run: pnpm install --frozen-lockfile
-      - run: echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
       - run: wp test --affected
         env:
           GITHUB_BASE_REF: main

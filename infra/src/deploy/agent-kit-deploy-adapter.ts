@@ -1,7 +1,8 @@
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
-import { canonicalPreviewLaneToDashed } from "./lib/deploy-lanes.ts";
+import { findRepoRoot } from "./deploy-runner.ts";
+import { canonicalPreviewLaneToDashed } from "./deploy-lanes.ts";
 
 type DeployRequest = {
   lane: string;
@@ -42,8 +43,8 @@ type DeployAdapter = {
   createPlan(request: DeployRequest): DeployPlan;
 };
 
-const scriptsDir = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(scriptsDir, "..");
+const deployDir = dirname(fileURLToPath(import.meta.url));
+const repoRoot = findRepoRoot(deployDir);
 
 export const webpressoDeployAdapter: DeployAdapter = {
   createPlan(request): DeployPlan {
@@ -72,7 +73,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
                   : `Deploy ${request.lane} preview custom domain`,
             command: "bun",
             args: [
-              resolve(scriptsDir, "deploy-preview.ts"),
+              resolve(deployDir, "deploy-preview.ts"),
               "--lane",
               previewLane,
               ...(request.mode === "destroy" ? ["--destroy"] : []),
@@ -101,7 +102,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
               runtimeProfile: "none",
               label: "Validate ozby.dev production deploy",
               command: "bun",
-              args: [resolve(scriptsDir, "deploy-production.ts"), "--dry-run"],
+              args: [resolve(deployDir, "deploy-production.ts"), "--dry-run"],
               cwd: repoRoot,
             },
           ]
@@ -112,7 +113,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
               runtimeProfile: "none",
               label: "Deploy ozby.dev production",
               command: "bun",
-              args: [resolve(scriptsDir, "deploy-production.ts"), "--skip-smoke"],
+              args: [resolve(deployDir, "deploy-production.ts"), "--skip-smoke"],
               cwd: repoRoot,
             },
           ],

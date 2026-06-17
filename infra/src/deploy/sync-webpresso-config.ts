@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { runtimeSecretsConfigPath } from "./lib/git-paths.ts";
-import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./lib/secrets-policy.ts";
+import { runtimeSecretsConfigPath } from "./git-paths.ts";
+import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./secrets-policy.ts";
 
 const ROOT = process.cwd();
 const SOURCE = path.join(ROOT, ".webpresso", "secrets.config.json");

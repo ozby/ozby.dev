@@ -12,10 +12,10 @@ being present does not mean the release claim is green: required rows must be
 
 | capability | host scope | support level | proof artifact | required for release | status |
 | --- | --- | --- | --- | --- | --- |
-| lifecycle capture | Codex, Claude hooks scaffolding | degraded | src/ci-governance-contract.test.ts | yes | open |
-| resume injection | generated setup surfaces | degraded | src/deploy-contract.test.ts | yes | open |
-| tool discovery | tracked catalog skills | degraded | src/lib/posts.test.ts | yes | open |
-| indexed search | content and route indexing | degraded | src/lib/posts.test.ts | yes | passed |
-| host setup smoke | CI setup + guardrail lane | degraded | src/ci-governance-contract.test.ts | yes | passed |
-| benchmark thresholds | quality smoke placeholder | degraded | src/quality-sample.test.ts | yes | open |
-| release claim gating | deploy contract audit lane | degraded | src/deploy-contract.test.ts | yes | open |
+| lifecycle capture | Codex, Claude hooks scaffolding | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| resume injection | generated setup surfaces | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| tool discovery | tracked catalog skills | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| indexed search | content and route indexing | degraded | docs/bench/reference-parity-matrix.md | yes | passed |
+| host setup smoke | CI setup + guardrail lane | degraded | docs/bench/reference-parity-matrix.md | yes | passed |
+| benchmark thresholds | quality smoke placeholder | degraded | docs/bench/reference-parity-matrix.md | yes | open |
+| release claim gating | deploy contract audit lane | degraded | docs/bench/reference-parity-matrix.md | yes | open |

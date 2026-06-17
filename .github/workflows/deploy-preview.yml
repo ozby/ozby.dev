@@ -90,13 +90,13 @@ jobs:
         [ -n "$VP_BIN" ] && ln -sf "$VP_BIN" "$(pwd)/node_modules/.bin/vp" || true
         echo "$(pwd)/node_modules/.bin" >> "$GITHUB_PATH"
       verify_command: |
-        vp run verify:secrets
-        wp lint
-        wp typecheck
-        wp test --file src/projects.test.ts --file src/worker.test.ts --file src/deploy-contract.test.ts --file src/lib/posts.test.ts
-        wp audit cloudflare-deploy-contract
+        pnpm run verify:secrets
+        pnpm run lint
+        pnpm run typecheck
+        pnpm run test
+        pnpm run verify:deploy-contract
       deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
-      destroy_command: bun scripts/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
+      destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
         const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"

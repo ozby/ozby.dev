@@ -1,0 +1,15 @@
+{
+  "name": "@ozby-dev/infra",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "wp test --file vitest.config.ts",
+    "check-types": "wp typecheck",
+    "lint": "wp lint"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

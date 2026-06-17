@@ -140,13 +140,13 @@ Full details: `.agent/rules/package-conventions.md`
 
 ## Repository map
 
-- `ozby-dev` — `.`
+- `@ozby-dev/client` — `apps/client`
+- `@ozby-dev/infra` — `infra`
+- `@ozby-dev/workers` — `apps/workers`
 
 ## Tech stack
 
-- Cloudflare Workers (wrangler)
 - Playwright
-- React
 - TypeScript
 - Vitest
 <!-- <<< managed by webpresso (planning-and-release) -->

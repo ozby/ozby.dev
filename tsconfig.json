@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2024",
-    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2024",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
@@ -17,10 +21,13 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "jsx": "react-jsx",
-    "types": ["node", "react", "react-dom"],
-    "paths": {
-      "#*": ["./src/*"]
-    }
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src"]
+  "include": [
+    "agent-kit.config.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts"
+  ]
 }

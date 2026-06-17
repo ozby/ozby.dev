@@ -2,7 +2,6 @@ node_modules
 dist
 .wrangler
 .webpresso/secrets.json
-.webpresso/hooks-manifest.json
 logs/
 .env
 .env.*
@@ -10,6 +9,10 @@ logs/
 .dev.vars
 .dev.vars.*
 credentials.json
+# Generated quarantine/dev-vars helper scripts may be materialized by setup in
+# some environments but must never be committed.
+scripts/audit-secret-provider-quarantine.ts
+scripts/check-no-dev-vars.ts
 .agent
 .agents
 .codex
@@ -85,7 +88,9 @@ agent-rules/ts-coding-conventions.md
 # instruction surfaces (for example selected `.claude/*` files).
 .agent/
 .agents/
+.gemini/
 .cursor/
+.windsurf/
 .omx/
 .omc/
 .opencode/
@@ -101,6 +106,9 @@ _worktrees/
 .claude/worktrees/
 .claude/scheduled_tasks.lock
 .cursor/rules/
+.windsurf/skills/
+.windsurf/rules/
+.gemini/commands/
 .opencode/agents/
 .opencode/commands/
 .agents/skills/

@@ -14,11 +14,11 @@ Each subdirectory represents a lifecycle state:
 | State | Count | Description |
 | ----- | ----: | ----------- |
 | `draft/` | 0 | early-stage sketches. Expect churn; move to `planned/` once scoped. |
-| `planned/` | 1 | committed-to specs, ready to pick up. |
+| `planned/` | 0 | committed-to specs, ready to pick up. |
 | `in-progress/` | 0 | actively being executed. At most 3 active blueprints per lane. |
-| `completed/` | 2 | execution finished and verified. Kept for reference. |
+| `completed/` | 3 | execution finished and verified. Kept for reference. |
 | `parked/` | 0 | intentionally paused. Include a reason in the spec's frontmatter. |
-| `archived/` | 0 | superseded or abandoned. Not deleted — the record matters. |
+| `archived/` | 1 | superseded or abandoned. Not deleted — the record matters. |
 <!-- END: blueprint-index -->
 ## Authoring
 
@@ -29,12 +29,13 @@ Each subdirectory represents a lifecycle state:
 
 Move files with `git mv` so history follows the spec through its lifecycle.
 
-## Current state (2026-06-11)
+## Current state (2026-06-16)
 
 | Blueprint | State | Path | Purpose |
 | --------- | ----- | ---- | ------- |
-| Strict agent-kit dogfood | in-progress | [`in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./in-progress/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | The repo keeps the stricter current contract: repo-owned `typescript` / `vitest` / `wrangler` surfaces plus remaining repo-local dry-run, deploy-contract audit, and fresh-clone proof. |
+| Strict agent-kit dogfood | completed | [`completed/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md`](./completed/2026-06-02-ozby-dev-strict-agent-kit-dogfood.md) | Closed the repo-owned `typescript` / `vitest` / `wrangler` contract proof lane. |
 | Shared deploy workflow alignment cleanup | completed | [`completed/2026-06-09-ozby-dev-shared-reusable-deploy-workflow-alignment.md`](./completed/2026-06-09-ozby-dev-shared-reusable-deploy-workflow-alignment.md) | Closed the stale “no workflows / no preview lanes” planning drift and aligned QA with the repo’s canonical `wp` verification surface. |
+| Consumer apps + infra standardization | completed | [`completed/2026-06-16-ozby-dev-consumer-apps-infra-standardization.md`](./completed/2026-06-16-ozby-dev-consumer-apps-infra-standardization.md) | Closed the remaining deploy PATH regression, switched Worker bindings to generated Wrangler types, and captured the standardized branch truth. |
 
 The upstream/parent blueprint lives in agent-kit:
 `webpresso/agent-kit/blueprints/in-progress/2026-06-02-agent-kit-wp-deploy-orchestrator-toolchain-isolation.md`,

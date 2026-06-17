@@ -1,6 +1,6 @@
 # ozby.dev
 
-Personal landing page + blog for Özberk Erçin. React 19 SPA served via Cloudflare Workers Assets.
+Personal landing page + blog for Özberk Erçin. Workspace split app: `apps/client` React frontend, `apps/workers` Worker runtime, `infra` deploy surface.
 
 **Live:** https://ozby.dev · **Preview (main):** https://preview-main.ozby.dev
 
@@ -8,13 +8,13 @@ Personal landing page + blog for Özberk Erçin. React 19 SPA served via Cloudfl
 
 - React 19 + React Router v7 — SPA with `/`, `/writing`, `/writing/:slug`, `/projects/:slug`
 - Cloudflare Workers Assets — `not_found_handling: single-page-application`
-- Blog: `.md` files in `src/content/posts/` → `gray-matter` + `marked` + `highlight.js`
+- Blog: `.md` files in `apps/client/src/content/posts/` → `gray-matter` + `marked` + `highlight.js`
 - Fonts: Geist + Geist Mono (self-hosted via `@fontsource-variable`)
 - Design: zinc palette, CSS custom properties, `prefers-color-scheme` light/dark
 
 ## Writing a post
 
-Add a file to `src/content/posts/<slug>.md`:
+Add a file to `apps/client/src/content/posts/<slug>.md`:
 
 ```markdown
 ---
@@ -29,7 +29,7 @@ Body content in standard Markdown. Fenced code blocks get syntax highlighting.
 
 ## Adding a project
 
-Edit `src/projects.ts` and add an entry to the array:
+Edit `apps/client/src/projects.ts` and add an entry to the array:
 
 ```ts
 {
@@ -51,7 +51,7 @@ This repo uses [vite-plus](https://www.npmjs.com/package/vite-plus) (`vp`) as it
 pnpm install
 vp run qa        # lint + typecheck + tests
 vp run build     # production build
-vp run dev       # local preview at localhost:8787
+vp run dev       # builds client dist, then serves the local preview at localhost:8787
 ```
 
 ## Secrets + deploy contract
