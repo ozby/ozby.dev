@@ -15,7 +15,10 @@ function readRepoFile(path: string): string {
  *
  * The `wp audit guardrails > agents` audit now requires the full managed agent
  * surface, including `.claude/agents`, so CI must hydrate the complete setup
- * contract rather than the earlier hooks-only restore path.
+ * contract rather than the earlier hooks-only restore path. The full setup also
+ * regenerates local-only helper scripts that are intentionally gitignored and
+ * can trip unrelated guardrails, so CI deletes those helper files again before
+ * running the audit.
  *
  * These assertions fail against the stale `--restore-hooks` variant and against
  * partial setup invocations, so the CI contract stays aligned with the actual
@@ -39,6 +42,11 @@ describe("ozby-dev CI governance contract", () => {
       expect(step).not.toContain("wp setup --with");
       expect(step).not.toContain("wp setup --restore-hooks");
     }
+  });
+
+  it("deletes regenerated local-only helper scripts before running guardrails in CI", () => {
+    const ci = readRepoFile(".github/workflows/ci.yml");
+    expect(ci).toContain("rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts");
   });
 
   it("skips full wp setup during CI installs so the gitignored artifacts are never regenerated in CI", () => {
