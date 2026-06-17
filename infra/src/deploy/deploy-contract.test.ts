@@ -190,10 +190,10 @@ describe("ozby-dev deploy contract", () => {
   it("uses thin caller workflows pinned to the shared reusable workflow commit", () => {
     const previewWorkflow = readRepoFile(".github/workflows/deploy-preview.yml");
     const productionWorkflow = readRepoFile(".github/workflows/deploy-production.yml");
-    const sha = "4ba75c74138e4bbfa2b72189e6f0a3dd05fef7a9";
+    const sha = "5bbbe43e6f152b802bcce655a8dadeb661f908b5";
 
     expect(previewWorkflow).toContain(
-      `uses: webpresso/agent-kit/.github/workflows/cloudflare-preview.yml@${sha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${sha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
@@ -201,7 +201,7 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("DOPPLER_SERVICE_TOKEN");
 
     expect(productionWorkflow).toContain(
-      `uses: webpresso/agent-kit/.github/workflows/cloudflare-production.yml@${sha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${sha}`,
     );
     expect(productionWorkflow).toContain('tags: ["v*"]');
     expect(productionWorkflow).not.toContain("workflow_dispatch:");

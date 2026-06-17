@@ -12,6 +12,7 @@
       "vitest/globals"
     ],
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "erasableSyntaxOnly": false,
     "paths": {
       "#*": [
