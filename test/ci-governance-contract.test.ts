@@ -13,25 +13,22 @@ function readRepoFile(path: string): string {
 /**
  * Pins the CI hook-materialization contract.
  *
- * The `wp audit guardrails > agents` audit fails CLOSED when the managed
- * Claude/Codex hooks are absent, so CI must hydrate them. But a full
- * `wp setup` in CI regenerates gitignored artifacts that fail OTHER
- * guardrails:
- *   - `agent-skills/<slug>/SKILL.md` with stale frontmatter -> `skills` audit
- *   - `scripts/audit-secret-provider-quarantine.ts` (literal banned patterns)
- *     -> `secret-provider-quarantine` audit
+ * The `wp audit guardrails > agents` audit now requires the full managed agent
+ * surface, including `.claude/agents`, so CI must hydrate the complete setup
+ * contract rather than the earlier hooks-only restore path. The full setup also
+ * regenerates local-only helper scripts that are intentionally gitignored and
+ * can trip unrelated guardrails, so CI deletes those helper files again before
+ * running the audit.
  *
- * The only correct path is the manifest-driven `wp setup --restore-hooks`,
- * which materializes hooks ONLY. These assertions fail against every wrong
- * variant we hit historically (bare `wp setup`, `wp setup --with agent-hooks`,
- * and dropping hook generation entirely), so the discover-in-CI loop cannot
- * recur — a regression turns the local `pnpm test` red before push.
+ * These assertions fail against the stale `--restore-hooks` variant and against
+ * partial setup invocations, so the CI contract stays aligned with the actual
+ * guardrail surface.
  */
 describe("ozby-dev CI governance contract", () => {
-  it("hydrates managed hooks via the manifest-only restore path, never full wp setup", () => {
+  it("hydrates the full managed agent surface via wp setup in CI", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
 
-    expect(ci).toContain("wp setup --restore-hooks");
+    expect(ci).toContain("wp setup");
 
     const wpSetupSteps = ci
       .split("\n")
@@ -40,10 +37,16 @@ describe("ozby-dev CI governance contract", () => {
 
     expect(wpSetupSteps.length).toBeGreaterThan(0);
     for (const step of wpSetupSteps) {
-      // Every wp-setup invocation in CI must be the restore-hooks variant.
-      expect(step).toContain("wp setup --restore-hooks");
+      // CI should run the full setup surface, not stale hooks-only restore.
+      expect(step).toContain("wp setup");
       expect(step).not.toContain("wp setup --with");
+      expect(step).not.toContain("wp setup --restore-hooks");
     }
+  });
+
+  it("deletes regenerated local-only helper scripts before running guardrails in CI", () => {
+    const ci = readRepoFile(".github/workflows/ci.yml");
+    expect(ci).toContain("rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts");
   });
 
   it("skips full wp setup during CI installs so the gitignored artifacts are never regenerated in CI", () => {
@@ -54,7 +57,7 @@ describe("ozby-dev CI governance contract", () => {
     expect(pkg.scripts.postinstall).toContain('test -n "$CI" || wp setup');
   });
 
-  it("commits the hooks manifest that --restore-hooks depends on", () => {
+  it("keeps the hooks manifest available for hook repair and setup drift audits", () => {
     const manifest = JSON.parse(readRepoFile(".webpresso/hooks-manifest.json")) as {
       claude?: unknown;
       codex?: unknown;
