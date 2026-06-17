@@ -7,8 +7,8 @@ scope: repo
 applies_to: [agents]
 related:
   - cmd-execution
-created: '2026-06-15'
-last_reviewed: '2026-06-15'
+created: "2026-06-15"
+last_reviewed: "2026-06-15"
 ---
 
 # Webpresso Routing
@@ -24,4 +24,4 @@ Use the repo-owned Webpresso surfaces before ad hoc command forms.
 ## Secrets and provider access
 
 - Route secret-aware execution through the repo contract (`wp config secrets`, `with-secrets -- <cmd>`, or repo-owned wrappers).
-- Do not call provider CLIs like `doppler` directly from agent instructions when a repo-owned Webpresso surface already exists.
+- Do not call secret-provider CLIs directly from agent instructions when a repo-owned Webpresso surface already exists.

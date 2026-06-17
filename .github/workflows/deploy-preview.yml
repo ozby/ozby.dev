@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   resolve:
-    runs-on: ubicloud-standard-2
+    runs-on: ubuntu-latest
     outputs:
       lane: ${{ steps.resolve.outputs.lane }}
       dashed_lane: ${{ steps.resolve.outputs.dashed_lane }}
@@ -80,7 +80,7 @@ jobs:
 
   preview:
     needs: resolve
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@5bbbe43e6f152b802bcce655a8dadeb661f908b5
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@d4fbb7b4449ff74d349aec7506eac8d84d3fea25
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: ${{ needs.resolve.outputs.mode }}
@@ -100,7 +100,7 @@ jobs:
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
         const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
-      runner: ubicloud-standard-2
+      runner: ubuntu-latest
       skip_when_ci_secret_missing: false
     secrets:
-      ci_secret_provider_token: ${{ secrets.DOPPLER_SERVICE_TOKEN || secrets.DOPPLER_TOKEN }}
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}

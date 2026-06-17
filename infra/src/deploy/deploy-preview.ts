@@ -27,7 +27,9 @@ const skipBuild = args.includes("--skip-build");
 const laneArg = args[args.indexOf("--lane") + 1];
 
 if (!laneArg) {
-  throw new Error("Usage: deploy-preview.ts --lane preview-main|preview-pr-<n> [--dry-run] [--destroy]");
+  throw new Error(
+    "Usage: deploy-preview.ts --lane preview-main|preview-pr-<n> [--dry-run] [--destroy]",
+  );
 }
 
 if (destroy && dryRun) {
@@ -37,7 +39,9 @@ if (destroy && dryRun) {
 const repoRoot = findRepoRoot(process.cwd());
 const workersRoot = join(repoRoot, "apps", "workers");
 const lane = resolvePreviewLane(laneArg);
-const baseConfig = JSON.parse(readFileSync(join(workersRoot, "wrangler.jsonc"), "utf8")) as WranglerConfig;
+const baseConfig = JSON.parse(
+  readFileSync(join(workersRoot, "wrangler.jsonc"), "utf8"),
+) as WranglerConfig;
 
 function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = process.env) {
   const result = spawnSync(command, commandArgs, {
@@ -54,10 +58,7 @@ function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = pr
   }
 }
 
-function runWorkersWrangler(
-  wranglerArgs: string[],
-  env: NodeJS.ProcessEnv = process.env,
-) {
+function runWorkersWrangler(wranglerArgs: string[], env: NodeJS.ProcessEnv = process.env) {
   run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
 }
 
@@ -70,7 +71,7 @@ function hasCommand(command: string): boolean {
 }
 
 function runSecretScoped(command: string, commandArgs: string[]) {
-  // Skip with-secrets if secrets are already injected (e.g. by CI doppler action)
+  // Skip with-secrets if CI already injected the deploy credentials.
   if (!process.env.CLOUDFLARE_API_TOKEN && hasCommand("with-secrets")) {
     run("with-secrets", ["--", command, ...commandArgs]);
     return;
