@@ -25,7 +25,11 @@
     "verify:paths": "wp audit absolute-path-policy --root .",
     "audit:secret-provider-quarantine": "WP_SKIP_UPDATE_CHECK=1 wp audit secret-provider-quarantine",
     "mutation": "wp test --mutation",
-    "e2e": "wp e2e --config playwright.config.ts"
+    "e2e": "wp e2e --config playwright.config.ts",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "version": "changeset version && bun scripts/sync-release-metadata-version.ts",
+    "release:publish": "bun scripts/release-publish.ts"
   },
   "files": [
     "LICENSE",
@@ -42,14 +46,17 @@
     "@stryker-mutator/typescript-checker": "catalog:",
     "@stryker-mutator/vitest-runner": "catalog:",
     "@types/node": "catalog:",
+    "@webpresso/agent-config": "catalog:",
     "@webpresso/agent-kit": "catalog:",
     "husky": "^9.1.7",
     "secretlint": "^9.3.4",
     "typescript": "catalog:",
     "vite-plus": "^0.1.24",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@changesets/cli": "latest"
   },
   "engines": {
     "node": ">=24"
-  }
+  },
+  "version": "0.0.0"
 }
