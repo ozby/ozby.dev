@@ -34,6 +34,8 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("wp audit architecture-drift --root .");
     expect(ci).toContain("pnpm run qa");
     expect(ci).toContain("pnpm run blueprints:check");
+    expect(ci).toContain("wp test --mutation");
+    expect(ci).not.toContain("wp test --affected");
   });
 
   it("hydrates the full managed agent surface via wp setup in CI", () => {
