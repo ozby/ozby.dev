@@ -35,9 +35,11 @@ jobs:
         with:
           node-version: '24.16.0'
           cache: pnpm
+      - name: Set up Webpresso tooling
+        uses: ./.github/actions/setup-webpresso
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
       - run: vp install --frozen-lockfile
       - name: Produce planned-only harness selection verdict
-        run: vp run test -- --runInBand test/ci-governance-contract.test.ts
+        run: wp test --file test/ci-governance-contract.test.ts
