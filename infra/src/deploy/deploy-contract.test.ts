@@ -111,6 +111,9 @@ describe("ozby-dev deploy contract", () => {
     expect(previewDeploy).toContain(
       'run("pnpm", ["--filter", "@ozby-dev/client", "run", "build"])',
     );
+    expect(productionDeploy).toContain(
+      "env.CI && env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_ZONE_ID",
+    );
   });
 
   it("consumes infra deploy helpers through the infra package surface instead of a root alias", () => {
