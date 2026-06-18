@@ -72,21 +72,11 @@ function runWithSecrets(
   commandArgs: string[],
   env: NodeJS.ProcessEnv = process.env,
 ) {
-  if (hasInjectedDeployEnv(env)) {
-    run(command, commandArgs, env);
-    return;
-  }
   requireCommand(
     "with-secrets",
     "Install Webpresso tooling so the repo-local `with-secrets` secret-provider wrapper is available.",
   );
   run("with-secrets", ["--env-profile", envProfile, "--", command, ...commandArgs], env);
-}
-
-function hasInjectedDeployEnv(env: NodeJS.ProcessEnv = process.env): boolean {
-  return Boolean(
-    env.CI && env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_ZONE_ID,
-  );
 }
 
 function waitForHttp(url: string, attempts: number, delaySeconds: number): void {
