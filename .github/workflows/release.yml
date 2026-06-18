@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   release:
-    uses: webpresso/github-actions/.github/workflows/changesets-release.yml@d4fbb7b4449ff74d349aec7506eac8d84d3fea25
+    uses: webpresso/github-actions/.github/workflows/changesets-release.yml@3f0136f88a488bc0894ab81ab3c8544b2e8dabf2
     with:
       install_command: |
         eval "$(node ./scripts/resolve-webpresso-cli-versions.js)"
@@ -20,10 +20,19 @@ jobs:
       publish_command: vp run release:publish
       runner: ubuntu-latest
 
-  deploy:
+  gate:
     needs: release
-    if: ${{ needs.release.outputs.should_deploy == 'true' }}
-    uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@d4fbb7b4449ff74d349aec7506eac8d84d3fea25
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ needs.release.outputs.should_deploy }}
+      release_version: ${{ needs.release.outputs.release_version }}
+    steps:
+      - run: "true"
+
+  deploy:
+    needs: gate
+    if: ${{ needs.gate.outputs.should_deploy == 'true' }}
+    uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@5bbbe43e6f152b802bcce655a8dadeb661f908b5
     with:
       install_command: |
         eval "$(node ./scripts/resolve-webpresso-cli-versions.js)"
@@ -40,7 +49,7 @@ jobs:
         node --input-type=module --eval "const urls=['https://ozby.dev/health','https://ozby.dev/'];
         const wait=async(url,attempts)=>{for(let i=0;i<attempts;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev prod smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);};
         for (const url of urls) await wait(url, url.endsWith('/health') ? 24 : 12);"
-      release_version: ${{ needs.release.outputs.release_version }}
+      release_version: ${{ needs.gate.outputs.release_version }}
       runner: ubuntu-latest
     secrets:
       ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}

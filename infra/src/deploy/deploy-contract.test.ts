@@ -12,6 +12,8 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
+const deployReusableWorkflowSha = "d4fbb7b4449ff74d349aec7506eac8d84d3fea25";
+const releaseReusableWorkflowSha = "3f0136f88a488bc0894ab81ab3c8544b2e8dabf2";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -214,11 +216,9 @@ describe("ozby-dev deploy contract", () => {
     const previewWorkflow = readRepoFile(".github/workflows/deploy-preview.yml");
     const productionWorkflow = readRepoFile(".github/workflows/deploy-production.yml");
     const releaseWorkflow = readRepoFile(".github/workflows/release.yml");
-    const deploySha = "d4fbb7b4449ff74d349aec7506eac8d84d3fea25";
-    const releaseSha = "d4fbb7b4449ff74d349aec7506eac8d84d3fea25";
 
     expect(previewWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deploySha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deployReusableWorkflowSha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
@@ -226,20 +226,20 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("CI_SECRET_PROVIDER_TOKEN");
 
     expect(productionWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deploySha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deployReusableWorkflowSha}`,
     );
     expect(productionWorkflow).not.toContain('tags: ["v*"]');
     expect(productionWorkflow).toContain("workflow_dispatch:");
     expect(productionWorkflow).toContain("release_version:");
 
     expect(releaseWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseSha}`,
+      `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseReusableWorkflowSha}`,
     );
     expect(releaseWorkflow).toContain("version_command: vp run version");
     expect(releaseWorkflow).toContain("publish_command: vp run release:publish");
     expect(releaseWorkflow).toContain("cloudflare-production.yml@");
     expect(releaseWorkflow).toContain(
-      "release_version: ${{ needs.release.outputs.release_version }}",
+      "release_version: ${{ needs.gate.outputs.release_version }}",
     );
   });
 
