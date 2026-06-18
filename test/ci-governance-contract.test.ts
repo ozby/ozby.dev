@@ -36,6 +36,7 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("wp audit blueprint-lifecycle");
     expect(ci).toContain("wp test --mutation");
     expect(ci).not.toContain("wp test --affected");
+    expect(ci).toContain("!startsWith(github.event.head_commit.message, 'Version Packages')");
   });
 
   it("hydrates the full managed agent surface via wp setup in CI", () => {
@@ -73,6 +74,14 @@ describe("ozby-dev CI governance contract", () => {
     };
 
     expect(pkg.scripts.postinstall).toContain('test -n "$CI" || wp setup');
+  });
+
+  it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {
+    const preview = readRepoFile(".github/workflows/deploy-preview.yml");
+    const security = readRepoFile(".github/workflows/security-scan.yml");
+
+    expect(preview).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
+    expect(security).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
   });
 
 });

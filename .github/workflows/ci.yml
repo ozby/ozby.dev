@@ -65,7 +65,7 @@ jobs:
           exit $FAIL
 
   mutation:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'Version Packages') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
