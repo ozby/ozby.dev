@@ -241,6 +241,11 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain(
       "release_version: ${{ needs.gate.outputs.release_version }}",
     );
+    expect(releaseWorkflow).toContain("permissions:");
+    expect(releaseWorkflow).toContain("contents: write");
+    expect(releaseWorkflow).toContain("pull-requests: write");
+    expect(releaseWorkflow).toContain("packages: read");
+    expect(readRepoFile("CHANGELOG.md")).toContain("# Changelog");
   });
 
   it("documents preview domains and the mandatory custom-domain conflict preflight", () => {
