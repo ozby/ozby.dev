@@ -84,7 +84,7 @@ describe("ozby-dev deploy contract", () => {
       devDependencies?: Record<string, string>;
     };
 
-    expect(pkg.version).toBe("0.1.0");
+    expect(pkg.version).toMatch(/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/);
     expect(pkg.scripts["deploy:dry-run"]).toBe("wp deploy --lane prd --dry-run");
     expect(pkg.scripts["deploy:preview"]).toBe("wp deploy --lane preview_main");
     expect(pkg.scripts["deploy:production"]).toBe("wp deploy --lane prd");

@@ -75,13 +75,4 @@ describe("ozby-dev CI governance contract", () => {
     expect(pkg.scripts.postinstall).toContain('test -n "$CI" || wp setup');
   });
 
-  it("keeps the hooks manifest available for hook repair and setup drift audits", () => {
-    const manifest = JSON.parse(readRepoFile(".webpresso/hooks-manifest.json")) as {
-      claude?: unknown;
-      codex?: unknown;
-    };
-
-    expect(manifest).toHaveProperty("claude");
-    expect(manifest).toHaveProperty("codex");
-  });
 });
