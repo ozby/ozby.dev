@@ -73,7 +73,8 @@ describe("ozby-dev CI governance contract", () => {
       scripts: Record<string, string>;
     };
 
-    expect(pkg.scripts.postinstall).toContain('test -n "$CI" || wp setup');
+    expect(pkg.scripts.postinstall).toContain('test -n "$CI" || (wp setup');
+    expect(pkg.scripts.postinstall).toContain("sync-webpresso-config.ts");
   });
 
   it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {

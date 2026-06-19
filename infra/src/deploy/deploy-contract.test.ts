@@ -12,8 +12,8 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const deployReusableWorkflowSha = "11e2b313823763e5f8ced862d4a798d8070e3628";
-const releaseReusableWorkflowSha = "3f0136f88a488bc0894ab81ab3c8544b2e8dabf2";
+const deployReusableWorkflowSha = "b0464171f61f5c90b4c2082fc05954f4324d96dd";
+const releaseReusableWorkflowSha = "b0464171f61f5c90b4c2082fc05954f4324d96dd";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -223,8 +223,9 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
     expect(previewWorkflow).toContain("mode: ${{ needs.resolve.outputs.mode }}");
-    expect(previewWorkflow).toContain("CI_SECRET_PROVIDER_TOKEN");
     expect(previewWorkflow).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
+    expect(previewWorkflow).toContain("secret_profile: preview");
+    expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
 
     expect(productionWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deployReusableWorkflowSha}`,
@@ -232,6 +233,8 @@ describe("ozby-dev deploy contract", () => {
     expect(productionWorkflow).not.toContain('tags: ["v*"]');
     expect(productionWorkflow).toContain("workflow_dispatch:");
     expect(productionWorkflow).toContain("release_version:");
+    expect(productionWorkflow).toContain("secret_profile: deploy");
+    expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
 
     expect(releaseWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseReusableWorkflowSha}`,
@@ -245,7 +248,7 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain("permissions:");
     expect(releaseWorkflow).toContain("contents: write");
     expect(releaseWorkflow).toContain("pull-requests: write");
-    expect(releaseWorkflow).toContain("packages: read");
+    expect(releaseWorkflow).toContain("packages: write");
     expect(readRepoFile("CHANGELOG.md")).toContain("# Changelog");
   });
 
