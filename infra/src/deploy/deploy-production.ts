@@ -35,7 +35,7 @@ export function readSecretsConfig(root: string): SecretsConfigMetadata {
   }
 
   throw new Error(
-    "Missing secret-manager metadata. Run `bun scripts/sync-webpresso-config.ts --force` first.",
+    "Missing secret-manager metadata. Run `wp secrets doctor --profile preview --json` and commit a valid `.webpresso/secrets.config.json` first.",
   );
 }
 
@@ -55,28 +55,6 @@ function run(command: string, commandArgs: string[], env: NodeJS.ProcessEnv = pr
 
 function runWorkersWrangler(wranglerArgs: string[], env: NodeJS.ProcessEnv = process.env) {
   run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
-}
-
-function requireCommand(name: string, hint: string): void {
-  const result = spawnSync("command", ["-v", name], { encoding: "utf8", shell: true });
-  if (result.status !== 0) {
-    console.error(`Missing required command: ${name}`);
-    console.error(hint);
-    process.exit(1);
-  }
-}
-
-function runWithSecrets(
-  envProfile: string,
-  command: string,
-  commandArgs: string[],
-  env: NodeJS.ProcessEnv = process.env,
-) {
-  requireCommand(
-    "with-secrets",
-    "Install Webpresso tooling so the repo-local `with-secrets` secret-provider wrapper is available.",
-  );
-  run("with-secrets", ["--env-profile", envProfile, "--", command, ...commandArgs], env);
 }
 
 function waitForHttp(url: string, attempts: number, delaySeconds: number): void {
@@ -129,8 +107,14 @@ export function main(): void {
     process.exit(0);
   }
 
-  console.log(`\n▶ Deploying ozby.dev via the configured Webpresso secret-provider wrapper…\n`);
-  runWithSecrets("prd", "pnpm", [
+  if (!process.env.CLOUDFLARE_API_TOKEN) {
+    throw new Error(
+      "Production deploy requires CLOUDFLARE_API_TOKEN in the environment. Invoke via `wp secrets run --sink deploy-wrangler --profile production -- bun infra/src/deploy/deploy-production.ts`.",
+    );
+  }
+
+  console.log(`\n▶ Deploying ozby.dev via the shared Webpresso secret surface…\n`);
+  run("pnpm", [
     "--dir",
     "apps/workers",
     "exec",

@@ -65,20 +65,21 @@ export NODE_AUTH_TOKEN="$(gh auth token)"
 
 ## Secrets + deploy contract
 
-- Shared infrastructure credentials now come from the separate **ozby** Doppler workplace, using the per-app project **`ozby-dev`**.
+- Shared infrastructure credentials come from the committed `schemaVersion: 1`
+  secret profile map in `.webpresso/secrets.config.json` (`ozby/ozby-dev`,
+  `preview -> stg`, `production -> prd`).
 - Repo-local secret-manager metadata lives in `.webpresso/secrets.config.json`.
-- Apply/update that metadata locally with:
+- Diagnose the current preview profile locally with:
 
 ```bash
-vp run setup:secrets
+wp secrets doctor --profile preview --json
 ```
 
 - On install, the repo automatically seeds the runtime secret-manager metadata
   into the repo's git common dir at `webpresso/secrets.json` (so linked
   worktrees share the same runtime metadata) when it is missing.
-- Secret-scoped deploy execution uses the canonical `wp secrets run --sink <sink> --profile <profile> -- <cmd>`
-  contract when available, and only falls back to direct Doppler execution when
-  that shared runner is not installed on the machine.
+- Secret-scoped execution now goes through shared `wp` surfaces (`wp preview`,
+  `wp deploy`, `wp ci act`, and `wp secrets run --sink <sink> --profile <name> -- <cmd>`).
 
 - Dry-run deploy stays secret-free:
 
@@ -124,11 +125,8 @@ The `/contact` route loads its public Turnstile site key at runtime from `/api/c
 ## GitHub deploy workflows
 
 This repo now uses thin caller workflows that delegate to the shared
-`github-actions` reusable deploy harness by immutable commit SHA while keeping the
-repo-local commands here. Preview and production callers map the shared Doppler
-config-token secret into the reusable workflow:
-
-- `CI_SECRET_PROVIDER_TOKEN` -> preview + production/release (`secret_profile: preview|deploy`)
+`agent-kit` reusable deploy harness by immutable commit SHA while keeping the
+repo-local commands here:
 
 - preview: `.github/workflows/deploy-preview.yml`
 - release orchestration: `.github/workflows/release.yml`

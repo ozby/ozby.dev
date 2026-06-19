@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
 import path, { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -62,20 +61,7 @@ function runWorkersWrangler(wranglerArgs: string[], env: NodeJS.ProcessEnv = pro
   run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
 }
 
-function hasCommand(command: string): boolean {
-  const result = spawnSync("command", ["-v", command], {
-    shell: true,
-    stdio: "ignore",
-  });
-  return result.status === 0;
-}
-
 function runSecretScoped(command: string, commandArgs: string[]) {
-  // Skip with-secrets if CI already injected the deploy credentials.
-  if (!process.env.CLOUDFLARE_API_TOKEN && hasCommand("with-secrets")) {
-    run("with-secrets", ["--", command, ...commandArgs]);
-    return;
-  }
   run(command, commandArgs);
 }
 
@@ -89,48 +75,8 @@ function loadPreviewCredentials(): {
     return { zoneId, apiToken };
   }
 
-  if (hasCommand("with-secrets")) {
-    const tempDir = mkdtempSync(join(tmpdir(), "ozby-dev-preview-creds-"));
-    const credentialsPath = join(tempDir, "credentials.json");
-    const result = spawnSync(
-      "with-secrets",
-      [
-        "--",
-        "node",
-        "--input-type=module",
-        "--eval",
-        'import { writeFileSync } from "node:fs"; writeFileSync(process.argv[1], JSON.stringify({zoneId:process.env.CLOUDFLARE_ZONE_ID||"",apiToken:process.env.CLOUDFLARE_API_TOKEN||""}), { mode: 0o600 });',
-        credentialsPath,
-      ],
-      {
-        cwd: repoRoot,
-        shell: false,
-      },
-    );
-    try {
-      if (result.error) throw result.error;
-      if (result.status === 0) {
-        const parsed = JSON.parse(readFileSync(credentialsPath, "utf8")) as {
-          zoneId?: string;
-          apiToken?: string;
-        };
-        if (parsed.zoneId && parsed.apiToken) {
-          return { zoneId: parsed.zoneId, apiToken: parsed.apiToken };
-        }
-        throw new Error(
-          `with-secrets did not return both CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN for preview deploy preflight.`,
-        );
-      }
-      throw new Error(
-        `with-secrets failed while resolving preview deploy credentials: ${(result.stderr?.toString() || "unknown error").trim()}`,
-      );
-    } finally {
-      rmSync(tempDir, { recursive: true, force: true });
-    }
-  }
-
   throw new Error(
-    "Preview deploy requires CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN for the custom-domain conflict preflight.",
+    "Preview deploy requires CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN. Invoke via `wp secrets run --sink deploy-wrangler --profile preview -- bun infra/src/deploy/deploy-preview.ts --lane <preview-main|preview-pr-<n>>`.",
   );
 }
 

@@ -119,11 +119,9 @@ describe("ozby-dev deploy contract", () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       devDependencies?: Record<string, string>;
     };
-    const syncScript = readRepoFile("infra/src/deploy/sync-webpresso-config.ts");
 
     expect(pkg.devDependencies?.["@ozby-dev/infra"]).toBe(undefined);
-    expect(syncScript).toContain('from "./git-paths.ts"');
-    expect(syncScript).toContain('from "./secrets-policy.ts"');
+    expect(() => readRepoFile("infra/src/deploy/sync-webpresso-config.ts")).toThrow();
   });
 
   it("builds preview dry-run and deploy plans through the local preview script", () => {
