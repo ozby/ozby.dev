@@ -227,7 +227,7 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
     expect(previewWorkflow).toContain("id-token: write");
     expect(previewWorkflow).toContain("secret_profile: preview");
-    expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
+    expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PREVIEW }}");
     expect(previewWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
 
     expect(productionWorkflow).toContain(
@@ -237,8 +237,8 @@ describe("ozby-dev deploy contract", () => {
     expect(productionWorkflow).toContain("workflow_dispatch:");
     expect(productionWorkflow).toContain("release_version:");
     expect(productionWorkflow).toContain("id-token: write");
-    expect(productionWorkflow).toContain("secret_profile: deploy");
-    expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
+    expect(productionWorkflow).toContain("secret_profile: production");
+    expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PRODUCTION }}");
     expect(productionWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
 
     expect(releaseWorkflow).toContain(
