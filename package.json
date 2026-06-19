@@ -16,8 +16,6 @@
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && vp run test",
     "prepare": "husky",
-    "postinstall": "test -n \"$CI\" || wp setup",
-    "setup:agent": "wp setup",
     "verify:secrets": "wp audit no-dev-vars && wp audit secret-provider-quarantine && wp audit secrets-config && wp secrets doctor --profile preview --json",
     "verify:deploy-contract": "wp audit cloudflare-deploy-contract",
     "test:mutation": "wp test --mutation",
