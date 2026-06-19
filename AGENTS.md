@@ -34,8 +34,7 @@ agent-kit's catalog is the single source of truth for generated agent surfaces.
 Agent-kit owns the generated agent surfaces in this file; the Webpresso CLI host owns the end-user command surface.
 
 Defaults worth preserving:
-- `omx` refreshes via `vp upgrade`, then runs `omx setup --yes --scope user`.
-- `omc` uses the Claude Code plugin marketplace path when `claude` is on `PATH`.
+- External tools such as `omx`, `omc`, and `gstack` are self-installed and updated with their native installers when you choose to use them.
 - `wp setup` repairs the managed `.gitignore` block for regenerated surfaces.
 - Track repo-owned instruction sources (`AGENTS.md`, `agent-rules/`, `agent-skills/`).
 - Ignore generated/runtime surfaces (`.agent/`, `.agents/`, `.omx/`, `.codex/`, `.claude/skills/`, etc.).
@@ -46,12 +45,27 @@ Prompt budget contract:
 - Keep the generated default `AGENTS.md` under 8 KB.
 - Move handbook prose to docs; keep only durable rules and command contracts here.
 
+Codex routing instruction surface:
+<wp_instruction_surface host="codex" artifact="AGENTS.md" source="wp_routing">
+  <host_contract>
+    <native_tool_names>wp_session_restore, wp_session_search, wp_session_execute_file, wp_session_execute, wp_session_batch_execute, wp_session_fetch_and_index, wp_session_index, wp_session_capture, wp_session_snapshot, wp_session_stats, wp_session_doctor, wp_session_purge, wp_test, wp_e2e, wp_lint, wp_typecheck, wp_qa, wp_audit, wp_ci_act, wp_worker_tail</native_tool_names>
+    <stdout_noop>Codex hook commands with no action write {} on stdout; durable guidance belongs in AGENTS.md.</stdout_noop>
+    <lifecycle_notes>
+    <note>Codex reads repository instruction files for durable guidance.</note>
+    <note>Unsupported managed lifecycle names are documented in the host capability matrix, not emulated here.</note>
+    </lifecycle_notes>
+    <public_support>Public support: first-class Codex instruction artifact.</public_support>
+  </host_contract>
+</wp_instruction_surface>
+
 ## Plan
 
 Use blueprints for non-trivial work. Specs live in
 [`blueprints/`](./blueprints/) with lifecycle directories such as
 `planned/`, `in-progress/`, and `completed/`. Keep tasks, dependencies,
 verification commands, and acceptance criteria current before execution.
+PRs with any non-`*.md` changes must include a changed blueprint, unless a
+commit carries `Blueprint-exempt: <reason>` for a genuinely trivial exception.
 
 Catalog-owned surfaces:
 - `.agent/commands/` — slash-command sources
@@ -97,7 +111,7 @@ this block is preserved verbatim across `wp sync` runs.
 - Do not create or persist secret-bearing files like `.env`, `.env.local`, `.env.*.local`, `.dev.vars`, or `.dev.vars.example`.
 - Route secret-scoped commands through the repo contract (`wp config secrets` + `with-secrets -- <cmd>`).
 - Keep secret/path checks on shared audit surfaces when available.
-- Do not commit agent surfaces (`.agent/`, `.agents/`, `.gemini/`, `.cursor/`, `.windsurf/`, `.omx/`, `.omc/`, `.codex/`, `.opencode/`).
+- Do not commit agent surfaces (`.agent/`, `.agents/`, `.cursor/`, `.omx/`, `.omc/`, `.codex/`, `.opencode/`).
 - Do not hand-edit generated or derived surfaces; edit the catalog in agent-kit.
 - Do not push directly to `main`; use PRs and keep CI green.
 - Do not bypass hooks or verification gates.
@@ -143,6 +157,7 @@ Full details: `.agent/rules/package-conventions.md`
 - `@ozby-dev/client` — `apps/client`
 - `@ozby-dev/infra` — `infra`
 - `@ozby-dev/workers` — `apps/workers`
+- `ozby-dev` — `.`
 
 ## Tech stack
 

@@ -8,8 +8,6 @@ surfaces:
     paths:
       - path: .codex
         status: projected
-      - path: .github/actions/setup-webpresso/action.yml
-        status: concrete
     triggers:
       - wp setup
       - wp audit guardrails
@@ -23,8 +21,6 @@ surfaces:
     paths:
       - path: .claude
         status: projected
-      - path: .github/actions/setup-webpresso/action.yml
-        status: concrete
     triggers:
       - wp setup
       - wp audit guardrails
@@ -65,7 +61,7 @@ surfaces:
       - wp audit guardrails
       - git commit
     evidence:
-      - .github/actions/setup-webpresso/action.yml
+      - .github/workflows/ci.yml
       - AGENTS.md
   - id: secret-gate
     title: Secret-provider quarantine and no-dev-vars enforcement

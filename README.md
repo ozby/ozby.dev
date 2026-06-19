@@ -56,7 +56,7 @@ vp run dev       # builds client dist, then serves the local preview at localhos
 
 ## Secrets + deploy contract
 
-- Shared infrastructure credentials come from **Doppler `ozby-shell`**.
+- Shared infrastructure credentials now come from the separate **ozby** Doppler workplace, using the per-app project **`ozby-dev`**.
 - Repo-local secret-manager metadata lives in `.webpresso/secrets.config.json`.
 - Apply/update that metadata locally with:
 
@@ -104,8 +104,11 @@ vp run verify:secrets
 ## GitHub deploy workflows
 
 This repo now uses thin caller workflows that delegate to the shared
-`agent-kit` reusable deploy harness by immutable commit SHA while keeping the
-repo-local commands here:
+`github-actions` reusable deploy harness by immutable commit SHA while keeping the
+repo-local commands here. Preview and production callers map the shared Doppler
+config-token secret into the reusable workflow:
+
+- `CI_SECRET_PROVIDER_TOKEN` -> preview + production/release (`secret_profile: preview|deploy`)
 
 - preview: `.github/workflows/deploy-preview.yml`
 - release orchestration: `.github/workflows/release.yml`
