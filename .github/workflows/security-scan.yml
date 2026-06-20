@@ -32,7 +32,7 @@ jobs:
             --recursive
             ./
 
-      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@f6fc93375f4ce83c8234341ec22137f43deff148
+      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@53869e557de386bd4d04656b275d6691d153bff9
         with:
           cli-global-packages: "vite-plus @webpresso/agent-kit"
       - run: vp install --frozen-lockfile

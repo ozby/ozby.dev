@@ -3,21 +3,21 @@ name: Harness Selection Gate (planned-only)
 on:
   pull_request:
     paths:
-      - 'catalog/agent/harness-surfaces.yaml'
-      - 'catalog/agent/skills/**'
-      - 'agent-rules/**'
-      - 'AGENTS.md'
-      - '.husky/**'
-      - '.github/actions/**'
-      - '.github/workflows/**'
-      - '.claude/**'
-      - '.codex/**'
-      - 'infra/**'
-      - 'package.json'
-      - 'test/**'
-      - 'scripts/**'
-      - 'apps/client/src/**'
-      - 'apps/workers/**'
+      - "catalog/agent/harness-surfaces.yaml"
+      - "catalog/agent/skills/**"
+      - "agent-rules/**"
+      - "AGENTS.md"
+      - ".husky/**"
+      - ".github/actions/**"
+      - ".github/workflows/**"
+      - ".claude/**"
+      - ".codex/**"
+      - "infra/**"
+      - "package.json"
+      - "test/**"
+      - "scripts/**"
+      - "apps/client/src/**"
+      - "apps/workers/**"
 
 permissions:
   contents: read
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
-      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@f6fc93375f4ce83c8234341ec22137f43deff148
+      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@53869e557de386bd4d04656b275d6691d153bff9
         with:
           cli-global-packages: "vite-plus @webpresso/agent-kit"
       - run: vp install --frozen-lockfile
