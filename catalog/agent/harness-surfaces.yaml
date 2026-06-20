@@ -33,9 +33,9 @@ surfaces:
     lifecycle: locked
     paths:
       - path: catalog/agent/skills
-        status: concrete
+        status: projected
       - path: agent-rules
-        status: concrete
+        status: projected
       - path: .agent
         status: projected
     triggers:
@@ -51,11 +51,11 @@ surfaces:
     lifecycle: locked
     paths:
       - path: .codex/hooks.json
-        status: concrete
+        status: projected
       - path: .codex/managed-hooks/wp-pretool-guard.sh
-        status: concrete
+        status: projected
       - path: .claude/settings.json
-        status: concrete
+        status: projected
     triggers:
       - wp setup
       - wp audit guardrails
@@ -125,9 +125,9 @@ surfaces:
     lifecycle: experimental
     paths:
       - path: agent-rules
-        status: concrete
+        status: projected
       - path: catalog/agent/skills
-        status: concrete
+        status: projected
     triggers:
       - wp sync
       - wp audit guardrails
