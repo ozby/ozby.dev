@@ -39,12 +39,13 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("!startsWith(github.event.head_commit.message, 'Version Packages')");
   });
 
-  it("uses shared global wp setup without regenerating agent setup surfaces in CI", () => {
+  it("uses pinned global Webpresso CLIs without regenerating agent setup surfaces in CI", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
 
-    expect(ci).toContain(
-      "webpresso/github-actions/.github/actions/setup-webpresso-toolchain@9ee13267e0dcb8587af82f4e46aa84e021b6d637",
-    );
+    expect(ci).toContain("Install shared Webpresso CLIs");
+    expect(ci).toContain("npm install -g");
+    expect(ci).toContain("vite-plus@${VITE_PLUS_VERSION}");
+    expect(ci).toContain("@webpresso/agent-kit@${AGENT_KIT_VERSION}");
     expect(ci).not.toContain('vp install -g "@webpresso/agent-kit@latest"');
     expect(ci).not.toContain("wp setup");
     expect(ci).not.toContain("git checkout -- package.json .gitignore AGENTS.md");

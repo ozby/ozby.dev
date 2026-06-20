@@ -221,7 +221,7 @@ describe("ozby-dev deploy contract", () => {
       `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${reusableWorkflowSha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
-    expect(previewWorkflow).toContain("types: [closed]");
+    expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
     expect(previewWorkflow).toContain("mode: deploy");
     expect(previewWorkflow).toContain("mode: destroy");
     expect(previewWorkflow).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");

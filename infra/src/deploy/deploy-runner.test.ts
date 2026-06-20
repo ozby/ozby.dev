@@ -43,7 +43,7 @@ describe("buildChildEnv", () => {
         '{"manager":"doppler","projectId":123}\n',
       );
 
-      expect(() => readSecretsConfig(root)).toThrow(/schemaVersion 1/u);
+      expect(() => readSecretsConfig(root)).toThrow(/projectId.*non-empty string/u);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
