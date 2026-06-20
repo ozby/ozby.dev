@@ -12,8 +12,8 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const deployReusableWorkflowSha = "5cd210dadf5cd0c04ccfaf3e10025efd7dbd6439";
-const releaseReusableWorkflowSha = "5cd210dadf5cd0c04ccfaf3e10025efd7dbd6439";
+const deployReusableWorkflowSha = "f6fc93375f4ce83c8234341ec22137f43deff148";
+const releaseReusableWorkflowSha = "f6fc93375f4ce83c8234341ec22137f43deff148";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
