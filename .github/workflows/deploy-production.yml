@@ -14,6 +14,10 @@ concurrency:
 
 jobs:
   deploy:
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
     uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@5cd210dadf5cd0c04ccfaf3e10025efd7dbd6439
     with:
       install_command: |

@@ -78,6 +78,10 @@ jobs:
   preview:
     if: ${{ needs.resolve.outputs.mode == 'deploy' }}
     needs: resolve
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
     uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@5cd210dadf5cd0c04ccfaf3e10025efd7dbd6439
     with:
       lane: ${{ needs.resolve.outputs.lane }}
@@ -103,6 +107,10 @@ jobs:
   destroy:
     if: ${{ needs.resolve.outputs.mode == 'destroy' }}
     needs: resolve
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
     uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@5cd210dadf5cd0c04ccfaf3e10025efd7dbd6439
     with:
       lane: ${{ needs.resolve.outputs.lane }}
