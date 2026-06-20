@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
   workflow_dispatch:
     inputs:
       lane:
@@ -49,13 +49,9 @@ jobs:
           if [[ "${EVENT_NAME}" == "push" ]]; then
             lane="preview_main"
             mode="deploy"
-          elif [[ "${EVENT_NAME}" == "pull_request" ]]; then
+          elif [[ "${EVENT_NAME}" == "pull_request" && "${EVENT_ACTION}" == "closed" ]]; then
             lane="preview_pr_${PR_NUMBER}"
-            if [[ "${EVENT_ACTION}" == "closed" ]]; then
-              mode="destroy"
-            else
-              mode="deploy"
-            fi
+            mode="destroy"
           else
             lane="${MANUAL_LANE}"
             mode="${MANUAL_MODE}"
@@ -80,13 +76,17 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   preview:
+    if: ${{ needs.resolve.outputs.mode == 'deploy' }}
     needs: resolve
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@b0464171f61f5c90b4c2082fc05954f4324d96dd
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@53869e557de386bd4d04656b275d6691d153bff9
     with:
       lane: ${{ needs.resolve.outputs.lane }}
-      mode: ${{ needs.resolve.outputs.mode }}
+      mode: deploy
       install_command: |
-        npm install -g vite-plus@0.1.24 @webpresso/agent-kit@2.1.1
         vp install --frozen-lockfile
       verify_command: |
         vp run verify:secrets
@@ -99,6 +99,27 @@ jobs:
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
         const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
+      secret_profile: preview
+      runner: ubuntu-latest
+    secrets:
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}
+
+  destroy:
+    if: ${{ needs.resolve.outputs.mode == 'destroy' }}
+    needs: resolve
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@53869e557de386bd4d04656b275d6691d153bff9
+    with:
+      lane: ${{ needs.resolve.outputs.lane }}
+      mode: destroy
+      install_command: |
+        vp install --frozen-lockfile
+      verify_command: ":"
+      deploy_command: ":"
+      destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       secret_profile: preview
       runner: ubuntu-latest
     secrets:

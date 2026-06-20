@@ -85,4 +85,23 @@ describe("ozby-dev CI governance contract", () => {
     expect(security).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
   });
 
+  it("grants reusable Cloudflare workflow callers the OIDC permission required by the shared deploy harness", () => {
+    const ci = readRepoFile(".github/workflows/ci.yml");
+    const preview = readRepoFile(".github/workflows/deploy-preview.yml");
+    const production = readRepoFile(".github/workflows/deploy-production.yml");
+
+    expect(ci).toContain("deploy-preview:");
+    expect(ci).toContain("id-token: write");
+    expect(ci).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml");
+
+    expect(preview).toContain("preview:");
+    expect(preview).toContain("destroy:");
+    expect(preview).toContain("id-token: write");
+    expect(preview).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml");
+
+    expect(production).toContain("deploy:");
+    expect(production).toContain("id-token: write");
+    expect(production).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml");
+  });
+
 });

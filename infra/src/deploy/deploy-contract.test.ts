@@ -12,8 +12,8 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const deployReusableWorkflowSha = "b0464171f61f5c90b4c2082fc05954f4324d96dd";
-const releaseReusableWorkflowSha = "b0464171f61f5c90b4c2082fc05954f4324d96dd";
+const deployReusableWorkflowSha = "53869e557de386bd4d04656b275d6691d153bff9";
+const releaseReusableWorkflowSha = "53869e557de386bd4d04656b275d6691d153bff9";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -221,9 +221,11 @@ describe("ozby-dev deploy contract", () => {
       `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deployReusableWorkflowSha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
-    expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
-    expect(previewWorkflow).toContain("mode: ${{ needs.resolve.outputs.mode }}");
+    expect(previewWorkflow).toContain("types: [closed]");
+    expect(previewWorkflow).toContain("mode: deploy");
+    expect(previewWorkflow).toContain("mode: destroy");
     expect(previewWorkflow).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
+    expect(previewWorkflow).toContain("id-token: write");
     expect(previewWorkflow).toContain("secret_profile: preview");
     expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
 
@@ -233,6 +235,7 @@ describe("ozby-dev deploy contract", () => {
     expect(productionWorkflow).not.toContain('tags: ["v*"]');
     expect(productionWorkflow).toContain("workflow_dispatch:");
     expect(productionWorkflow).toContain("release_version:");
+    expect(productionWorkflow).toContain("id-token: write");
     expect(productionWorkflow).toContain("secret_profile: deploy");
     expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
 
