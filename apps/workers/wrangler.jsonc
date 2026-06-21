@@ -9,6 +9,15 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_sender_addresses": ["info@ozby.dev"]
+    }
+  ],
+  "secrets": {
+    "required": ["CONTACT_TURNSTILE_SITE_KEY", "CONTACT_TURNSTILE_SECRET_KEY"]
+  },
   "routes": [
     { "pattern": "ozby.dev", "custom_domain": true }
   ]

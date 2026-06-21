@@ -9,6 +9,7 @@ import { Home } from './pages/Home'
 import { Writing } from './pages/Writing'
 import { Post } from './pages/Post'
 import { Project } from './pages/Project'
+import { Contact } from './pages/Contact'
 import './styles.css'
 
 function NotFound() {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/writing" element={<Writing />} />
             <Route path="/writing/:slug" element={<Post />} />
             <Route path="/projects/:slug" element={<Project />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

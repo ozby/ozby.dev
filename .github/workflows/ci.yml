@@ -8,10 +8,15 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  NODE_AUTH_TOKEN: ${{ github.token }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   wp-check:
@@ -24,9 +29,13 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
-      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@53869e557de386bd4d04656b275d6691d153bff9
-        with:
-          cli-global-packages: "vite-plus @webpresso/agent-kit"
+      - name: Install shared Webpresso CLIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          VITE_PLUS_VERSION=$(node -p "require('./package.json').devDependencies['vite-plus'].replace(/^[^0-9]*/, '')")
+          AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
+          npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
       - run: vp install --frozen-lockfile
       - run: WP_SKIP_UPDATE_CHECK=1 wp setup
       - run: git checkout -- package.json .gitignore AGENTS.md
@@ -66,9 +75,13 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
-      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@53869e557de386bd4d04656b275d6691d153bff9
-        with:
-          cli-global-packages: "vite-plus @webpresso/agent-kit"
+      - name: Install shared Webpresso CLIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          VITE_PLUS_VERSION=$(node -p "require('./package.json').devDependencies['vite-plus'].replace(/^[^0-9]*/, '')")
+          AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
+          npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
       - run: vp install --frozen-lockfile
       - run: wp test --mutation
 
@@ -83,7 +96,7 @@ jobs:
     concurrency:
       group: ozby-dev-preview-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: true
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@53869e557de386bd4d04656b275d6691d153bff9
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
     with:
       lane: preview_pr_${{ github.event.pull_request.number }}
       mode: deploy

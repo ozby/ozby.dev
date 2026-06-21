@@ -1,7 +1,7 @@
 export const SECRET_VALUE_PATTERN =
   /(?:^|[\s"'`=:])(?:(?:sk|pk)(?=[-_0-9])|ghp|gho|ghu|ghs|ghr|dp\.st|napi_|pplx-|ctx7sk-)[-_a-zA-Z0-9./+=]{8,}/u;
 
-const ALLOWED_CONFIG_KEYS = new Set(["manager", "projectId", "projectLabel", "profiles"]);
+const ALLOWED_SCHEMA_V1_KEYS = new Set(["schemaVersion", "providers", "profiles", "sinks", "projectLabel"]);
 const FORBIDDEN_CONFIG_KEY =
   /(?:^|_)(?:token|secret|password|api[_-]?key|credential|private[_-]?key)(?:$|_)/iu;
 const PROJECT_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,62}$/u;
@@ -12,6 +12,13 @@ export type SecretsConfigMetadata = {
   projectLabel?: string;
   profiles?: Record<string, { environment: string }>;
 };
+
+function requireRecord(value: unknown, sourceLabel: string, name: string): Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`${sourceLabel}: "${name}" must be an object`);
+  }
+  return value as Record<string, unknown>;
+}
 
 export function parseSecretsConfigMetadata(
   raw: string,
@@ -34,8 +41,12 @@ export function parseSecretsConfigMetadata(
   }
 
   const obj = parsed as Record<string, unknown>;
+  if (obj.schemaVersion !== 1) {
+    throw new Error(`${sourceLabel}: only schemaVersion 1 secret config is supported`);
+  }
+
   for (const key of Object.keys(obj)) {
-    if (!ALLOWED_CONFIG_KEYS.has(key)) {
+    if (!ALLOWED_SCHEMA_V1_KEYS.has(key)) {
       throw new Error(`${sourceLabel}: unexpected key "${key}"`);
     }
     if (FORBIDDEN_CONFIG_KEY.test(key)) {
@@ -43,17 +54,22 @@ export function parseSecretsConfigMetadata(
     }
   }
 
-  if (obj.manager !== "doppler" && obj.manager !== "infisical") {
-    throw new Error(`${sourceLabel}: "manager" must be "doppler" or "infisical"`);
-  }
-  if (typeof obj.projectId !== "string" || obj.projectId.length === 0) {
-    throw new Error(`${sourceLabel}: "projectId" must be a non-empty string`);
-  }
-  if (!PROJECT_ID_PATTERN.test(obj.projectId)) {
-    throw new Error(`${sourceLabel}: "projectId" must be a valid project slug`);
+  const providers = requireRecord(obj.providers, sourceLabel, "providers");
+  const defaultProvider = requireRecord(providers.default, sourceLabel, "providers.default");
+  const providerType = defaultProvider.type;
+  if (providerType !== "doppler" && providerType !== "infisical") {
+    throw new Error(`${sourceLabel}: "providers.default.type" must be "doppler" or "infisical"`);
   }
 
-  const config: SecretsConfigMetadata = { manager: obj.manager, projectId: obj.projectId };
+  const project = defaultProvider.project;
+  if (typeof project !== "string" || project.length === 0) {
+    throw new Error(`${sourceLabel}: "providers.default.project" must be a non-empty string`);
+  }
+  if (!PROJECT_ID_PATTERN.test(project)) {
+    throw new Error(`${sourceLabel}: "providers.default.project" must be a valid project slug`);
+  }
+
+  const config: SecretsConfigMetadata = { manager: providerType, projectId: project };
   if (obj.projectLabel !== undefined) {
     if (typeof obj.projectLabel !== "string" || obj.projectLabel.length === 0) {
       throw new Error(`${sourceLabel}: "projectLabel" must be a non-empty string when set`);

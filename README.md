@@ -54,6 +54,15 @@ vp run build     # production build
 vp run dev       # builds client dist, then serves the local preview at localhost:8787
 ```
 
+
+## GitHub Packages
+
+This repo consumes `@ozby/cloudflare` from GitHub Packages. GitHub Actions uses `NODE_AUTH_TOKEN: ${{ github.token }}` with `packages: read`. For local installs, export a token from the GitHub CLI session before running install commands:
+
+```bash
+export NODE_AUTH_TOKEN="$(gh auth token)"
+```
+
 ## Secrets + deploy contract
 
 - Shared infrastructure credentials now come from the separate **ozby** Doppler workplace, using the per-app project **`ozby-dev`**.
@@ -67,7 +76,7 @@ vp run setup:secrets
 - On install, the repo automatically seeds the runtime secret-manager metadata
   into the repo's git common dir at `webpresso/secrets.json` (so linked
   worktrees share the same runtime metadata) when it is missing.
-- Secret-scoped deploy execution prefers the canonical `with-secrets -- <cmd>`
+- Secret-scoped deploy execution uses the canonical `wp secrets run --sink <sink> --profile <profile> -- <cmd>`
   contract when available, and only falls back to direct Doppler execution when
   that shared runner is not installed on the machine.
 
@@ -86,7 +95,7 @@ vp run deploy:dry-run
   fails early with a cleanup message instead of letting Cloudflare custom-domain
   attachment fail later.
 
-- Production deploy uses the same DRY secret-manager contract as the other consumer repos:
+- Production deploy uses the same DRY secret-manager contract as the other site repos:
 
 ```bash
 vp run deploy:production
@@ -100,6 +109,17 @@ manager instead of hardcoding repo-local env files or ad hoc provider commands.
 ```bash
 vp run verify:secrets
 ```
+
+
+## Contact Form Production Gates
+
+The `/contact` route loads its public Turnstile site key at runtime from `/api/contact/config`; the Worker keeps the matching server-side secret in runtime bindings. Production is not complete until these checks are done:
+
+- Onboard `ozby.dev` in Cloudflare Email Sending and verify bounce/SPF/DKIM/DMARC DNS records.
+- Approve `info@ozby.dev` as the sender and keep the Wrangler `send_email` binding restricted to that sender only.
+- Set `CONTACT_TURNSTILE_SITE_KEY` and `CONTACT_TURNSTILE_SECRET_KEY` through Worker secrets or the repo secret-provider flow; do not create `.env` or `.dev.vars` files.
+- Confirm Workers Paid is active before sending customer confirmations to arbitrary customer email addresses.
+- Submit one real production form and confirm the internal recipient receives the message and the customer receives the confirmation.
 
 ## GitHub deploy workflows
 
