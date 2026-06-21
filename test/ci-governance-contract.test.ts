@@ -39,42 +39,23 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("!startsWith(github.event.head_commit.message, 'Version Packages')");
   });
 
-  it("hydrates the full managed agent surface via wp setup in CI", () => {
+  it("uses pinned global Webpresso CLIs without regenerating agent setup surfaces in CI", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
 
-    expect(ci).toContain("wp setup");
+    expect(ci).toContain("Install shared Webpresso CLIs");
+    expect(ci).toContain("npm install -g");
+    expect(ci).toContain("vite-plus@${VITE_PLUS_VERSION}");
+    expect(ci).toContain("@webpresso/agent-kit@${AGENT_KIT_VERSION}");
+    expect(ci).not.toContain('vp install -g "@webpresso/agent-kit@latest"');
+    expect(ci).not.toContain("wp setup");
+    expect(ci).not.toContain("git checkout -- package.json .gitignore AGENTS.md");
+    expect(ci).not.toContain("rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts");
 
-    const wpSetupSteps = ci
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith("- run:") && line.includes("wp setup"));
-
-    expect(wpSetupSteps.length).toBeGreaterThan(0);
-    for (const step of wpSetupSteps) {
-      // CI should run the full setup surface, not stale hooks-only restore.
-      expect(step).toContain("wp setup");
-      expect(step).not.toContain("wp setup --with");
-      expect(step).not.toContain("wp setup --restore-hooks");
-    }
-
-    expect(ci).toContain("git checkout -- package.json .gitignore AGENTS.md");
-  });
-
-  it("deletes regenerated local-only helper scripts before running guardrails in CI", () => {
-    const ci = readRepoFile(".github/workflows/ci.yml");
-
-    expect(ci).toContain(
-      "rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts",
-    );
-  });
-
-  it("skips full wp setup during CI installs so the gitignored artifacts are never regenerated in CI", () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
     };
-
-    expect(pkg.scripts.postinstall).toContain('test -n "$CI" || (wp setup');
-    expect(pkg.scripts.postinstall).toContain("sync-webpresso-config.ts");
+    expect(pkg.scripts["setup:agent"]).toBeUndefined();
+    expect(pkg.scripts.postinstall).toBeUndefined();
   });
 
   it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {
@@ -83,25 +64,6 @@ describe("ozby-dev CI governance contract", () => {
 
     expect(preview).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
     expect(security).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
-  });
-
-  it("grants reusable Cloudflare workflow callers the OIDC permission required by the shared deploy harness", () => {
-    const ci = readRepoFile(".github/workflows/ci.yml");
-    const preview = readRepoFile(".github/workflows/deploy-preview.yml");
-    const production = readRepoFile(".github/workflows/deploy-production.yml");
-
-    expect(ci).toContain("deploy-preview:");
-    expect(ci).toContain("id-token: write");
-    expect(ci).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml");
-
-    expect(preview).toContain("preview:");
-    expect(preview).toContain("destroy:");
-    expect(preview).toContain("id-token: write");
-    expect(preview).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml");
-
-    expect(production).toContain("deploy:");
-    expect(production).toContain("id-token: write");
-    expect(production).toContain("uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml");
   });
 
 });

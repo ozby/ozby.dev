@@ -64,7 +64,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
           {
             kind: "command",
             id: "preview-deploy",
-            runtimeProfile: "none",
+            runtimeProfile: request.dryRun ? "none" : "secrets-only",
             label:
               request.mode === "destroy"
                 ? `Destroy ${request.lane} preview custom domain`
@@ -110,7 +110,7 @@ export const webpressoDeployAdapter: DeployAdapter = {
             {
               kind: "command",
               id: "production-deploy",
-              runtimeProfile: "none",
+              runtimeProfile: "secrets-only",
               label: "Deploy ozby.dev production",
               command: "bun",
               args: [resolve(deployDir, "deploy-production.ts"), "--skip-smoke"],

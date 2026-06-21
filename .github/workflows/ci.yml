@@ -22,9 +22,6 @@ jobs:
   wp-check:
     name: wp-check
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
@@ -37,9 +34,6 @@ jobs:
           AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
           npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
       - run: vp install --frozen-lockfile
-      - run: WP_SKIP_UPDATE_CHECK=1 wp setup
-      - run: git checkout -- package.json .gitignore AGENTS.md
-      - run: rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts
       - run: wp audit hook-vendor-drift
       - run: wp audit harness-surfaces
       - run: wp audit architecture-drift --root .
@@ -47,6 +41,7 @@ jobs:
       - run: wp typecheck
       - run: vp run test
       - run: wp audit blueprint-lifecycle
+
       - name: Validate Lore commits
         run: |
           BASE=${{ github.base_ref || 'main' }}
@@ -84,30 +79,3 @@ jobs:
           npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
       - run: vp install --frozen-lockfile
       - run: wp test --mutation
-
-  deploy-preview:
-    name: Deploy preview (PR)
-    if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' && github.head_ref != 'changeset-release/main' }}
-    needs: wp-check
-    permissions:
-      contents: read
-      packages: read
-      id-token: write
-    concurrency:
-      group: ozby-dev-preview-pr-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
-    with:
-      lane: preview_pr_${{ github.event.pull_request.number }}
-      mode: deploy
-      install_command: |
-        vp install --frozen-lockfile
-      verify_command: ":"
-      deploy_command: wp deploy --lane preview_pr_${{ github.event.pull_request.number }}
-      smoke_command: >
-        node --input-type=module --eval "const url='https://preview-pr-${{ github.event.pull_request.number }}.ozby.dev';
-        const run=async()=>{for(let i=0;i<24;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev preview smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);}; await run();"
-      secret_profile: preview
-      runner: ubuntu-latest
-    secrets:
-      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}

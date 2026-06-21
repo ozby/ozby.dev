@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
     inputs:
       lane:
@@ -49,9 +49,13 @@ jobs:
           if [[ "${EVENT_NAME}" == "push" ]]; then
             lane="preview_main"
             mode="deploy"
-          elif [[ "${EVENT_NAME}" == "pull_request" && "${EVENT_ACTION}" == "closed" ]]; then
+          elif [[ "${EVENT_NAME}" == "pull_request" ]]; then
             lane="preview_pr_${PR_NUMBER}"
-            mode="destroy"
+            if [[ "${EVENT_ACTION}" == "closed" ]]; then
+              mode="destroy"
+            else
+              mode="deploy"
+            fi
           else
             lane="${MANUAL_LANE}"
             mode="${MANUAL_MODE}"
@@ -94,7 +98,7 @@ jobs:
         vp run typecheck
         vp run test
         vp run verify:deploy-contract
-      deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
+      deploy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }}
       destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
@@ -102,7 +106,7 @@ jobs:
       secret_profile: preview
       runner: ubuntu-latest
     secrets:
-      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PREVIEW }}
 
   destroy:
     if: ${{ needs.resolve.outputs.mode == 'destroy' }}
@@ -123,4 +127,4 @@ jobs:
       secret_profile: preview
       runner: ubuntu-latest
     secrets:
-      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PREVIEW }}

@@ -52,7 +52,7 @@ jobs:
         const wait=async(url,attempts)=>{for(let i=0;i<attempts;i+=1){try{const res=await fetch(url,{headers:{'user-agent':'ozby-dev prod smoke'}}); if(res.ok) return;}catch{} await new Promise((r)=>setTimeout(r,5000));} throw new Error('Timed out waiting for '+url);};
         for (const url of urls) await wait(url, url.endsWith('/health') ? 24 : 12);"
       release_version: ${{ needs.gate.outputs.release_version }}
-      secret_profile: deploy
+      secret_profile: production
       runner: ubuntu-latest
     secrets:
-      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}
+      ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PRODUCTION }}
