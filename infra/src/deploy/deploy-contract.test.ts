@@ -244,6 +244,17 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${reusableWorkflowSha}`,
     );
+    expect(releaseWorkflow).toContain("release-preflight:");
+    expect(releaseWorkflow).toContain("Detect versionable release diff");
+    expect(releaseWorkflow).toContain("vp run version");
+    expect(releaseWorkflow).toContain("has_version_diff=false");
+    expect(releaseWorkflow).toContain(
+      "Skipping shared release workflow because vp run version produced no commitable diff.",
+    );
+    expect(releaseWorkflow).toContain(
+      "if: ${{ needs.release-preflight.outputs.has_version_diff == 'true' }}",
+    );
+    expect(releaseWorkflow).toContain("if: ${{ always() }}");
     expect(releaseWorkflow).toContain("version_command: vp run version");
     expect(releaseWorkflow).toContain("publish_command: vp run release:publish");
     expect(releaseWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
