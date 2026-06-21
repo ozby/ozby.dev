@@ -98,7 +98,7 @@ jobs:
         vp run typecheck
         vp run test
         vp run verify:deploy-contract
-      deploy_command: wp deploy --lane ${{ needs.resolve.outputs.lane }}
+      deploy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }}
       destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
       smoke_command: >
         node --input-type=module --eval "const url='${{ needs.resolve.outputs.preview_url }}';
