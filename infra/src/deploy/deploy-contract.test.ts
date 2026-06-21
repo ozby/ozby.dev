@@ -246,6 +246,7 @@ describe("ozby-dev deploy contract", () => {
     );
     expect(releaseWorkflow).toContain("release-preflight:");
     expect(releaseWorkflow).toContain("Detect versionable release diff");
+    expect(releaseWorkflow).toContain("oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6");
     expect(releaseWorkflow).toContain("vp run version");
     expect(releaseWorkflow).toContain("has_version_diff=false");
     expect(releaseWorkflow).toContain(
