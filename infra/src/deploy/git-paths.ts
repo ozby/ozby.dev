@@ -1,29 +1,51 @@
-import { spawnSync } from "node:child_process";
+import { existsSync, lstatSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-export function gitCommonDir(root: string): string {
-  const result = spawnSync("git", ["rev-parse", "--git-common-dir"], {
-    cwd: root,
-    encoding: "utf8",
-  });
-
-  if (result.error) {
-    throw new Error(
-      `Failed to resolve git common dir from ${root}: ${result.error.message}`,
-    );
+function resolveGitDirReference(root: string, value: string): string {
+  const match = /^gitdir:\s*(.+)$/u.exec(value.trim());
+  if (!match) {
+    throw new Error(`Invalid .git file in ${root}: expected gitdir reference`);
   }
-
-  if (result.status !== 0) {
-    const details = (result.stderr || result.stdout || "unknown git error").trim();
-    throw new Error(`Failed to resolve git common dir from ${root}: ${details}`);
+  const gitDir = match[1];
+  if (gitDir === undefined || gitDir.length === 0) {
+    throw new Error(`Invalid .git file in ${root}: empty gitdir reference`);
   }
-
-  const gitDir = result.stdout.trim();
-  if (gitDir.length === 0) {
-    throw new Error(`Failed to resolve git common dir from ${root}: empty git dir output`);
-  }
-
   return path.isAbsolute(gitDir) ? gitDir : path.resolve(root, gitDir);
+}
+
+function readCommonDir(gitDir: string): string {
+  const commonDirPath = path.join(gitDir, "commondir");
+  if (!existsSync(commonDirPath)) {
+    return gitDir;
+  }
+
+  const commonDir = readFileSync(commonDirPath, "utf8").trim();
+  if (commonDir.length === 0) {
+    throw new Error(`Invalid git commondir in ${gitDir}: empty value`);
+  }
+  return path.isAbsolute(commonDir) ? commonDir : path.resolve(gitDir, commonDir);
+}
+
+export function gitCommonDir(root: string): string {
+  const dotGitPath = path.join(root, ".git");
+  try {
+    if (!existsSync(dotGitPath)) {
+      throw new Error("missing .git entry");
+    }
+
+    const dotGit = lstatSync(dotGitPath);
+    if (dotGit.isDirectory()) {
+      return dotGitPath;
+    }
+    if (dotGit.isFile()) {
+      return readCommonDir(resolveGitDirReference(root, readFileSync(dotGitPath, "utf8")));
+    }
+
+    throw new Error(".git entry is neither a directory nor a file");
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to resolve git common dir from ${root}: ${detail}`);
+  }
 }
 
 export function runtimeSecretsConfigPath(root: string): string {

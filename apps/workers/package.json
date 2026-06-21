@@ -2,6 +2,9 @@
   "name": "@ozby-dev/workers",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@ozby/cloudflare": "catalog:"
+  },
   "scripts": {
     "typegen": "wp exec wrangler types",
     "prebuild": "wp exec wrangler types && vp run --filter @ozby-dev/client build",

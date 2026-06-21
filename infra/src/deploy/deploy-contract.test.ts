@@ -12,8 +12,7 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const deployReusableWorkflowSha = "53869e557de386bd4d04656b275d6691d153bff9";
-const releaseReusableWorkflowSha = "53869e557de386bd4d04656b275d6691d153bff9";
+const reusableWorkflowSha = "aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -64,6 +63,9 @@ describe("ozby-dev deploy contract", () => {
     expect(() => readRepoFile("infra/package.json")).not.toThrow();
 
     expect(() => readRepoFile("apps/workers/wrangler.jsonc")).not.toThrow();
+    const wrangler = readRepoFile("apps/workers/wrangler.jsonc");
+    expect(wrangler).toContain('"allowed_sender_addresses": ["info@ozby.dev"]');
+    expect(wrangler).toContain('"required": ["CONTACT_TURNSTILE_SITE_KEY", "CONTACT_TURNSTILE_SECRET_KEY"]');
     expect(() => readRepoFile("apps/workers/worker-configuration.d.ts")).not.toThrow();
     expect(() => readRepoFile("wrangler.jsonc")).toThrow();
     expect(() => readRepoFile("infra/src/deploy/agent-kit-deploy-adapter.ts")).not.toThrow();
@@ -218,7 +220,7 @@ describe("ozby-dev deploy contract", () => {
     const releaseWorkflow = readRepoFile(".github/workflows/release.yml");
 
     expect(previewWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${deployReusableWorkflowSha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@${reusableWorkflowSha}`,
     );
     expect(previewWorkflow).toContain("branches: [main]");
     expect(previewWorkflow).toContain("types: [closed]");
@@ -228,9 +230,10 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("id-token: write");
     expect(previewWorkflow).toContain("secret_profile: preview");
     expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
+    expect(previewWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
 
     expect(productionWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${deployReusableWorkflowSha}`,
+      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${reusableWorkflowSha}`,
     );
     expect(productionWorkflow).not.toContain('tags: ["v*"]');
     expect(productionWorkflow).toContain("workflow_dispatch:");
@@ -238,12 +241,14 @@ describe("ozby-dev deploy contract", () => {
     expect(productionWorkflow).toContain("id-token: write");
     expect(productionWorkflow).toContain("secret_profile: deploy");
     expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN }}");
+    expect(productionWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
 
     expect(releaseWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${releaseReusableWorkflowSha}`,
+      `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${reusableWorkflowSha}`,
     );
     expect(releaseWorkflow).toContain("version_command: vp run version");
     expect(releaseWorkflow).toContain("publish_command: vp run release:publish");
+    expect(releaseWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
     expect(releaseWorkflow).toContain("cloudflare-production.yml@");
     expect(releaseWorkflow).toContain(
       "release_version: ${{ needs.gate.outputs.release_version }}",

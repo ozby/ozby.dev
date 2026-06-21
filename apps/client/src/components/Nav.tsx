@@ -30,6 +30,9 @@ export function Nav() {
         <Link to="/writing" className="nav-link">
           Writing
         </Link>
+        <Link to="/contact" className="nav-link">
+          Contact
+        </Link>
         <a
           href="https://github.com/ozby"
           className="nav-link"

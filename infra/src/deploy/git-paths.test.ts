@@ -1,42 +1,37 @@
-import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 
 import { describe, expect, it } from "vitest";
 
 import { gitCommonDir, runtimeSecretsConfigPath } from "./git-paths.ts";
 
-function runGit(cwd: string, ...args: string[]): string {
-  const result = spawnSync("git", args, { cwd, encoding: "utf8" });
-  if (result.error) {
-    throw result.error;
-  }
-  if (result.status !== 0) {
-    throw new Error((result.stderr || result.stdout || "git command failed").trim());
-  }
-  return result.stdout.trim();
+function createGitRepo(): string {
+  const repoRoot = mkdtempSync(path.join(tmpdir(), "ozby-dev-git-paths-"));
+  mkdirSync(path.join(repoRoot, ".git"), { recursive: true });
+  writeFileSync(path.join(repoRoot, ".git", "HEAD"), "ref: refs/heads/main\n");
+  return repoRoot;
 }
 
-function createCommittedRepo(): string {
-  const repoRoot = mkdtempSync(path.join(tmpdir(), "ozby-dev-git-paths-"));
-  runGit(repoRoot, "init", "-b", "main");
-  runGit(repoRoot, "config", "user.name", "Test User");
-  runGit(repoRoot, "config", "user.email", "test@example.com");
-  writeFileSync(path.join(repoRoot, "README.md"), "fixture\n");
-  runGit(repoRoot, "add", "README.md");
-  runGit(repoRoot, "commit", "-m", "init");
-  return repoRoot;
+function createLinkedWorktreeMetadata(repoRoot: string, worktreeRoot: string): void {
+  const gitDir = path.join(repoRoot, ".git", "worktrees", "fixture");
+  mkdirSync(gitDir, { recursive: true });
+  writeFileSync(path.join(worktreeRoot, ".git"), `gitdir: ${gitDir}\n`);
+  writeFileSync(path.join(gitDir, "commondir"), "../..\n");
+  writeFileSync(path.join(gitDir, "gitdir"), `${path.join(worktreeRoot, ".git")}\n`);
+  writeFileSync(path.join(gitDir, "HEAD"), "ref: refs/heads/fixture\n");
 }
 
 describe("git path helpers", () => {
   it("resolves the main git dir for a regular checkout", () => {
-    const repoRoot = createCommittedRepo();
+    const repoRoot = createGitRepo();
 
     try {
-      expect(realpathSync(gitCommonDir(repoRoot))).toBe(realpathSync(path.join(repoRoot, ".git")));
+      const commonDir = gitCommonDir(repoRoot);
+
+      expect(realpathSync(commonDir)).toBe(realpathSync(path.join(repoRoot, ".git")));
       expect(path.normalize(runtimeSecretsConfigPath(repoRoot))).toBe(
-        path.normalize(path.join(gitCommonDir(repoRoot), "webpresso", "secrets.json")),
+        path.normalize(path.join(commonDir, "webpresso", "secrets.json")),
       );
     } finally {
       rmSync(repoRoot, { recursive: true, force: true });
@@ -44,21 +39,19 @@ describe("git path helpers", () => {
   });
 
   it("resolves the shared git common dir for linked worktrees", () => {
-    const repoRoot = createCommittedRepo();
+    const repoRoot = createGitRepo();
     const worktreeRoot = mkdtempSync(path.join(tmpdir(), "ozby-dev-worktree-"));
 
     try {
-      runGit(repoRoot, "worktree", "add", "-b", "feature/test", worktreeRoot);
+      createLinkedWorktreeMetadata(repoRoot, worktreeRoot);
 
-      expect(realpathSync(gitCommonDir(worktreeRoot))).toBe(realpathSync(path.join(repoRoot, ".git")));
+      const commonDir = gitCommonDir(worktreeRoot);
+
+      expect(realpathSync(commonDir)).toBe(realpathSync(path.join(repoRoot, ".git")));
       expect(path.normalize(runtimeSecretsConfigPath(worktreeRoot))).toBe(
-        path.normalize(path.join(gitCommonDir(worktreeRoot), "webpresso", "secrets.json")),
+        path.normalize(path.join(commonDir, "webpresso", "secrets.json")),
       );
     } finally {
-      spawnSync("git", ["worktree", "remove", "--force", worktreeRoot], {
-        cwd: repoRoot,
-        stdio: "ignore",
-      });
       rmSync(worktreeRoot, { recursive: true, force: true });
       rmSync(repoRoot, { recursive: true, force: true });
     }

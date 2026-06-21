@@ -21,6 +21,10 @@ on:
 
 permissions:
   contents: read
+  packages: read
+
+env:
+  NODE_AUTH_TOKEN: ${{ github.token }}
 
 jobs:
   verdict:
@@ -30,9 +34,13 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
-      - uses: webpresso/github-actions/.github/actions/setup-webpresso-toolchain@53869e557de386bd4d04656b275d6691d153bff9
-        with:
-          cli-global-packages: "vite-plus @webpresso/agent-kit"
+      - name: Install shared Webpresso CLIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          VITE_PLUS_VERSION=$(node -p "require('./package.json').devDependencies['vite-plus'].replace(/^[^0-9]*/, '')")
+          AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
+          npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
       - run: vp install --frozen-lockfile
       - name: Produce planned-only harness selection verdict
         run: wp test --file test/ci-governance-contract.test.ts

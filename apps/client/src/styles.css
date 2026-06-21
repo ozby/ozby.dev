@@ -993,3 +993,71 @@ main {
     gap: 3px;
   }
 }
+
+
+/* ─── Contact ─────────────────────────────────────────── */
+.contact-page {
+  max-width: 720px;
+}
+
+.contact-intro {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.contact-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+}
+
+.contact-form textarea {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.contact-status {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.contact-status--success {
+  color: var(--accent);
+}
+
+.contact-status--error {
+  color: #f9735b;
+}
+
+.contact-submit {
+  justify-self: start;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--text);
+  color: var(--bg);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

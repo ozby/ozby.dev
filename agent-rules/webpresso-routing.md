@@ -23,5 +23,5 @@ Use the repo-owned Webpresso surfaces before ad hoc command forms.
 
 ## Secrets and provider access
 
-- Route secret-aware execution through the repo contract (`wp config secrets`, `with-secrets -- <cmd>`, or repo-owned wrappers).
+- Route secret-aware execution through the repo contract (`wp secrets doctor --profile <profile> --json`, `wp secrets run --sink <sink> --profile <profile> -- <cmd>`, or repo-owned wrappers).
 - Do not call secret-provider CLIs directly from agent instructions when a repo-owned Webpresso surface already exists.

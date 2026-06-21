@@ -82,7 +82,7 @@ jobs:
       contents: read
       packages: read
       id-token: write
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@53869e557de386bd4d04656b275d6691d153bff9
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: deploy
@@ -111,7 +111,7 @@ jobs:
       contents: read
       packages: read
       id-token: write
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@53869e557de386bd4d04656b275d6691d153bff9
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: destroy
