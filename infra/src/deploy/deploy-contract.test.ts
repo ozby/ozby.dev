@@ -65,7 +65,9 @@ describe("ozby-dev deploy contract", () => {
     expect(() => readRepoFile("apps/workers/wrangler.jsonc")).not.toThrow();
     const wrangler = readRepoFile("apps/workers/wrangler.jsonc");
     expect(wrangler).toContain('"allowed_sender_addresses": ["info@ozby.dev"]');
-    expect(wrangler).toContain('"required": ["CONTACT_TURNSTILE_SITE_KEY", "CONTACT_TURNSTILE_SECRET_KEY"]');
+    expect(wrangler).toContain(
+      '"required": ["CONTACT_TURNSTILE_SITE_KEY", "CONTACT_TURNSTILE_SECRET_KEY"]',
+    );
     expect(() => readRepoFile("apps/workers/worker-configuration.d.ts")).not.toThrow();
     expect(() => readRepoFile("wrangler.jsonc")).toThrow();
     expect(() => readRepoFile("infra/src/deploy/agent-kit-deploy-adapter.ts")).not.toThrow();
@@ -89,7 +91,8 @@ describe("ozby-dev deploy contract", () => {
     expect(pkg.version).toMatch(/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/);
     expect(pkg.scripts["deploy:dry-run"]).toBe("wp deploy --lane prd --dry-run");
     expect(pkg.scripts["deploy:preview"]).toBe("wp deploy --lane preview_main");
-    expect(pkg.scripts["deploy:production"]).toBe("wp deploy --lane prd");
+    expect(pkg.scripts["deploy:production"]).toBeUndefined();
+    expect(pkg.scripts["deploy:production:wrangler"]).toBeUndefined();
     expect(pkg.scripts["changeset"]).toBe("changeset");
     expect(pkg.scripts["changeset:status"]).toBe("changeset status");
     expect(pkg.scripts["version"]).toBe(
@@ -214,7 +217,7 @@ describe("ozby-dev deploy contract", () => {
 
   it("uses thin caller workflows pinned to the shared reusable workflow commits", () => {
     const previewWorkflow = readRepoFile(".github/workflows/deploy-preview.yml");
-    const productionWorkflow = readRepoFile(".github/workflows/deploy-production.yml");
+    expect(() => readRepoFile(".github/workflows/deploy-production.yml")).toThrow();
     const releaseWorkflow = readRepoFile(".github/workflows/release.yml");
 
     expect(previewWorkflow).toContain(
@@ -224,45 +227,36 @@ describe("ozby-dev deploy contract", () => {
     expect(previewWorkflow).toContain("types: [opened, synchronize, reopened, closed]");
     expect(previewWorkflow).toContain("mode: deploy");
     expect(previewWorkflow).toContain("mode: destroy");
-    expect(previewWorkflow).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
+    expect(previewWorkflow).toContain(
+      "github.event.pull_request.head.ref != 'changeset-release/main'",
+    );
     expect(previewWorkflow).toContain("id-token: write");
     expect(previewWorkflow).toContain("secret_profile: preview");
-    expect(previewWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PREVIEW }}");
-    expect(previewWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
-
-    expect(productionWorkflow).toContain(
-      `uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@${reusableWorkflowSha}`,
+    expect(previewWorkflow).toContain(
+      "ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PREVIEW }}",
     );
-    expect(productionWorkflow).not.toContain('tags: ["v*"]');
-    expect(productionWorkflow).toContain("workflow_dispatch:");
-    expect(productionWorkflow).toContain("release_version:");
-    expect(productionWorkflow).toContain("id-token: write");
-    expect(productionWorkflow).toContain("secret_profile: production");
-    expect(productionWorkflow).toContain("ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PRODUCTION }}");
-    expect(productionWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
+    expect(previewWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
 
     expect(releaseWorkflow).toContain(
       `uses: webpresso/github-actions/.github/workflows/changesets-release.yml@${reusableWorkflowSha}`,
     );
-    expect(releaseWorkflow).toContain("release-preflight:");
-    expect(releaseWorkflow).toContain("Detect versionable release diff");
-    expect(releaseWorkflow).toContain("oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6");
-    expect(releaseWorkflow).toContain("vp run version");
-    expect(releaseWorkflow).toContain("has_version_diff=false");
-    expect(releaseWorkflow).toContain(
-      "Skipping shared release workflow because vp run version produced no commitable diff.",
-    );
-    expect(releaseWorkflow).toContain(
-      "if: ${{ needs.release-preflight.outputs.has_version_diff == 'true' }}",
-    );
-    expect(releaseWorkflow).toContain("if: ${{ always() }}");
+    expect(releaseWorkflow).not.toContain("release-preflight:");
+    expect(releaseWorkflow).not.toContain("Detect versionable release diff");
+    expect(releaseWorkflow).not.toContain("workflow_dispatch:");
+    expect(releaseWorkflow).toContain("branches: [main]");
     expect(releaseWorkflow).toContain("version_command: vp run version");
     expect(releaseWorkflow).toContain("publish_command: vp run release:publish");
     expect(releaseWorkflow).not.toContain('export NODE_AUTH_TOKEN="${{ github.token }}"');
     expect(releaseWorkflow).toContain("cloudflare-production.yml@");
+    expect(releaseWorkflow).toContain("if: ${{ needs.gate.outputs.should_deploy == 'true' }}");
     expect(releaseWorkflow).toContain(
-      "release_version: ${{ needs.gate.outputs.release_version }}",
+      'deploy-production.ts --release-version "${RELEASE_VERSION}" --skip-smoke',
     );
+    expect(releaseWorkflow).toContain(
+      "ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PRODUCTION }}",
+    );
+    expect(releaseWorkflow).not.toContain("CI_SECRET_PROVIDER_TOKEN }}");
+    expect(releaseWorkflow).toContain("release_version: ${{ needs.gate.outputs.release_version }}");
     expect(releaseWorkflow).toContain("permissions:");
     expect(releaseWorkflow).toContain("contents: write");
     expect(releaseWorkflow).toContain("pull-requests: write");

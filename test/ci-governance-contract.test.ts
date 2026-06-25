@@ -43,13 +43,19 @@ describe("ozby-dev CI governance contract", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
 
     expect(ci).toContain("Install shared Webpresso CLIs");
-    expect(ci).toContain("npm install -g");
-    expect(ci).toContain("vite-plus@${VITE_PLUS_VERSION}");
-    expect(ci).toContain("@webpresso/agent-kit@${AGENT_KIT_VERSION}");
-    expect(ci).not.toContain('vp install -g "@webpresso/agent-kit@latest"');
+    expect(ci).toContain("curl -fsSL https://vite.plus | bash");
+    expect(ci).toContain('export PATH="$HOME/.vite-plus/bin:$PATH"');
+    expect(ci).toContain('echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"');
+    expect(ci).toContain('vp install -g "@webpresso/agent-kit@2.3.2"');
+    expect(ci).not.toContain("agent-kit@latest");
+    expect(ci).not.toContain("AGENT_KIT_VERSION");
+    expect(ci).not.toContain("VITE_PLUS_VERSION");
+    expect(ci).not.toMatch(/(?<!p)npm\b/u);
     expect(ci).not.toContain("wp setup");
     expect(ci).not.toContain("git checkout -- package.json .gitignore AGENTS.md");
-    expect(ci).not.toContain("rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts");
+    expect(ci).not.toContain(
+      "rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts",
+    );
 
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
@@ -65,5 +71,4 @@ describe("ozby-dev CI governance contract", () => {
     expect(preview).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
     expect(security).toContain("github.event.pull_request.head.ref != 'changeset-release/main'");
   });
-
 });

@@ -13,6 +13,11 @@ const skipBuild = args.includes("--skip-build");
 const skipSmoke = args.includes("--skip-smoke");
 const dryRun = args.includes("--dry-run");
 
+function readArg(name: string): string | undefined {
+  const index = args.indexOf(name);
+  return index === -1 ? undefined : args[index + 1];
+}
+
 function runtimeConfigPath(root: string): string {
   return runtimeSecretsConfigPath(root);
 }
@@ -80,12 +85,50 @@ process.exit(1);
   }
 }
 
-function verifyReleaseVersion(): void {
-  const releaseVersion = process.env.RELEASE_VERSION ?? process.env.RELEASE_VERSION_INPUT ?? "";
-  if (releaseVersion.length === 0) return;
-  if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(releaseVersion)) {
-    throw new Error(`Invalid semantic release version: ${releaseVersion}`);
+const SEMVER_RELEASE_VERSION = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u;
+
+export function resolveReleaseVersion(params: {
+  releaseVersionArg?: string;
+  env?: Record<string, string | undefined>;
+}): string {
+  return (
+    params.releaseVersionArg ??
+    params.env?.RELEASE_VERSION ??
+    params.env?.RELEASE_VERSION_INPUT ??
+    ""
+  );
+}
+
+export function assertProductionReleaseVersion(params: {
+  releaseVersion: string;
+  metadataReleaseVersion: unknown;
+}): void {
+  const { releaseVersion, metadataReleaseVersion } = params;
+  if (!SEMVER_RELEASE_VERSION.test(releaseVersion)) {
+    throw new Error(
+      `Production deploy requires an explicit semantic release version; received ${releaseVersion || "<missing>"}`,
+    );
   }
+  if (metadataReleaseVersion !== releaseVersion) {
+    throw new Error(
+      `Production deploy version mismatch: metadata releaseVersion=${String(metadataReleaseVersion)}, requested=${releaseVersion}`,
+    );
+  }
+}
+
+function verifyReleaseVersion(): void {
+  if (dryRun) return;
+  const releaseVersion = resolveReleaseVersion({
+    releaseVersionArg: readArg("--release-version"),
+    env: process.env,
+  });
+  const metadata = JSON.parse(
+    readFileSync(path.join(ROOT, "infra", "release-metadata.production.json"), "utf8"),
+  ) as { releaseVersion?: unknown };
+  assertProductionReleaseVersion({
+    releaseVersion,
+    metadataReleaseVersion: metadata.releaseVersion,
+  });
 }
 
 export function main(): void {
