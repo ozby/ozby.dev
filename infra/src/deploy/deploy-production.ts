@@ -85,26 +85,50 @@ process.exit(1);
   }
 }
 
-function verifyReleaseVersion(): void {
-  if (dryRun) return;
-  const releaseVersion =
-    readArg("--release-version") ??
-    process.env.RELEASE_VERSION ??
-    process.env.RELEASE_VERSION_INPUT ??
-    "";
-  if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(releaseVersion)) {
+const SEMVER_RELEASE_VERSION = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u;
+
+export function resolveReleaseVersion(params: {
+  releaseVersionArg?: string;
+  env?: Record<string, string | undefined>;
+}): string {
+  return (
+    params.releaseVersionArg ??
+    params.env?.RELEASE_VERSION ??
+    params.env?.RELEASE_VERSION_INPUT ??
+    ""
+  );
+}
+
+export function assertProductionReleaseVersion(params: {
+  releaseVersion: string;
+  metadataReleaseVersion: unknown;
+}): void {
+  const { releaseVersion, metadataReleaseVersion } = params;
+  if (!SEMVER_RELEASE_VERSION.test(releaseVersion)) {
     throw new Error(
       `Production deploy requires an explicit semantic release version; received ${releaseVersion || "<missing>"}`,
     );
   }
+  if (metadataReleaseVersion !== releaseVersion) {
+    throw new Error(
+      `Production deploy version mismatch: metadata releaseVersion=${String(metadataReleaseVersion)}, requested=${releaseVersion}`,
+    );
+  }
+}
+
+function verifyReleaseVersion(): void {
+  if (dryRun) return;
+  const releaseVersion = resolveReleaseVersion({
+    releaseVersionArg: readArg("--release-version"),
+    env: process.env,
+  });
   const metadata = JSON.parse(
     readFileSync(path.join(ROOT, "infra", "release-metadata.production.json"), "utf8"),
   ) as { releaseVersion?: unknown };
-  if (metadata.releaseVersion !== releaseVersion) {
-    throw new Error(
-      `Production deploy version mismatch: metadata releaseVersion=${String(metadata.releaseVersion)}, requested=${releaseVersion}`,
-    );
-  }
+  assertProductionReleaseVersion({
+    releaseVersion,
+    metadataReleaseVersion: metadata.releaseVersion,
+  });
 }
 
 export function main(): void {
