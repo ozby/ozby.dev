@@ -13,6 +13,11 @@ const skipBuild = args.includes("--skip-build");
 const skipSmoke = args.includes("--skip-smoke");
 const dryRun = args.includes("--dry-run");
 
+function readArg(name: string): string | undefined {
+  const index = args.indexOf(name);
+  return index === -1 ? undefined : args[index + 1];
+}
+
 function runtimeConfigPath(root: string): string {
   return runtimeSecretsConfigPath(root);
 }
@@ -81,10 +86,24 @@ process.exit(1);
 }
 
 function verifyReleaseVersion(): void {
-  const releaseVersion = process.env.RELEASE_VERSION ?? process.env.RELEASE_VERSION_INPUT ?? "";
-  if (releaseVersion.length === 0) return;
+  if (dryRun) return;
+  const releaseVersion =
+    readArg("--release-version") ??
+    process.env.RELEASE_VERSION ??
+    process.env.RELEASE_VERSION_INPUT ??
+    "";
   if (!/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/u.test(releaseVersion)) {
-    throw new Error(`Invalid semantic release version: ${releaseVersion}`);
+    throw new Error(
+      `Production deploy requires an explicit semantic release version; received ${releaseVersion || "<missing>"}`,
+    );
+  }
+  const metadata = JSON.parse(
+    readFileSync(path.join(ROOT, "infra", "release-metadata.production.json"), "utf8"),
+  ) as { releaseVersion?: unknown };
+  if (metadata.releaseVersion !== releaseVersion) {
+    throw new Error(
+      `Production deploy version mismatch: metadata releaseVersion=${String(metadata.releaseVersion)}, requested=${releaseVersion}`,
+    );
   }
 }
 

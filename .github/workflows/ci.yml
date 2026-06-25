@@ -30,9 +30,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VITE_PLUS_VERSION=$(node -p "require('./package.json').devDependencies['vite-plus'].replace(/^[^0-9]*/, '')")
-          AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
-          npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
+          curl -fsSL https://vite.plus | bash
+          export PATH="$HOME/.vite-plus/bin:$PATH"
+          echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
+          vp install -g "@webpresso/agent-kit@2.3.2"
       - run: vp install --frozen-lockfile
       - run: wp audit hook-vendor-drift
       - run: wp audit harness-surfaces
@@ -74,8 +75,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VITE_PLUS_VERSION=$(node -p "require('./package.json').devDependencies['vite-plus'].replace(/^[^0-9]*/, '')")
-          AGENT_KIT_VERSION="${WP_SETUP_AGENT_KIT_VERSION:-2.3.2}"
-          npm install -g "vite-plus@${VITE_PLUS_VERSION}" "@webpresso/agent-kit@${AGENT_KIT_VERSION}"
+          curl -fsSL https://vite.plus | bash
+          export PATH="$HOME/.vite-plus/bin:$PATH"
+          echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
+          vp install -g "@webpresso/agent-kit@2.3.2"
       - run: vp install --frozen-lockfile
       - run: wp test --mutation

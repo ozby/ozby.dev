@@ -54,7 +54,6 @@ vp run build     # production build
 vp run dev       # builds client dist, then serves the local preview at localhost:8787
 ```
 
-
 ## GitHub Packages
 
 This repo consumes `@ozby/cloudflare` from GitHub Packages. GitHub Actions uses `NODE_AUTH_TOKEN: ${{ github.token }}` with `packages: read`. For local installs, export a token from the GitHub CLI session before running install commands:
@@ -99,7 +98,7 @@ vp run deploy:dry-run
 - Production deploy uses the same DRY secret-manager contract as the other site repos:
 
 ```bash
-vp run deploy:production
+vp run changeset && merge the generated Version Packages PR
 ```
 
 That build + deploy path resolves Cloudflare credentials through the selected
@@ -110,7 +109,6 @@ manager instead of hardcoding repo-local env files or ad hoc provider commands.
 ```bash
 vp run verify:secrets
 ```
-
 
 ## Contact Form Production Gates
 
@@ -130,7 +128,7 @@ repo-local commands here:
 
 - preview: `.github/workflows/deploy-preview.yml`
 - release orchestration: `.github/workflows/release.yml`
-- production hotfix/manual rerun: `.github/workflows/deploy-production.yml`
+- production redeploy/rollback: create a new versioned Changesets release PR; production deploys only from `.github/workflows/release.yml` after Version Packages merges
 
 ## Verify
 

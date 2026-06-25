@@ -4,21 +4,12 @@
   Current-state agent-kit scaffolding (`wp setup`) renders this file with:
   - Repository map: bulleted list of workspace packages inferred from
     pnpm-workspace.yaml / package.json workspaces.
-  - Tech stack: short description generated from package.json + detected
-    frameworks (React, Hono, Drizzle, etc.).
-  - Escalation map: user-edited section. Left as a TODO placeholder if
-    not specified.
-  - Durable planning root: defaults to `.agent/planning/`. Override via
-    .webpressorc.json.
-  - Blueprints directory: defaults to `blueprints`. Override via
-    .webpressorc.json#blueprintsDir.
-
-  Managed sections in this file are refreshed by agent-kit. Sync uses `wp sync`.
-  Repo-specific edits belong only inside `user-owned` blocks; agent-kit preserves
-  those blocks verbatim when it rewrites managed content.
+  Managed sections refresh via `wp sync`; repo-specific edits belong in
+  `user-owned` blocks and are preserved verbatim.
 -->
 
 <!-- >>> managed by webpresso (operating-contract) -->
+
 # Operating Contract
 
 Prefer repo-local instructions when they are more specific than this template.
@@ -34,28 +25,31 @@ agent-kit's catalog is the single source of truth for generated agent surfaces.
 Agent-kit owns the generated agent surfaces in this file; the Webpresso CLI host owns the end-user command surface.
 
 Defaults worth preserving:
-- External tools such as `omx`, `omc`, and `gstack` are self-installed and updated with their native installers when you choose to use them.
+
+- External tools such as `omx` and `omc` are self-installed and updated with their native installers when you choose to use them; Webpresso workflow/browser skills are package defaults.
 - `wp setup` repairs the managed `.gitignore` block for regenerated surfaces.
+- Consumer repos use the global `wp` install and keep only `@webpresso/agent-config` locally; do not add a consumer-local `@webpresso/agent-kit` dependency.
 - Track repo-owned instruction sources (`AGENTS.md`, `agent-rules/`, `agent-skills/`).
 - Ignore generated/runtime surfaces (`.agent/`, `.agents/`, `.omx/`, `.codex/`, `.claude/skills/`, etc.).
 
 Current-state bootstrap commands remain `wp setup` / `wp sync`; future unified CLI replacements are `webpresso agent setup` / `webpresso agent sync`.
 
 Prompt budget contract:
+
 - Keep the generated default `AGENTS.md` under 8 KB.
 - Move handbook prose to docs; keep only durable rules and command contracts here.
 
 Codex routing instruction surface:
 <wp_instruction_surface host="codex" artifact="AGENTS.md" source="wp_routing">
-  <host_contract>
-    <native_tool_names>wp_session_restore, wp_session_search, wp_session_execute_file, wp_session_execute, wp_session_batch_execute, wp_session_fetch_and_index, wp_session_index, wp_session_capture, wp_session_snapshot, wp_session_stats, wp_session_doctor, wp_session_purge, wp_test, wp_e2e, wp_lint, wp_typecheck, wp_qa, wp_audit, wp_ci_act, wp_worker_tail</native_tool_names>
-    <stdout_noop>Codex hook commands with no action write {} on stdout; durable guidance belongs in AGENTS.md.</stdout_noop>
-    <lifecycle_notes>
-    <note>Codex reads repository instruction files for durable guidance.</note>
-    <note>Unsupported managed lifecycle names are documented in the host capability matrix, not emulated here.</note>
-    </lifecycle_notes>
-    <public_support>Public support: first-class Codex instruction artifact.</public_support>
-  </host_contract>
+<host_contract>
+<native_tool_names>wp_audit, wp_audits, wp_bench, wp_ci_act, wp_e2e, wp_format, wp_gain, wp_lint, wp_pr_status, wp_qa, wp_release_readiness, wp_session_batch_execute, wp_session_capture, wp_session_doctor, wp_session_execute, wp_session_execute_file, wp_session_fetch_and_index, wp_session_index, wp_session_purge, wp_session_retrieve, wp_session_restore, wp_session_search, wp_session_snapshot, wp_session_stats, wp_test, wp_typecheck, wp_worker_tail, wp_worktree</native_tool_names>
+<stdout_noop>Codex hook commands with no action write {} on stdout; durable guidance belongs in AGENTS.md.</stdout_noop>
+<lifecycle_notes>
+<note>Codex reads repository instruction files for durable guidance.</note>
+<note>Unsupported managed lifecycle names are documented in the host capability matrix, not emulated here.</note>
+</lifecycle_notes>
+<public_support>Public support: first-class Codex instruction artifact.</public_support>
+</host_contract>
 </wp_instruction_surface>
 
 ## Plan
@@ -64,10 +58,17 @@ Use blueprints for non-trivial work. Specs live in
 [`blueprints/`](./blueprints/) with lifecycle directories such as
 `planned/`, `in-progress/`, and `completed/`. Keep tasks, dependencies,
 verification commands, and acceptance criteria current before execution.
+
+For any non-trivial change, run the gate **before the first edit**, in order:
+**worktree → blueprint → draft PR** — create a git worktree on a fresh branch
+and switch into it, create the blueprint on that branch, then open a draft PR
+early and push implementation commits to it. Never implement on `main`.
 PRs with any non-`*.md` changes must include a changed blueprint, unless a
 commit carries `Blueprint-exempt: <reason>` for a genuinely trivial exception.
+Full rule: `.agent/rules/pre-implementation.md` § Blueprint gate.
 
 Catalog-owned surfaces:
+
 - `.agent/commands/` — slash-command sources
 - `.agent/skills/` — generated/projected skills; edit the catalog, not generated copies
 
@@ -81,6 +82,7 @@ Catalog-owned surfaces:
 ## Verify
 
 Before claiming completion, run the narrowest checks that prove the change:
+
 - agent-kit MCP tools first when available; otherwise the repo wrapper
 - typecheck
 - lint / format check
@@ -95,21 +97,25 @@ If a gate fails, fix the root cause or record the blocker with evidence.
 
 Explain why the change exists, what tradeoffs were made, and what was verified.
 Record durable architecture decisions in the repo's ADR/planning surface if one exists.
+
 <!-- <<< managed by webpresso (operating-contract) -->
 
 <!-- >>> user-owned (repo-customizations) -->
+
 ## Repo-specific customizations
 
 Add repo-local instructions, preferences, and exceptions here. Content inside
 this block is preserved verbatim across `wp sync` runs.
+
 <!-- <<< user-owned (repo-customizations) -->
 
 <!-- >>> managed by webpresso (planning-and-release) -->
+
 ## Safety boundaries
 
 - Do not commit secrets or credentials.
 - Do not create or persist secret-bearing files like `.env`, `.env.local`, `.env.*.local`, `.dev.vars`, or `.dev.vars.example`.
-- Route secret-scoped commands through the repo contract (`wp secrets doctor --profile <profile> --json`, `wp secrets run --sink <sink> --profile <profile> -- <cmd>`, and committed `.webpresso/secrets.config.json`).
+- Route secret-scoped commands through the repo contract (`wp secrets doctor --profile <profile> --json` + `wp secrets run --sink <sink> --profile <profile> -- <cmd>`).
 - Keep secret/path checks on shared audit surfaces when available.
 - Do not commit agent surfaces (`.agent/`, `.agents/`, `.cursor/`, `.omx/`, `.omc/`, `.codex/`, `.opencode/`).
 - Do not hand-edit generated or derived surfaces; edit the catalog in agent-kit.
@@ -131,6 +137,7 @@ If work changes workspace ownership, build boundaries, or cross-package consumpt
 All webpresso public packages use **Changesets**. Never push `v*` tags or manually bump `package.json#version`.
 
 Release flow:
+
 1. `vp run changeset`
 2. Commit the generated `.changeset/*.md`
 3. Merge to `main` to update the **Version Packages** PR
@@ -167,7 +174,9 @@ Full details: `.agent/rules/package-conventions.md`
 <!-- <<< managed by webpresso (planning-and-release) -->
 
 <!-- >>> user-owned (escalation-map) -->
+
 ## Escalation map
 
 {{TODO: populate escalation map — who to ping for which subsystem.}}
+
 <!-- <<< user-owned (escalation-map) -->
