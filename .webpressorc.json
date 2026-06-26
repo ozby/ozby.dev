@@ -114,6 +114,11 @@
   "rules": {
     "overrides": []
   },
-  "scripts": {},
+  "scripts": {
+    "setup-agent": "wp setup && bun scripts/repair-agent-hooks.ts"
+  },
+  "setup": {
+    "preservePaths": [".claude/settings.json", ".codex/hooks.json", "package.json"]
+  },
   "durablePlanningRoot": ".agent/planning/"
 }

@@ -29,7 +29,9 @@
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "version": "changeset version && bun scripts/sync-release-metadata-version.ts",
-    "release:publish": "bun scripts/release-publish.ts"
+    "release:publish": "bun scripts/release-publish.ts",
+    "postinstall": "wp setup && bun scripts/repair-agent-hooks.ts",
+    "setup:agent": "wp setup && bun scripts/repair-agent-hooks.ts"
   },
   "dependencies": {},
   "devDependencies": {

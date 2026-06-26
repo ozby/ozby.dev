@@ -23,7 +23,7 @@ jobs:
     uses: webpresso/github-actions/.github/workflows/changesets-release.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
     with:
       install_command: |
-        vp install --frozen-lockfile
+        vp install --frozen-lockfile --ignore-scripts
       version_command: vp run version
       publish_command: vp run release:publish
       runner: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
     uses: webpresso/github-actions/.github/workflows/cloudflare-production.yml@aaf5e03cb7b215bcc8232858ebcf4cbbec2a8c0e
     with:
       install_command: |
-        vp install --frozen-lockfile
+        vp install --frozen-lockfile --ignore-scripts
       verify_command: |
         vp run verify:secrets
         wp lint

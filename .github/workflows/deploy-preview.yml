@@ -91,7 +91,7 @@ jobs:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: deploy
       install_command: |
-        vp install --frozen-lockfile
+        vp install --frozen-lockfile --ignore-scripts
       verify_command: |
         vp run verify:secrets
         vp run lint
@@ -120,7 +120,7 @@ jobs:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: destroy
       install_command: |
-        vp install --frozen-lockfile
+        vp install --frozen-lockfile --ignore-scripts
       verify_command: ":"
       deploy_command: ":"
       destroy_command: bun infra/src/deploy/deploy-preview.ts --lane ${{ needs.resolve.outputs.dashed_lane }} --destroy
