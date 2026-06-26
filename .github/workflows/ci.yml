@@ -33,7 +33,7 @@ jobs:
           curl -fsSL https://vite.plus | bash
           export PATH="$HOME/.vite-plus/bin:$PATH"
           echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
-          vp install -g "@webpresso/agent-kit@2.3.2"
+          vp install -g "@webpresso/agent-kit@2.4.1"
       - run: vp install --frozen-lockfile --ignore-scripts
       - run: wp audit hook-vendor-drift
       - run: wp audit harness-surfaces
@@ -78,6 +78,6 @@ jobs:
           curl -fsSL https://vite.plus | bash
           export PATH="$HOME/.vite-plus/bin:$PATH"
           echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
-          vp install -g "@webpresso/agent-kit@2.3.2"
+          vp install -g "@webpresso/agent-kit@2.4.1"
       - run: vp install --frozen-lockfile --ignore-scripts
       - run: wp test --mutation
