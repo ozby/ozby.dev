@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
+import path from "node:path";
 
-import { assertProductionReleaseVersion, resolveReleaseVersion } from "./deploy-production.ts";
+import {
+  assertProductionReleaseVersion,
+  resolveReleaseVersion,
+  resolveRequiredWranglerSecrets,
+  writeWranglerSecretsFile,
+} from "./deploy-production.ts";
+import { readFileSync, rmSync } from "node:fs";
 
 describe("resolveReleaseVersion", () => {
   it("prefers the --release-version argument over env vars", () => {
@@ -85,5 +92,46 @@ describe("assertProductionReleaseVersion", () => {
         metadataReleaseVersion: "1.4.0-rc.1",
       }),
     ).not.toThrow();
+  });
+});
+
+describe("resolveRequiredWranglerSecrets", () => {
+  it("returns the required Wrangler secrets from env", () => {
+    expect(
+      resolveRequiredWranglerSecrets({
+        CONTACT_TURNSTILE_SITE_KEY: "site-key",
+        CONTACT_TURNSTILE_SECRET_KEY: "secret-key",
+      }),
+    ).toEqual({
+      CONTACT_TURNSTILE_SITE_KEY: "site-key",
+      CONTACT_TURNSTILE_SECRET_KEY: "secret-key",
+    });
+  });
+
+  it("fails loudly when a required Wrangler secret is missing", () => {
+    expect(() =>
+      resolveRequiredWranglerSecrets({
+        CONTACT_TURNSTILE_SECRET_KEY: "secret-key",
+      }),
+    ).toThrow(/Production deploy requires CI\/runtime values for: CONTACT_TURNSTILE_SITE_KEY/u);
+  });
+});
+
+describe("writeWranglerSecretsFile", () => {
+  it("writes a JSON secrets file consumable by Wrangler", () => {
+    const secretsFilePath = writeWranglerSecretsFile({
+      CONTACT_TURNSTILE_SITE_KEY: "site-key",
+      CONTACT_TURNSTILE_SECRET_KEY: "secret-key",
+    });
+
+    try {
+      expect(JSON.parse(readFileSync(secretsFilePath, "utf8"))).toEqual({
+        CONTACT_TURNSTILE_SITE_KEY: "site-key",
+        CONTACT_TURNSTILE_SECRET_KEY: "secret-key",
+      });
+    } finally {
+      rmSync(secretsFilePath, { force: true });
+      rmSync(path.dirname(secretsFilePath), { force: true, recursive: true });
+    }
   });
 });

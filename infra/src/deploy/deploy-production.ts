@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { parseSecretsConfigMetadata, type SecretsConfigMetadata } from "./secrets-policy.ts";
 import { runtimeSecretsConfigPath } from "./git-paths.ts";
@@ -8,6 +9,10 @@ import { buildChildEnv, findRepoRoot } from "./deploy-runner.ts";
 
 const ROOT = findRepoRoot(process.cwd());
 const PRODUCTION_URL = "https://ozby.dev";
+const WORKER_REQUIRED_SECRET_NAMES = [
+  "CONTACT_TURNSTILE_SITE_KEY",
+  "CONTACT_TURNSTILE_SECRET_KEY",
+] as const;
 const args = process.argv.slice(2);
 const skipBuild = args.includes("--skip-build");
 const skipSmoke = args.includes("--skip-smoke");
@@ -116,6 +121,32 @@ export function assertProductionReleaseVersion(params: {
   }
 }
 
+export function resolveRequiredWranglerSecrets(
+  env: Record<string, string | undefined>,
+): Record<(typeof WORKER_REQUIRED_SECRET_NAMES)[number], string> {
+  const missing = WORKER_REQUIRED_SECRET_NAMES.filter((name) => {
+    const value = env[name];
+    return typeof value !== "string" || value.length === 0;
+  });
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Production deploy requires CI/runtime values for: ${missing.join(", ")}.`,
+    );
+  }
+
+  return Object.fromEntries(
+    WORKER_REQUIRED_SECRET_NAMES.map((name) => [name, env[name]!]),
+  ) as Record<(typeof WORKER_REQUIRED_SECRET_NAMES)[number], string>;
+}
+
+export function writeWranglerSecretsFile(secrets: Record<string, string>): string {
+  const tempDir = mkdtempSync(path.join(tmpdir(), "ozby-dev-wrangler-secrets-"));
+  const secretsPath = path.join(tempDir, "secrets.json");
+  writeFileSync(secretsPath, `${JSON.stringify(secrets, null, 2)}\n`, { mode: 0o600 });
+  return secretsPath;
+}
+
 function verifyReleaseVersion(): void {
   if (dryRun) return;
   const releaseVersion = resolveReleaseVersion({
@@ -157,15 +188,23 @@ export function main(): void {
   }
 
   console.log(`\n▶ Deploying ozby.dev via the shared Webpresso secret surface…\n`);
-  run("pnpm", [
-    "--dir",
-    "apps/workers",
-    "exec",
-    "wrangler",
-    "deploy",
-    "--config",
-    "wrangler.jsonc",
-  ]);
+  const wranglerSecrets = resolveRequiredWranglerSecrets(process.env);
+  const wranglerSecretsPath = writeWranglerSecretsFile(wranglerSecrets);
+  try {
+    run("pnpm", [
+      "--dir",
+      "apps/workers",
+      "exec",
+      "wrangler",
+      "deploy",
+      "--config",
+      "wrangler.jsonc",
+      "--secrets-file",
+      wranglerSecretsPath,
+    ]);
+  } finally {
+    rmSync(path.dirname(wranglerSecretsPath), { recursive: true, force: true });
+  }
 
   if (skipSmoke) {
     console.log(
