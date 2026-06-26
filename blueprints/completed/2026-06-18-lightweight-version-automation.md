@@ -2,11 +2,13 @@
 type: blueprint
 owner: ozby
 title: "Lightweight version automation"
-status: in-progress
+status: completed
+completed_at: "2026-06-26"
 complexity: S
 created: "2026-06-18"
-last_updated: "2026-06-18"
-progress: "80% (workflow contract changes implemented locally; PR verification running)"
+last_updated: "2026-06-26"
+progress_pct: 100
+progress: "100% (merged and validated on main)"
 depends_on: []
 ---
 
@@ -34,7 +36,7 @@ depends_on: []
 
 #### [ci] Task 1.1: Lighten version automation workflow lanes
 
-**Status:** in progress
+**Status:** done
 
 **Depends:** None
 

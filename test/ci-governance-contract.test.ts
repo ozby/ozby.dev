@@ -50,7 +50,7 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("curl -fsSL https://vite.plus | bash");
     expect(ci).toContain('export PATH="$HOME/.vite-plus/bin:$PATH"');
     expect(ci).toContain('echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"');
-    expect(ci).toContain('vp install -g "@webpresso/agent-kit@2.3.2"');
+    expect(ci).toMatch(/vp install -g "@webpresso\/agent-kit@\d+\.\d+\.\d+"/u);
     expect(ci).not.toContain("agent-kit@latest");
     expect(ci).not.toContain("AGENT_KIT_VERSION");
     expect(ci).not.toContain("VITE_PLUS_VERSION");

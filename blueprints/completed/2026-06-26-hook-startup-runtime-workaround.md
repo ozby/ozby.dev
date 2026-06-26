@@ -2,11 +2,13 @@
 type: blueprint
 owner: ozby
 title: "Hook startup runtime workaround"
-status: in-progress
+status: completed
+completed_at: "2026-06-26"
 complexity: S
 created: "2026-06-26"
 last_updated: "2026-06-26"
-progress: "25% (root cause isolated; repo-level contract fix in progress)"
+progress_pct: 100
+progress: "100% (merged and validated across setup + PR CI)"
 depends_on: []
 ---
 
@@ -33,7 +35,7 @@ depends_on: []
 
 #### [hooks] Task 1.1: Make SessionStart hook repair durable across setup reruns
 
-**Status:** in progress
+**Status:** done
 
 **Depends:** None
 
