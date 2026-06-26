@@ -34,7 +34,7 @@ jobs:
           export PATH="$HOME/.vite-plus/bin:$PATH"
           echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
           vp install -g "@webpresso/agent-kit@2.3.2"
-      - run: vp install --frozen-lockfile
+      - run: vp install --frozen-lockfile --ignore-scripts
       - run: wp audit hook-vendor-drift
       - run: wp audit harness-surfaces
       - run: wp audit architecture-drift --root .
@@ -79,5 +79,5 @@ jobs:
           export PATH="$HOME/.vite-plus/bin:$PATH"
           echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
           vp install -g "@webpresso/agent-kit@2.3.2"
-      - run: vp install --frozen-lockfile
+      - run: vp install --frozen-lockfile --ignore-scripts
       - run: wp test --mutation

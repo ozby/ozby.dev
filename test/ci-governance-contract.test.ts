@@ -39,8 +39,12 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("!startsWith(github.event.head_commit.message, 'Version Packages')");
   });
 
-  it("uses pinned global Webpresso CLIs without regenerating agent setup surfaces in CI", () => {
+  it("uses pinned global Webpresso CLIs while keeping install-time setup scripts disabled in CI", () => {
     const ci = readRepoFile(".github/workflows/ci.yml");
+    const security = readRepoFile(".github/workflows/security-scan.yml");
+    const preview = readRepoFile(".github/workflows/deploy-preview.yml");
+    const harness = readRepoFile(".github/workflows/harness-gate.yml");
+    const release = readRepoFile(".github/workflows/release.yml");
 
     expect(ci).toContain("Install shared Webpresso CLIs");
     expect(ci).toContain("curl -fsSL https://vite.plus | bash");
@@ -51,17 +55,23 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).not.toContain("AGENT_KIT_VERSION");
     expect(ci).not.toContain("VITE_PLUS_VERSION");
     expect(ci).not.toMatch(/(?<!p)npm\b/u);
-    expect(ci).not.toContain("wp setup");
+    expect(ci).toContain("vp install --frozen-lockfile --ignore-scripts");
+    expect(ci).not.toContain("\n      - run: wp setup");
     expect(ci).not.toContain("git checkout -- package.json .gitignore AGENTS.md");
     expect(ci).not.toContain(
       "rm -f scripts/check-no-dev-vars.ts scripts/audit-secret-provider-quarantine.ts",
     );
+    expect(ci).toContain("vp install --frozen-lockfile --ignore-scripts");
+    expect(security).toContain("vp install --frozen-lockfile --ignore-scripts");
+    expect(preview).toContain("vp install --frozen-lockfile --ignore-scripts");
+    expect(harness).toContain("vp install --frozen-lockfile --ignore-scripts");
+    expect(release).toContain("vp install --frozen-lockfile --ignore-scripts");
 
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
     };
-    expect(pkg.scripts["setup:agent"]).toBeUndefined();
-    expect(pkg.scripts.postinstall).toBeUndefined();
+    expect(pkg.scripts["setup:agent"]).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
+    expect(pkg.scripts.postinstall).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
   });
 
   it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {
