@@ -95,10 +95,8 @@ describe("ozby-dev deploy contract", () => {
     expect(pkg.scripts["deploy:production:wrangler"]).toBeUndefined();
     expect(pkg.scripts["changeset"]).toBe("changeset");
     expect(pkg.scripts["changeset:status"]).toBe("changeset status");
-    expect(pkg.scripts["version"]).toBe(
-      "changeset version && bun scripts/sync-release-metadata-version.ts",
-    );
-    expect(pkg.scripts["release:publish"]).toBe("bun scripts/release-publish.ts");
+    expect(pkg.scripts["version"]).toBe("changeset version && wp release-metadata sync");
+    expect(pkg.scripts["release:publish"]).toBe("wp release-metadata prepare");
     expect(pkg.devDependencies?.["@changesets/cli"]).toBeDefined();
     expect(() => readRepoFile(".changeset/config.json")).not.toThrow();
   });
@@ -261,7 +259,7 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain("contents: write");
     expect(releaseWorkflow).toContain("pull-requests: write");
     expect(releaseWorkflow).toContain("packages: write");
-    expect(readRepoFile("CHANGELOG.md")).toContain("# Changelog");
+    expect(() => readRepoFile("CHANGELOG.md")).toThrow();
   });
 
   it("documents preview domains and the mandatory custom-domain conflict preflight", () => {
