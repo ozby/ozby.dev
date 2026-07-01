@@ -4,7 +4,7 @@ packages:
   - "infra"
 
 catalog:
-  "@webpresso/agent-config": ^0.1.4
+  "@webpresso/agent-config": ^0.3.3
   "@ozby/cloudflare": ^0.1.0
   "@types/node": ^22.19.21
   "@stryker-mutator/core": ^9.6.1

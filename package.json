@@ -33,7 +33,6 @@
     "postinstall": "wp setup && bun scripts/repair-agent-hooks.ts",
     "setup:agent": "wp setup && bun scripts/repair-agent-hooks.ts"
   },
-  "dependencies": {},
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
     "@commitlint/cli": "^19.8.1",
@@ -49,7 +48,7 @@
     "secretlint": "^9.3.4",
     "tsx": "^4.22.4",
     "typescript": "catalog:",
-    "vite-plus": "^0.1.24",
+    "vite-plus": "^0.2.1",
     "vitest": "catalog:"
   },
   "engines": {
