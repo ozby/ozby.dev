@@ -2,12 +2,13 @@
 type: blueprint
 owner: ozby
 title: "Consumer follow-up after upstream duplication audit"
-status: planned
+status: completed
 complexity: M
 created: "2026-07-02"
 last_updated: "2026-07-02"
-progress_pct: 0
-progress: "Drafted: consumer verification and selective follow-up lane defined after the upstream cross-consumer duplication audit landed in webpresso/monorepo."
+completed_at: "2026-07-02"
+progress_pct: 100
+progress: "100% — fresh-main consumer sweep completed; no consumer PRs were needed because the only failures were stale upstream registry assumptions for ingest-lens origin/main."
 depends_on:
   - "webpresso/monorepo#106: cross-consumer duplication audit"
   - "ozby.dev: Consumer duplication upstreaming"
@@ -37,7 +38,7 @@ Use the merged upstream cross-consumer duplication audit as the source of truth,
 
 #### [audit] Task 1.1: Re-run the upstream duplication audit against current consumer heads
 
-**Status:** planned
+**Status:** done
 
 **Depends:** None
 
@@ -51,7 +52,7 @@ Use the merged upstream audit from `webpresso/monorepo` to classify each consume
 
 #### [fix] Task 1.2: Create consumer follow-up branches and PRs only where required
 
-**Status:** planned
+**Status:** done
 
 **Depends:** Task 1.1
 
@@ -65,7 +66,7 @@ For any consumer that fails the audit or has required shared-owner/generated-own
 
 #### [verify] Task 1.3: Close the sweep with explicit consumer outcomes
 
-**Status:** planned
+**Status:** done
 
 **Depends:** Task 1.1, Task 1.2
 
@@ -89,3 +90,24 @@ Record which consumers needed no change, which received PRs, and whether any acc
 - `wp audit blueprint-lifecycle`
 - repo-local markdown/blueprint checks if the lifecycle audit requires them
 - before execution, rerun `bun apps/scripts/src/audit/consumer-duplication-audit.ts --json` from the merged `webpresso/monorepo` lane
+
+## Execution update — 2026-07-02
+
+- Created fresh detached `origin/main` sweep worktrees for `ingest-lens`, `aksaprocess.tr`, `edge-matte`, and `ozby.dev` under `/Users/ozby/repos/ozby/_worktrees/consumer-followup-sweep/`.
+- Re-ran the merged upstream cross-consumer duplication audit against those fresh-main worktrees by setting `WP_CONSUMER_REPOS_ROOT` to the sweep root.
+- `aksaprocess.tr`, `edge-matte`, and `ozby.dev` required **no consumer follow-up**.
+- `ingest-lens` also required **no consumer follow-up**: the sweep failures were caused by stale assumptions in the merged upstream registry, not by consumer drift. Current `origin/main` already uses the generated Husky hook sections, shared release-metadata commands, shared Playwright quality scaffold, and no longer tracks the root quality-sample files.
+- Result: **0 consumer PRs needed** from this lane. The real follow-up is an upstream `webpresso/monorepo` registry refresh for `ingest-lens` current-main surfaces.
+
+## Verification evidence
+
+- `wp audit blueprint-lifecycle` passed for this blueprint branch before and after promotion.
+- Fresh-main upstream sweep command: `WP_CONSUMER_REPOS_ROOT=/Users/ozby/repos/ozby/_worktrees/consumer-followup-sweep bun /Users/ozby/repos/webpresso/_worktrees/cross-consumer-dup-audit/apps/scripts/src/audit/consumer-duplication-audit.ts --json`
+- Sweep finding: the only failures were `ingest-lens` registry mismatches against upstream assumptions (`.husky/commit-msg`, `.husky/pre-push`, `Brewfile`, `playwright.config.ts`, `package.json` release commands, and missing legacy quality-sample files), which proves the consumer has advanced past the registry baseline rather than regressed.
+
+## Final outcome
+
+- [x] Fresh-main sweep run across all four consumers.
+- [x] Consumer dispositions recorded.
+- [x] No consumer repo required a PR from this lane.
+- [x] The remaining action is upstream-owner follow-up, not consumer drift remediation.
