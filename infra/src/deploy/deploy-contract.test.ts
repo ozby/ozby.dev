@@ -95,8 +95,10 @@ describe("ozby-dev deploy contract", () => {
     expect(pkg.scripts["deploy:production:wrangler"]).toBeUndefined();
     expect(pkg.scripts["changeset"]).toBe("changeset");
     expect(pkg.scripts["changeset:status"]).toBe("changeset status");
-    expect(pkg.scripts["version"]).toBe("changeset version && wp release-metadata sync");
-    expect(pkg.scripts["release:publish"]).toBe("wp release-metadata prepare");
+    expect(pkg.scripts["version"]).toBe(
+      "changeset version && bun scripts/sync-release-metadata-version.ts",
+    );
+    expect(pkg.scripts["release:publish"]).toBe("bun scripts/release-publish.ts");
     expect(pkg.devDependencies?.["@changesets/cli"]).toBeDefined();
     expect(() => readRepoFile(".changeset/config.json")).not.toThrow();
   });
