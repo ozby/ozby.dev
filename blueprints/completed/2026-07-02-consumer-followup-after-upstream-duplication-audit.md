@@ -46,9 +46,9 @@ Use the merged upstream audit from `webpresso/monorepo` to classify each consume
 
 **Acceptance:**
 
-- [ ] The audit is rerun against the live sibling repos from a fresh `webpresso/monorepo` checkout.
-- [ ] Each consumer has an explicit disposition recorded in execution notes.
-- [ ] No consumer is queued for a PR without concrete evidence of drift or a gate-restoring need.
+- [x] The audit is rerun against the live sibling repos from a fresh `webpresso/monorepo` checkout.
+- [x] Each consumer has an explicit disposition recorded in execution notes.
+- [x] No consumer is queued for a PR without concrete evidence of drift or a gate-restoring need.
 
 #### [fix] Task 1.2: Create consumer follow-up branches and PRs only where required
 
@@ -60,9 +60,9 @@ For any consumer that fails the audit or has required shared-owner/generated-own
 
 **Acceptance:**
 
-- [ ] Only consumers with real follow-up work get code changes.
-- [ ] Fixes preserve the approved duplicate class (`shared-owner`, `generated-owned`, `thin-adapter`, `thin-workflow-glue-adapter`, `tracked-bootstrap-exception`, or approved `repo-local-policy`).
-- [ ] Each changed consumer has targeted verification evidence attached to its PR.
+- [x] Only consumers with real follow-up work get code changes.
+- [x] Fixes preserve the approved duplicate class (`shared-owner`, `generated-owned`, `thin-adapter`, `thin-workflow-glue-adapter`, `tracked-bootstrap-exception`, or approved `repo-local-policy`).
+- [x] Each changed consumer has targeted verification evidence attached to its PR.
 
 #### [verify] Task 1.3: Close the sweep with explicit consumer outcomes
 
@@ -74,9 +74,9 @@ Record which consumers needed no change, which received PRs, and whether any acc
 
 **Acceptance:**
 
-- [ ] Final sweep outcome is explicit for all four consumers.
-- [ ] Any no-op consumers are documented as intentionally unchanged because the upstream audit already passed.
-- [ ] Any optional second-wave cleanup is separated from required follow-up work.
+- [x] Final sweep outcome is explicit for all four consumers.
+- [x] Any no-op consumers are documented as intentionally unchanged because the upstream audit already passed.
+- [x] Any optional second-wave cleanup is separated from required follow-up work.
 
 ## Acceptance criteria
 
