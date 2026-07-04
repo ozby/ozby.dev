@@ -1,53 +1,107 @@
-import { Link } from 'react-router-dom'
-import { posts } from '#lib/posts'
-import { projects } from '#projects'
+import { Link } from "react-router-dom";
+import { posts } from "#lib/posts";
+import { projects } from "#projects";
 
 const stats = [
-  { value: '25', label: 'years writing code', accent: true },
-  { value: '15M+', label: 'users @ ResearchGate' },
-  { value: '60k+', label: 'patients on Emilyn' },
-  { value: '#1', label: 'MS app, both stores' },
-]
+  { value: "25", label: "years building systems", accent: true },
+  { value: "15M+", label: "users reached @ ResearchGate" },
+  { value: "60k+", label: "patients supported on Emilyn" },
+  { value: "#1", label: "MS app on both stores" },
+];
 
 const career = [
-  { year: '2025', role: 'Contract — CTO & LLM', note: 'CTO (seed-stage), DevOps, product, LLM infra — AI-first companies', current: true },
-  { year: '2024', role: 'Career break', note: 'SE Asia & the Caribbean, Jan–Jul' },
-  { year: '2022', role: 'Head of Engineering · Mymee', note: 'post-acquisition, two multinational teams — through Dec 2023' },
-  { year: '2018', role: 'Founding engineer · Breakthrough Health', note: 'built Emilyn — #1 MS app, 60k+ patients, acquired 2022' },
-  { year: '2016', role: 'Senior Software Engineer · ResearchGate', note: 'Growth — 100% organic traffic increase in 2 years, 15M+ users, top-40 Alexa' },
-  { year: '2015', role: 'Founding engineer · SevenSenders', note: 'Berlin logistics scale-up — zero to MVP, first customers shipping in a month; 8 months' },
-  { year: '2013', role: 'GetYourGuide', note: 'hypergrowth — scale, chaos, extreme pace' },
-  { year: '2012', role: 'Rocket Internet · Plinga', note: 'Rocket Internet machine — cloned business, extreme pace' },
-  { year: '2009', role: 'MegaUpload', note: '~10% of global internet traffic at peak — hired after Load2all' },
-  { year: '2007', role: 'Load2all', note: 'mass file spreader to hosts like Rapidshare & MegaUpload', url: 'https://www.ghacks.net/2009/11/23/upload-files-to-multiple-file-hosting-services-with-load2all/' },
-  { year: '2005', role: 'plazmaweb.net', note: 'Linux, FreeBSD hosting + Counter-Strike servers', url: 'https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php' },
-  { year: '2003', role: 'e-muzzik.com', note: 'Turkish music portal — PHP, MySQL', url: 'https://web.archive.org/web/20031208192541/http://e-muzzik.com/' },
-  { year: '2001', role: 'Geocities, FrontPage', note: 'first pages, age 10' },
-]
+  {
+    year: "2025",
+    role: "CTO advisory · LLM infrastructure",
+    note: "Seed-stage CTO, platform, DevOps, product, and LLM infrastructure for AI-first companies",
+    current: true,
+  },
+  { year: "2024", role: "Career break", note: "SE Asia & the Caribbean, Jan–Jul" },
+  {
+    year: "2022",
+    role: "Head of Engineering · Mymee",
+    note: "post-acquisition engineering leadership across two multinational teams — through Dec 2023",
+  },
+  {
+    year: "2018",
+    role: "Founding engineer · Breakthrough Health",
+    note: "built Emilyn — #1 MS app, 60k+ patients supported, acquired 2022",
+  },
+  {
+    year: "2016",
+    role: "Senior Software Engineer · ResearchGate",
+    note: "growth systems — 100% organic traffic increase in 2 years, 15M+ users, top-40 Alexa",
+  },
+  {
+    year: "2015",
+    role: "Founding engineer · SevenSenders",
+    note: "Berlin logistics scale-up — zero to MVP and first customers shipping in a month",
+  },
+  {
+    year: "2013",
+    role: "GetYourGuide",
+    note: "hypergrowth engineering — scale, reliability, and rapid product iteration",
+  },
+  {
+    year: "2012",
+    role: "Rocket Internet · Plinga",
+    note: "high-tempo venture buildout — rapid product execution and operational scale",
+  },
+  {
+    year: "2009",
+    role: "MegaUpload",
+    note: "large-scale consumer infrastructure — joined after Load2all",
+  },
+  {
+    year: "2007",
+    role: "Load2all",
+    note: "distributed upload automation for major file-hosting platforms",
+    url: "https://www.ghacks.net/2009/11/23/upload-files-to-multiple-file-hosting-services-with-load2all/",
+  },
+  {
+    year: "2005",
+    role: "plazmaweb.net",
+    note: "Linux/FreeBSD hosting, networking, and game-server operations",
+    url: "https://web.archive.org/web/20060901030903/http://www.plazmaweb.net/index.php",
+  },
+  {
+    year: "2003",
+    role: "e-muzzik.com",
+    note: "Turkish music portal — PHP/MySQL product and operations",
+    url: "https://web.archive.org/web/20031208192541/http://e-muzzik.com/",
+  },
+  { year: "2001", role: "Geocities, FrontPage", note: "first shipped web pages, age 10" },
+];
 
 export function Home() {
-  const recent = posts.slice(0, 3)
+  const recent = posts.slice(0, 3);
 
   return (
     <>
       <section className="hero">
         <p className="hero-kicker">
           <span className="only-dark">$ whoami</span>
-          <span className="only-light">Software engineer — est. 2001</span>
+          <span className="only-light">Principal engineer · Head of Engineering · est. 2001</span>
         </p>
         <h1 className="hero-title">
           <span className="only-light">
-            Özberk<br />Erçin<span className="accent">.</span>
+            Özberk
+            <br />
+            Erçin<span className="accent">.</span>
           </span>
           <span className="only-dark">
-            25 years of<br />shipping software<span className="cursor-block" />
+            25 years of
+            <br />
+            engineering leverage
+            <span className="cursor-block" />
           </span>
         </h1>
         <div className="hero-foot">
           <p className="hero-sub">
-            Founding engineer ×2, head of engineering, hypergrowth survivor. From Geocities at 10
-            to agent harnesses in 2026 — these days I build LLM infrastructure for early-stage AI
-            startups.
+            Principal-level engineer, Head of Engineering, and founding engineer ×2. I build the
+            systems that let teams move faster without giving up operational discipline: cloud
+            platforms, LLM infrastructure, developer workflows, Kubernetes delivery, networking,
+            IaC, high availability, and scalable product architecture.
           </p>
           <span className="hero-meta">Berlin · Çanakkale</span>
         </div>
@@ -56,7 +110,7 @@ export function Home() {
       <div className="stat-grid">
         {stats.map((s) => (
           <div key={s.label} className="stat-cell">
-            <div className={`stat-value${s.accent === true ? ' accent' : ''}`}>{s.value}</div>
+            <div className={`stat-value${s.accent === true ? " accent" : ""}`}>{s.value}</div>
             <div className="stat-label">{s.label}</div>
           </div>
         ))}
@@ -64,15 +118,26 @@ export function Home() {
 
       <section className="section-block">
         <div className="section-label">
-          <span className="only-light label-light">Career<span className="slash">/</span></span>
+          <span className="only-light label-light">
+            Career<span className="slash">/</span>
+          </span>
           <span className="only-dark label-dark">$ git log --career</span>
         </div>
         <div>
           {career.map((entry) => (
             <div key={entry.year} className="career-row">
-              <span className={`career-year${entry.current === true ? ' current' : ''}`}>{entry.year}</span>
+              <span className={`career-year${entry.current === true ? " current" : ""}`}>
+                {entry.year}
+              </span>
               {entry.url != null ? (
-                <a className="career-role career-role-link" href={entry.url} target="_blank" rel="noopener noreferrer">{entry.role}</a>
+                <a
+                  className="career-role career-role-link"
+                  href={entry.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {entry.role}
+                </a>
               ) : (
                 <span className="career-role">{entry.role}</span>
               )}
@@ -84,8 +149,10 @@ export function Home() {
 
       <section className="section-block">
         <div className="section-label">
-          <span className="only-light label-light">Work<span className="slash">/</span></span>
-          <span className="only-dark label-dark">$ ls ~/projects</span>
+          <span className="only-light label-light">
+            Work<span className="slash">/</span>
+          </span>
+          <span className="only-dark label-dark">$ ls ~/systems</span>
         </div>
         <div className="project-grid">
           {projects.map((project) => (
@@ -104,11 +171,13 @@ export function Home() {
 
       <section className="section-block flush">
         <div className="section-label">
-          <span className="only-light label-light">Writing<span className="slash">/</span></span>
+          <span className="only-light label-light">
+            Writing<span className="slash">/</span>
+          </span>
           <span className="only-dark label-dark">$ tail -f writing.log</span>
         </div>
         {recent.length === 0 ? (
-          <p className="empty-state">No posts yet — check back soon.</p>
+          <p className="empty-state">No essays published yet.</p>
         ) : (
           <ul className="post-list">
             {recent.map((post) => (
@@ -121,15 +190,17 @@ export function Home() {
                     {post.date}
                   </time>
                 </div>
-                {post.description !== undefined && post.description !== '' && (
+                {post.description !== undefined && post.description !== "" && (
                   <p className="post-description">{post.description}</p>
                 )}
               </li>
             ))}
           </ul>
         )}
-        <p className="list-aside">more to follow. no promises on cadence.</p>
+        <p className="list-aside">
+          Occasional notes on engineering leadership, platform work, and AI-assisted delivery.
+        </p>
       </section>
     </>
-  )
+  );
 }
