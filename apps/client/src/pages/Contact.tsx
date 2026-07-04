@@ -14,7 +14,8 @@ declare global {
 }
 
 const TURNSTILE_SCRIPT_ID = "cloudflare-turnstile-api";
-const TURNSTILE_SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 let turnstileScriptPromise: Promise<void> | null = null;
 
@@ -31,7 +32,11 @@ function ensureTurnstileScript(): Promise<void> {
         return;
       }
       existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Cloudflare Turnstile failed to load")), { once: true });
+      existing.addEventListener(
+        "error",
+        () => reject(new Error("Cloudflare Turnstile failed to load")),
+        { once: true },
+      );
       return;
     }
 
@@ -40,22 +45,41 @@ function ensureTurnstileScript(): Promise<void> {
     script.src = TURNSTILE_SCRIPT_SRC;
     script.async = true;
     script.defer = true;
-    script.addEventListener("load", () => {
-      script.dataset.loaded = "true";
-      resolve();
-    }, { once: true });
-    script.addEventListener("error", () => reject(new Error("Cloudflare Turnstile failed to load")), { once: true });
+    script.addEventListener(
+      "load",
+      () => {
+        script.dataset.loaded = "true";
+        resolve();
+      },
+      { once: true },
+    );
+    script.addEventListener(
+      "error",
+      () => reject(new Error("Cloudflare Turnstile failed to load")),
+      { once: true },
+    );
     document.head.append(script);
   });
 
   return turnstileScriptPromise;
 }
 
-function contactStatusCopy(status?: ContactStatus | string | null): { readonly tone: "success" | "error"; readonly text: string } | null {
-  if (status === "success") return { tone: "success", text: "Message received." };
-  if (status === "invalid") return { tone: "error", text: "Please check your name, email, and message." };
+function contactStatusCopy(
+  status?: ContactStatus | string | null,
+): { readonly tone: "success" | "error"; readonly text: string } | null {
+  if (status === "success")
+    return {
+      tone: "success",
+      text: "Message received. I read every note and reply when I can add useful perspective.",
+    };
+  if (status === "invalid")
+    return { tone: "error", text: "Please check your name, email, and message before sending." };
   if (status === "captcha") return { tone: "error", text: "Turnstile verification failed." };
-  if (status === "email") return { tone: "error", text: "I could not send the message. Please try again." };
+  if (status === "email")
+    return {
+      tone: "error",
+      text: "I could not send the message. Please try again, or reach me through LinkedIn.",
+    };
   return null;
 }
 
@@ -100,21 +124,45 @@ export function ContactPage({
   return (
     <section className="contact-page">
       <p className="section-label">
-        <span className="only-light label-light">Contact<span className="slash">/</span></span>
+        <span className="only-light label-light">
+          Contact<span className="slash">/</span>
+        </span>
         <span className="only-dark label-dark">$ mail ozberk</span>
       </p>
       <h1>Contact</h1>
-      <p className="contact-intro">Send a short note about the work, system, or agent problem you want to discuss.</p>
+      <p className="contact-intro">
+        Send a concise note if you are building an AI product, cloud platform, developer workflow,
+        or reliability-sensitive system and want senior engineering perspective.
+      </p>
       <form className="contact-form" method="post" action="/api/contact">
-        {banner ? <p className={`contact-status contact-status--${banner.tone}`} role="status">{banner.text}</p> : null}
+        {banner ? (
+          <p className={`contact-status contact-status--${banner.tone}`} role="status">
+            {banner.text}
+          </p>
+        ) : null}
         <input type="hidden" name="_redirect" value="/contact" />
-        <label>Name<input name="name" autoComplete="name" required /></label>
-        <label>Email<input name="email" type="email" autoComplete="email" required /></label>
-        <label>Message<textarea name="message" required /></label>
-        {verificationReady
-          ? <TurnstileWidget siteKey={turnstileSiteKey} />
-          : <p className="contact-status contact-status--error" role="status">Security check is loading.</p>}
-        <button type="submit" className="contact-submit" disabled={!verificationReady}>Send message</button>
+        <label>
+          Name
+          <input name="name" autoComplete="name" required />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" autoComplete="email" required />
+        </label>
+        <label>
+          Message
+          <textarea name="message" required />
+        </label>
+        {verificationReady ? (
+          <TurnstileWidget siteKey={turnstileSiteKey} />
+        ) : (
+          <p className="contact-status contact-status--error" role="status">
+            Security check is loading. The form will unlock automatically.
+          </p>
+        )}
+        <button type="submit" className="contact-submit" disabled={!verificationReady}>
+          Send message
+        </button>
       </form>
     </section>
   );
@@ -127,9 +175,13 @@ export function Contact() {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/contact/config", { headers: { accept: "application/json" } })
-      .then(async (response): Promise<ContactRuntimeConfig> => response.ok ? await response.json() as ContactRuntimeConfig : {})
+      .then(
+        async (response): Promise<ContactRuntimeConfig> =>
+          response.ok ? ((await response.json()) as ContactRuntimeConfig) : {},
+      )
       .then((config) => {
-        if (!cancelled && typeof config.turnstileSiteKey === "string") setTurnstileSiteKey(config.turnstileSiteKey);
+        if (!cancelled && typeof config.turnstileSiteKey === "string")
+          setTurnstileSiteKey(config.turnstileSiteKey);
       })
       .catch(() => undefined);
 

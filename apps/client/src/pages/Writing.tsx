@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom'
-import { formatDate } from '#lib/format'
-import { posts } from '#lib/posts'
+import { Link } from "react-router-dom";
+import { formatDate } from "#lib/format";
+import { posts } from "#lib/posts";
 
 function getYear(date: string): string {
-  return new Date(date).getFullYear().toString()
+  return new Date(date).getFullYear().toString();
 }
 
 export function Writing() {
@@ -11,19 +11,19 @@ export function Writing() {
     return (
       <>
         <h1 className="page-title">Writing</h1>
-        <p className="empty-state">No posts yet — check back soon.</p>
+        <p className="empty-state">No essays published yet.</p>
       </>
-    )
+    );
   }
 
   const byYear = posts.reduce<Record<string, typeof posts>>((acc, post) => {
-    const year = getYear(post.date)
-    const existing = acc[year]
-    acc[year] = existing ? [...existing, post] : [post]
-    return acc
-  }, {})
+    const year = getYear(post.date);
+    const existing = acc[year];
+    acc[year] = existing ? [...existing, post] : [post];
+    return acc;
+  }, {});
 
-  const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a))
+  const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 
   return (
     <>
@@ -42,14 +42,12 @@ export function Writing() {
                     {formatDate(post.date)}
                   </time>
                 </div>
-                {post.description && (
-                  <p className="post-description">{post.description}</p>
-                )}
+                {post.description && <p className="post-description">{post.description}</p>}
               </li>
             ))}
           </ul>
         </div>
       ))}
     </>
-  )
+  );
 }
