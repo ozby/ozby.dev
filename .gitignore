@@ -14,7 +14,6 @@ credentials.json
 # some environments but must never be committed.
 .agent
 .agents
-.codex
 .omx
 .omc
 .DS_Store
@@ -22,17 +21,11 @@ credentials.json
 # >>> managed by webpresso (rule-sync)
 .agent/rules/
 .cursor/rules/
-.windsurf/rules/
-.claude/rules/
-.gemini/commands/
 # <<< managed by webpresso (rule-sync)
 
 # >>> managed by webpresso (skill-sync)
 .agent/skills/
 .cursor/skills/
-.windsurf/skills/
-.claude/skills/
-.gemini/commands/
 .agents/skills/
 # <<< managed by webpresso (skill-sync)
 
@@ -64,7 +57,6 @@ agent-rules/context-mode-routing.md
 agent-rules/engineering-principles.md
 agent-rules/extraction-parity.md
 agent-rules/generated-code-governance.md
-agent-rules/gstack-routing.md
 agent-rules/no-timeout-as-fix.md
 agent-rules/package-conventions.md
 agent-rules/pre-implementation.md
@@ -75,7 +67,6 @@ agent-rules/supported-agent-clis.md
 agent-rules/ts-coding-conventions.md
 # <<< managed by webpresso (catalog-installed)
 
-.gstack/
 .playwright-mcp/
 
 
@@ -106,27 +97,14 @@ e2e/fixtures/smoke.html
 # Commit canonical sources (`agent-skills/`, `agent-rules/`, catalog) instead.
 # Ignore generated projections and local-only runtime state, but avoid
 # blanket tool-root ignores when repos may deliberately commit specific
-# instruction surfaces (for example selected `.claude/*` files).
 .agent/
 .agents/
 .cursor/
 .omx/
 .omc/
-.opencode/
-.codex/
 _worktrees/
 .webpresso/hooks-manifest.json
-.claude/settings.json
-.claude/settings.local.json
-.claude/agents/
-.claude/hooks/
-.claude/rules/
-.claude/skills/
-.claude/worktrees/
-.claude/scheduled_tasks.lock
 .cursor/rules/
-.opencode/agents/
-.opencode/commands/
 .agents/skills/
 .agent/.merged.provenance.json
 .agent/.compile-manifest.json
