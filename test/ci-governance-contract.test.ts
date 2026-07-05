@@ -13,9 +13,8 @@ function readRepoFile(path: string): string {
 /**
  * Pins the CI hook-materialization contract.
  *
- * The `wp audit guardrails > agents` audit now requires the full managed agent
- * surface, including `.claude/agents`, so CI must hydrate the complete setup
- * contract rather than the earlier hooks-only restore path.
+ * The `wp audit guardrails > agents` audit requires the managed agent
+ * surface contract to stay in sync with current repo policy.
  *
  * These assertions fail against the stale `--restore-hooks` variant and against
  * partial setup invocations, so the CI contract stays aligned with the actual
