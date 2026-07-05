@@ -32,10 +32,8 @@ describe("hook startup contract", () => {
       };
     }>(".webpressorc.json");
 
-    expect(config.scripts?.["setup-agent"]).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
-    expect(config.setup?.preservePaths).toEqual(
-      expect.arrayContaining([".claude/settings.json", ".codex/hooks.json", "package.json"]),
-    );
+    expect(config.scripts?.["setup-agent"]).toBeUndefined();
+    expect(config.setup?.preservePaths).toBeUndefined();
   });
 
   it("rewrites the generated SessionStart command to a direct JS entrypoint", () => {

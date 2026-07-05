@@ -70,8 +70,8 @@ describe("ozby-dev CI governance contract", () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
     };
-    expect(pkg.scripts["setup:agent"]).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
-    expect(pkg.scripts.postinstall).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
+    expect(pkg.scripts["setup:agent"]).toBeUndefined();
+    expect(pkg.scripts.postinstall).toBeUndefined();
   });
 
   it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {

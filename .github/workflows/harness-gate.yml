@@ -10,8 +10,6 @@ on:
       - ".husky/**"
       - ".github/actions/**"
       - ".github/workflows/**"
-      - ".claude/**"
-      - ".codex/**"
       - "infra/**"
       - "package.json"
       - "test/**"
