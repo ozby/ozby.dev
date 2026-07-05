@@ -10,8 +10,6 @@ surfaces:
         status: projected
       - path: agent-rules
         status: projected
-      - path: .agent
-        status: projected
     triggers:
       - wp setup
       - wp sync
@@ -37,19 +35,6 @@ surfaces:
     evidence:
       - package.json
       - test/ci-governance-contract.test.ts
-  - id: omx-runtime-state
-    title: OMX runtime and workflow state
-    owner: oh-my-codex
-    kind: runtime-state
-    lifecycle: governed
-    paths:
-      - path: .omx
-        status: projected
-    triggers:
-      - omx ultragoal checkpoint
-      - omx team status
-    evidence:
-      - package.json
   - id: harness-regression-gate
     title: Reference consumer regression gate
     owner: agent-kit
