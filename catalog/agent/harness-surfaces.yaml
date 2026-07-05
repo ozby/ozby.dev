@@ -1,31 +1,5 @@
 version: 1
 surfaces:
-  - id: codex-hooks
-    title: Codex hook runtime
-    owner: agent-kit
-    kind: hook
-    lifecycle: locked
-    paths:
-      - path: .codex
-        status: projected
-    triggers:
-      - wp setup
-      - wp audit guardrails
-    evidence:
-      - AGENTS.md
-  - id: claude-hooks
-    title: Claude hook runtime
-    owner: agent-kit
-    kind: hook
-    lifecycle: locked
-    paths:
-      - path: .claude
-        status: projected
-    triggers:
-      - wp setup
-      - wp audit guardrails
-    evidence:
-      - AGENTS.md
   - id: generated-agent-surfaces
     title: Generated agent instructions and skills
     owner: agent-kit
@@ -44,25 +18,6 @@ surfaces:
       - wp audit guardrails
     evidence:
       - catalog/agent/skills/monorepo-navigation/SKILL.md
-  - id: permission-policy
-    title: Prompt-time permission and deny policy
-    owner: agent-kit
-    kind: policy
-    lifecycle: locked
-    paths:
-      - path: .codex/hooks.json
-        status: projected
-      - path: .codex/managed-hooks/wp-pretool-guard.sh
-        status: projected
-      - path: .claude/settings.json
-        status: projected
-    triggers:
-      - wp setup
-      - wp audit guardrails
-      - git commit
-    evidence:
-      - .github/workflows/ci.yml
-      - AGENTS.md
   - id: secret-gate
     title: Secret-provider quarantine and no-dev-vars enforcement
     owner: agent-kit
@@ -94,7 +49,7 @@ surfaces:
       - omx ultragoal checkpoint
       - omx team status
     evidence:
-      - AGENTS.md
+      - package.json
   - id: harness-regression-gate
     title: Reference consumer regression gate
     owner: agent-kit
