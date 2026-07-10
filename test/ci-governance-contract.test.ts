@@ -13,9 +13,8 @@ function readRepoFile(path: string): string {
 /**
  * Pins the CI hook-materialization contract.
  *
- * The `wp audit guardrails > agents` audit now requires the full managed agent
- * surface, including `.claude/agents`, so CI must hydrate the complete setup
- * contract rather than the earlier hooks-only restore path.
+ * The `wp audit guardrails > agents` audit requires the managed agent
+ * surface contract to stay in sync with current repo policy.
  *
  * These assertions fail against the stale `--restore-hooks` variant and against
  * partial setup invocations, so the CI contract stays aligned with the actual
@@ -70,8 +69,8 @@ describe("ozby-dev CI governance contract", () => {
     const pkg = JSON.parse(readRepoFile("package.json")) as {
       scripts: Record<string, string>;
     };
-    expect(pkg.scripts["setup:agent"]).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
-    expect(pkg.scripts.postinstall).toBe("wp setup && bun scripts/repair-agent-hooks.ts");
+    expect(pkg.scripts["setup:agent"]).toBeUndefined();
+    expect(pkg.scripts.postinstall).toBeUndefined();
   });
 
   it("skips heavy version-automation preview and security workflows on changeset release PRs", () => {
