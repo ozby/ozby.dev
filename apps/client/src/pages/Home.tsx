@@ -30,7 +30,7 @@ const career = [
   {
     year: "2016",
     role: "Senior Software Engineer · ResearchGate",
-    note: "growth data & ML pipelines — organic traffic doubled in 2 years, 15M+ active users, led Hadoop→Flink and YUI→React migrations",
+    note: "growth data & ML pipelines, A/B testing and traffic-experiment frameworks — organic traffic doubled in 2 years to 15M+ active users; led Hadoop→Flink and YUI→React migrations",
   },
   {
     year: "2015",
@@ -104,8 +104,11 @@ export function Home() {
             two-time founding engineer, still heavily hands-on. Twenty-five years of taking systems
             from first commit to production scale: growth engineering behind ResearchGate&apos;s 15M
             users, the #1 multiple sclerosis app from zero to acquisition, and post-merger
-            engineering teams at Mymee. Today I run engineering for AI-first startups and build the
-            cloud platforms and LLM infrastructure myself.
+            engineering teams at Mymee. I bet on two things: developer experience — the tooling and
+            fast feedback loops that let small teams ship like big ones — and data-driven decisions,
+            having built A/B testing and traffic-experiment frameworks twice. Today I run
+            engineering for AI-first startups and build the cloud platforms and LLM infrastructure
+            myself.
           </p>
           <span className="hero-meta">Berlin · Çanakkale</span>
         </div>
@@ -202,7 +205,8 @@ export function Home() {
           </ul>
         )}
         <p className="list-aside">
-          Occasional notes on engineering leadership, platform work, and AI-assisted delivery.
+          Occasional notes on engineering leadership, developer experience, and AI-assisted
+          delivery.
         </p>
       </section>
     </>
