@@ -1,10 +1,12 @@
 ---
 type: blueprint
+title: Migrate CI to immutable self-versioning agent-kit setup
+owner: codex
 status: in-progress
 complexity: M
 created: '2026-07-11'
 last_updated: '2026-07-11'
-progress: '0% (0/2 tasks done, 0 blocked, updated 2026-07-11)'
+progress: '70% (0/2 tasks done, 2 blocked, updated 2026-07-11)'
 depends_on: []
 tags:
   - ci
@@ -37,9 +39,11 @@ setup-vp (immutable SHA) -> setup-wp (immutable SHA) -> action resolves its own 
 
 #### [infra] Task 1.1: Apply owner-generated workflow migration
 
-**Status:** todo
+**Status:** blocked
 
 **Depends:** None
+
+**Blocked:** The immutable setup-wp checkout resolves published agent-kit 3.1.11, which predates PR #509's explicit-file routing fix; setup also leaves two historical zero-task blueprints invalid under the 3.1.x lifecycle audit.
 
 Run the current agent-kit PR #509 source setup command against the blueprint owner worktree. Keep only the intended immutable action migration and restore unrelated setup drift.
 
@@ -56,9 +60,11 @@ Run the current agent-kit PR #509 source setup command against the blueprint own
 
 #### [qa] Task 1.2: Future-proof governance and compatibility verification
 
-**Status:** todo
+**Status:** blocked
 
 **Depends:** Task 1.1
+
+**Blocked:** Full CI verification depends on the Task 1.1 owner gaps being released or migrated by setup.
 
 Update repo-owned governance tests to scan all workflow files and reject legacy version variables, direct agent-kit installs, mutable action refs, and incomplete setup action ordering without hardcoding the current package version. Verify the generated contract with 3.1.11 and the previous 3.1.10 runtime.
 

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +8,17 @@ const repoRoot = fileURLToPath(new URL("../", import.meta.url));
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
+}
+
+function readWorkflows(): ReadonlyArray<{ path: string; source: string }> {
+  const workflowsDirectory = join(repoRoot, ".github", "workflows");
+  return readdirSync(workflowsDirectory)
+    .filter((name) => /\.ya?ml$/u.test(name))
+    .sort()
+    .map((name) => ({
+      path: `.github/workflows/${name}`,
+      source: readFileSync(join(workflowsDirectory, name), "utf8"),
+    }));
 }
 
 /**
@@ -38,22 +49,37 @@ describe("ozby-dev CI governance contract", () => {
     expect(ci).toContain("!startsWith(github.event.head_commit.message, 'Version Packages')");
   });
 
-  it("uses pinned global Webpresso CLIs while keeping install-time setup scripts disabled in CI", () => {
+  it("uses immutable self-versioning setup actions without consumer-owned agent-kit pins", () => {
+    const workflows = readWorkflows();
+    const setupWpPattern =
+      /webpresso\/agent-kit\/\.github\/actions\/setup-wp@([a-f0-9]{40})(?:\s|$)/giu;
+    const setupVpPattern = /voidzero-dev\/setup-vp@([a-f0-9]{40})(?:\s|$)/giu;
+
+    expect(workflows.length).toBeGreaterThan(0);
+    expect(
+      workflows.flatMap(({ path, source }) =>
+        /(?:AGENT_KIT_VERSION|WP_SETUP_AGENT_KIT_VERSION|@webpresso\/agent-kit)/u.test(source)
+          ? [path]
+          : [],
+      ),
+    ).toEqual([]);
+
+    const setupWpRefs = workflows.flatMap(({ source }) => [...source.matchAll(setupWpPattern)]);
+    const setupVpRefs = workflows.flatMap(({ source }) => [...source.matchAll(setupVpPattern)]);
+    expect(setupWpRefs.length).toBeGreaterThan(0);
+    expect(setupVpRefs.length).toBeGreaterThan(0);
+    expect(
+      workflows.flatMap(({ path, source }) =>
+        /setup-wp@[^\n]+\n\s+with:\n\s+version\s*:/u.test(source) ? [path] : [],
+      ),
+    ).toEqual([]);
+
     const ci = readRepoFile(".github/workflows/ci.yml");
     const security = readRepoFile(".github/workflows/security-scan.yml");
     const preview = readRepoFile(".github/workflows/deploy-preview.yml");
     const harness = readRepoFile(".github/workflows/harness-gate.yml");
     const release = readRepoFile(".github/workflows/release.yml");
 
-    expect(ci).toContain("Install shared Webpresso CLIs");
-    expect(ci).toContain("curl -fsSL https://vite.plus | bash");
-    expect(ci).toContain('export PATH="$HOME/.vite-plus/bin:$PATH"');
-    expect(ci).toContain('echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"');
-    expect(ci).toMatch(/vp install -g "@webpresso\/agent-kit@\d+\.\d+\.\d+"/u);
-    expect(ci).not.toContain("agent-kit@latest");
-    expect(ci).not.toContain("AGENT_KIT_VERSION");
-    expect(ci).not.toContain("VITE_PLUS_VERSION");
-    expect(ci).not.toMatch(/(?<!p)npm\b/u);
     expect(ci).toContain("vp install --frozen-lockfile --ignore-scripts");
     expect(ci).not.toContain("\n      - run: wp setup");
     expect(ci).not.toContain("git checkout -- package.json .gitignore AGENTS.md");
