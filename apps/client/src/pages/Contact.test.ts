@@ -16,9 +16,7 @@ describe("ContactPage", () => {
     expect(html).toContain('name="message"');
     expect(html).toContain('class="cf-turnstile"');
     expect(html).toContain('data-sitekey="site-key"');
-    expect(html).toContain(
-      "Message received. I read every note and reply when I can add useful perspective.",
-    );
+    expect(html).toContain("Message received — thanks. I read everything and reply personally.");
   });
 
   it("blocks submission until the runtime Turnstile site key loads", () => {

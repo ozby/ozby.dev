@@ -3,54 +3,54 @@ import { posts } from "#lib/posts";
 import { projects } from "#projects";
 
 const stats = [
-  { value: "25", label: "years building systems", accent: true },
-  { value: "15M+", label: "users reached @ ResearchGate" },
-  { value: "60k+", label: "patients supported on Emilyn" },
-  { value: "#1", label: "MS app on both stores" },
+  { value: "25", label: "years building software", accent: true },
+  { value: "2×", label: "founding engineer" },
+  { value: "15M+", label: "active users · ResearchGate growth" },
+  { value: "60k+", label: "patients · #1 multiple sclerosis app" },
 ];
 
 const career = [
   {
-    year: "2025",
-    role: "CTO advisory · LLM infrastructure",
-    note: "Seed-stage CTO, platform, DevOps, product, and LLM infrastructure for AI-first companies",
+    year: "2024",
+    role: "Fractional CTO · AI startups",
+    note: "CTO for a climate-tech company; hybrid Kubernetes platforms, Temporal orchestration, and LLM infrastructure for early-stage AI startups",
     current: true,
   },
   { year: "2024", role: "Career break", note: "SE Asia & the Caribbean, Jan–Jul" },
   {
     year: "2022",
     role: "Head of Engineering · Mymee",
-    note: "post-acquisition engineering leadership across two multinational teams — through Dec 2023",
+    note: "merged two engineering teams post-acquisition into one org, shipped the combined mobile product — and kept coding 2–4 days a week",
   },
   {
     year: "2018",
     role: "Founding engineer · Breakthrough Health",
-    note: "built Emilyn — #1 MS app, 60k+ patients supported, acquired 2022",
+    note: "built Emilyn — the #1 multiple sclerosis app on iOS & Android, 60k+ patients, acquired by Mymee in 2022",
   },
   {
     year: "2016",
     role: "Senior Software Engineer · ResearchGate",
-    note: "growth systems — 100% organic traffic increase in 2 years, 15M+ users, top-40 Alexa",
+    note: "growth data & ML pipelines — organic traffic doubled in 2 years, 15M+ active users, led Hadoop→Flink and YUI→React migrations",
   },
   {
     year: "2015",
     role: "Founding engineer · SevenSenders",
-    note: "Berlin logistics scale-up — zero to MVP and first customers shipping in a month",
+    note: "first hire — AWS infrastructure and the shipment-tracking MVP that landed the first customers",
   },
   {
     year: "2013",
-    role: "GetYourGuide",
-    note: "hypergrowth engineering — scale, reliability, and rapid product iteration",
+    role: "Software Engineer · GetYourGuide",
+    note: "built the A/B testing framework from scratch, multi-language ElasticSearch, search-conversion work",
   },
   {
     year: "2012",
-    role: "Rocket Internet · Plinga",
-    note: "high-tempo venture buildout — rapid product execution and operational scale",
+    role: "Software Engineer · Rocket Internet (Plinga)",
+    note: "payments & campaign API integrations for social games, internal tooling",
   },
   {
     year: "2009",
     role: "MegaUpload",
-    note: "large-scale consumer infrastructure — joined after Load2all",
+    note: "hired off Load2all — server monitoring for a platform carrying ~10% of internet traffic",
   },
   {
     year: "2007",
@@ -81,7 +81,9 @@ export function Home() {
       <section className="hero">
         <p className="hero-kicker">
           <span className="only-dark">$ whoami</span>
-          <span className="only-light">Principal engineer · Head of Engineering · est. 2001</span>
+          <span className="only-light">
+            Principal Engineer · Head of Engineering · CTO — hands-on since 2001
+          </span>
         </p>
         <h1 className="hero-title">
           <span className="only-light">
@@ -90,18 +92,20 @@ export function Home() {
             Erçin<span className="accent">.</span>
           </span>
           <span className="only-dark">
-            25 years of
+            25 years in,
             <br />
-            engineering leverage
+            still shipping
             <span className="cursor-block" />
           </span>
         </h1>
         <div className="hero-foot">
           <p className="hero-sub">
-            Principal-level engineer, Head of Engineering, and founding engineer ×2. I build the
-            systems that let teams move faster without giving up operational discipline: cloud
-            platforms, LLM infrastructure, developer workflows, Kubernetes delivery, networking,
-            IaC, high availability, and scalable product architecture.
+            Head of Engineering and CTO who never stopped operating as a principal engineer —
+            two-time founding engineer, still heavily hands-on. Twenty-five years of taking systems
+            from first commit to production scale: growth engineering behind ResearchGate&apos;s 15M
+            users, the #1 multiple sclerosis app from zero to acquisition, and post-merger
+            engineering teams at Mymee. Today I run engineering for AI-first startups and build the
+            cloud platforms and LLM infrastructure myself.
           </p>
           <span className="hero-meta">Berlin · Çanakkale</span>
         </div>
@@ -125,7 +129,7 @@ export function Home() {
         </div>
         <div>
           {career.map((entry) => (
-            <div key={entry.year} className="career-row">
+            <div key={entry.role} className="career-row">
               <span className={`career-year${entry.current === true ? " current" : ""}`}>
                 {entry.year}
               </span>

@@ -70,7 +70,7 @@ function contactStatusCopy(
   if (status === "success")
     return {
       tone: "success",
-      text: "Message received. I read every note and reply when I can add useful perspective.",
+      text: "Message received — thanks. I read everything and reply personally.",
     };
   if (status === "invalid")
     return { tone: "error", text: "Please check your name, email, and message before sending." };
@@ -131,8 +131,8 @@ export function ContactPage({
       </p>
       <h1>Contact</h1>
       <p className="contact-intro">
-        Send a concise note if you are building an AI product, cloud platform, developer workflow,
-        or reliability-sensitive system and want senior engineering perspective.
+        Building an AI product or a cloud platform — or a team that needs an engineering leader who
+        still ships? Tell me what you&apos;re working on.
       </p>
       <form className="contact-form" method="post" action="/api/contact">
         {banner ? (
