@@ -1,19 +1,19 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function Nav() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const attr = document.documentElement.getAttribute('data-theme')
-    if (attr === 'light' || attr === 'dark') return attr
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const attr = document.documentElement.getAttribute("data-theme");
+    if (attr === "light" || attr === "dark") return attr;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
   const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    document.documentElement.setAttribute('data-theme', next)
-    localStorage.setItem('ozby-theme', next)
-    setTheme(next)
-  }
+    const next = theme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("ozby-theme", next);
+    setTheme(next);
+  };
 
   return (
     <nav className="nav">
@@ -50,9 +50,9 @@ export function Nav() {
           LinkedIn
         </a>
         <button className="nav-link" type="button" onClick={toggleTheme}>
-          {theme === 'dark' ? '[light]' : '[dark]'}
+          {theme === "dark" ? "[light]" : "[dark]"}
         </button>
       </div>
     </nav>
-  )
+  );
 }

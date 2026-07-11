@@ -130,9 +130,7 @@ export function resolveRequiredWranglerSecrets(
   });
 
   if (missing.length > 0) {
-    throw new Error(
-      `Production deploy requires CI/runtime values for: ${missing.join(", ")}.`,
-    );
+    throw new Error(`Production deploy requires CI/runtime values for: ${missing.join(", ")}.`);
   }
 
   return Object.fromEntries(

@@ -28,7 +28,10 @@ describe("buildChildEnv", () => {
       mkdirSync(path.join(root, ".git"), { recursive: true });
       writeFileSync(path.join(root, ".git", "HEAD"), "ref: refs/heads/main\n");
       writeFileSync(path.join(root, "package.json"), '{"name":"fixture","private":true}\n');
-      writeFileSync(path.join(root, "pnpm-workspace.yaml"), 'packages:\n  - "apps/*"\n  - "infra"\n');
+      writeFileSync(
+        path.join(root, "pnpm-workspace.yaml"),
+        'packages:\n  - "apps/*"\n  - "infra"\n',
+      );
       writeFileSync(path.join(root, "AGENTS.md"), "# fixture\n");
 
       mkdirSync(path.join(root, ".webpresso"), { recursive: true });
@@ -55,7 +58,10 @@ describe("buildChildEnv", () => {
     try {
       mkdirSync(path.join(root, "apps"), { recursive: true });
       writeFileSync(path.join(root, "package.json"), '{"name":"fixture","private":true}\n');
-      writeFileSync(path.join(root, "pnpm-workspace.yaml"), 'packages:\n  - "apps/*"\n  - "infra"\n');
+      writeFileSync(
+        path.join(root, "pnpm-workspace.yaml"),
+        'packages:\n  - "apps/*"\n  - "infra"\n',
+      );
 
       expect(findRepoRoot(path.join(root, "apps"))).toBe(root);
     } finally {
