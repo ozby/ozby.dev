@@ -27,7 +27,7 @@ WP_SKIP_UPDATE_CHECK=1 wp audit no-dev-vars
 STAGED="$(git diff --cached --name-only --diff-filter=ACMR)"
 FORMAT_FILES="$(printf '%s\n' "$STAGED" | grep -E '\.(ts|tsx|js|jsx|cjs|mjs|json|ya?ml|sh|tmpl|md|mdx)$' || true)"
 if [ -n "$FORMAT_FILES" ]; then
-  wp format || exit 1
+  wp format --affected || exit 1
   wp sync || exit 1
   printf '%s\n' "$FORMAT_FILES" | while IFS= read -r file; do
     [ -n "$file" ] || continue
