@@ -5,6 +5,7 @@ import "@fontsource-variable/geist-mono";
 import "highlight.js/styles/github-dark.css";
 import { Nav } from "./components/Nav";
 import { Footer } from "./components/Footer";
+import { Lightbox } from "./components/Lightbox";
 import { Home } from "./pages/Home";
 import { Writing } from "./pages/Writing";
 import { Post } from "./pages/Post";
@@ -39,6 +40,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <Lightbox />
       </div>
     </BrowserRouter>
   );
