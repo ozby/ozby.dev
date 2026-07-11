@@ -32,14 +32,14 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
-      - name: Install shared Webpresso CLIs
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL https://vite.plus | bash
-          export PATH="$HOME/.vite-plus/bin:$PATH"
-          echo "$HOME/.vite-plus/bin" >> "$GITHUB_PATH"
-          vp install -g "@webpresso/agent-kit@2.3.2"
+      - uses: voidzero-dev/setup-vp@13e7afb99c66525824db54e107d667216e795d37 # v1.14.0
+        with:
+          node-version: "24.16.0"
+          cache: true
+          run-install: false
+      - uses: webpresso/agent-kit/.github/actions/setup-wp@d9ea3a1dc36545fd1e652e23ba2b46cb8d58b6a0
+      - name: Check workflow action pins
+        run: node scripts/check-workflow-action-pins.ts
       - run: vp install --frozen-lockfile --ignore-scripts
       - name: Produce planned-only harness selection verdict
         run: wp test --file test/ci-governance-contract.test.ts
