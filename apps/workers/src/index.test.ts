@@ -83,11 +83,14 @@ describe("worker", () => {
     const turnstileFetch = vi.fn(async () => new Response(JSON.stringify({ success: true })));
     vi.stubGlobal("fetch", turnstileFetch);
 
-    const response = await worker.fetch(new Request("https://ozby.dev/api/contact", {
-      method: "POST",
-      body: validContactBody(),
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-    }), env);
+    const response = await worker.fetch(
+      new Request("https://ozby.dev/api/contact", {
+        method: "POST",
+        body: validContactBody(),
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+      }),
+      env,
+    );
 
     expect(response.status).toBe(303);
     expect(response.headers.get("location")).toBe("/contact?contact=success");
@@ -112,11 +115,14 @@ describe("worker", () => {
     const turnstileFetch = vi.fn(async () => new Response(JSON.stringify({ success: true })));
     vi.stubGlobal("fetch", turnstileFetch);
 
-    const response = await worker.fetch(new Request("https://ozby.dev/api/contact", {
-      method: "POST",
-      body: validContactBody({ email: "not-email", message: "" }),
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-    }), env);
+    const response = await worker.fetch(
+      new Request("https://ozby.dev/api/contact", {
+        method: "POST",
+        body: validContactBody({ email: "not-email", message: "" }),
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+      }),
+      env,
+    );
 
     expect(response.status).toBe(303);
     expect(response.headers.get("location")).toBe("/contact?contact=invalid");
@@ -127,13 +133,19 @@ describe("worker", () => {
   it("fails the contact request when the internal email fails", async () => {
     const env = createEnv();
     env.emailSend.mockRejectedValueOnce(new Error("internal failed"));
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ success: true }))));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({ success: true }))),
+    );
 
-    const response = await worker.fetch(new Request("https://ozby.dev/api/contact", {
-      method: "POST",
-      body: validContactBody(),
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-    }), env);
+    const response = await worker.fetch(
+      new Request("https://ozby.dev/api/contact", {
+        method: "POST",
+        body: validContactBody(),
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+      }),
+      env,
+    );
 
     expect(response.headers.get("location")).toBe("/contact?contact=email");
     expect(env.emailSend).toHaveBeenCalledTimes(1);
@@ -141,20 +153,27 @@ describe("worker", () => {
 
   it("keeps success and logs non-PII when confirmation email fails", async () => {
     const env = createEnv();
-    env.emailSend.mockResolvedValueOnce({ messageId: "internal" }).mockRejectedValueOnce(Object.assign(new Error("confirm failed"), { code: "E_SEND" }));
+    env.emailSend
+      .mockResolvedValueOnce({ messageId: "internal" })
+      .mockRejectedValueOnce(Object.assign(new Error("confirm failed"), { code: "E_SEND" }));
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ success: true }))));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({ success: true }))),
+    );
 
-    const response = await worker.fetch(new Request("https://ozby.dev/api/contact", {
-      method: "POST",
-      body: validContactBody(),
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-    }), env);
+    const response = await worker.fetch(
+      new Request("https://ozby.dev/api/contact", {
+        method: "POST",
+        body: validContactBody(),
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+      }),
+      env,
+    );
 
     expect(response.headers.get("location")).toBe("/contact?contact=success");
     expect(env.emailSend).toHaveBeenCalledTimes(2);
     expect(JSON.stringify(warn.mock.calls)).not.toContain("ada@example.com");
     warn.mockRestore();
   });
-
 });

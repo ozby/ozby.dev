@@ -74,7 +74,9 @@ function parseProfiles(
       throw new Error(`${sourceLabel}: profile "${profileName}" must set a non-empty environment`);
     }
     if (SECRET_VALUE_PATTERN.test(environment)) {
-      throw new Error(`${sourceLabel}: profile "${profileName}" environment must not contain secret values`);
+      throw new Error(
+        `${sourceLabel}: profile "${profileName}" environment must not contain secret values`,
+      );
     }
     profiles[profileName] = { environment };
   }
