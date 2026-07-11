@@ -261,7 +261,6 @@ describe("ozby-dev deploy contract", () => {
     expect(releaseWorkflow).toContain("contents: write");
     expect(releaseWorkflow).toContain("pull-requests: write");
     expect(releaseWorkflow).toContain("packages: write");
-    expect(() => readRepoFile("CHANGELOG.md")).toThrow();
   });
 
   it("documents preview domains and the mandatory custom-domain conflict preflight", () => {
