@@ -1,10 +1,10 @@
-import { Link, useParams } from 'react-router-dom'
-import { projects } from '#projects'
-import { renderMarkdown } from '#lib/markdown'
+import { Link, useParams } from "react-router-dom";
+import { projects } from "#projects";
+import { renderMarkdown } from "#lib/markdown";
 
 export function Project() {
-  const { slug } = useParams<{ slug: string }>()
-  const project = projects.find((p) => p.slug === slug)
+  const { slug } = useParams<{ slug: string }>();
+  const project = projects.find((p) => p.slug === slug);
 
   if (!project) {
     return (
@@ -14,10 +14,10 @@ export function Project() {
           <Link to="/">← Home</Link>
         </p>
       </div>
-    )
+    );
   }
 
-  const whyHtml = renderMarkdown(project.why)
+  const whyHtml = renderMarkdown(project.why);
 
   return (
     <>
@@ -73,5 +73,5 @@ export function Project() {
         <div className="prose" dangerouslySetInnerHTML={{ __html: whyHtml }} />
       </section>
     </>
-  )
+  );
 }

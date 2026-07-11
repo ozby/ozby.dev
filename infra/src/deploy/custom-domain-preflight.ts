@@ -31,7 +31,9 @@ export function getConflictingCustomDomainCnameRecords(
 }
 
 function isCloudflareManagedCustomDomainRecord(record: CloudflareDnsRecord): boolean {
-  return record.proxied === true && (record.content ?? "").toLowerCase().endsWith(".cdn.cloudflare.net");
+  return (
+    record.proxied === true && (record.content ?? "").toLowerCase().endsWith(".cdn.cloudflare.net")
+  );
 }
 
 export async function assertNoConflictingCustomDomainCname(options: {
@@ -57,8 +59,10 @@ export async function assertNoConflictingCustomDomainCname(options: {
   const payload = (await response.json()) as CloudflareDnsListResponse;
   if (!payload.success) {
     const message =
-      payload.errors?.map((entry) => entry.message).filter(Boolean).join("; ") ||
-      "unknown Cloudflare DNS API failure";
+      payload.errors
+        ?.map((entry) => entry.message)
+        .filter(Boolean)
+        .join("; ") || "unknown Cloudflare DNS API failure";
     throw new Error(`Cloudflare DNS preflight failed for ${options.hostname}: ${message}`);
   }
 
