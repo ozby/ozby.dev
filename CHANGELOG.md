@@ -1,5 +1,11 @@
 # ozby-dev
 
+## 0.1.4
+
+### Patch Changes
+
+- 06c20f7: Add a click-to-zoom lightbox: project screenshots and post images open enlarged in a native modal dialog (Escape / backdrop / close to dismiss).
+
 ## 0.1.3
 
 ### Patch Changes
