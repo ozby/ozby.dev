@@ -1061,3 +1061,69 @@ main {
   font-weight: 700;
   cursor: pointer;
 }
+
+/* ─── Lightbox ────────────────────────────────────────── */
+.screenshot,
+.prose img {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(3px);
+}
+
+.lightbox-figure {
+  position: relative;
+  margin: 0;
+  max-width: 92vw;
+  max-height: 90vh;
+  cursor: default;
+}
+
+.lightbox-img {
+  display: block;
+  max-width: 92vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -2rem;
+  right: 0;
+  padding: 0.25rem 0;
+  border: none;
+  background: transparent;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: var(--label-tracking);
+  text-transform: var(--label-transform);
+  cursor: pointer;
+}
+
+.lightbox-close:hover {
+  color: var(--accent);
+}

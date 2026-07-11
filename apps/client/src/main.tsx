@@ -1,27 +1,27 @@
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import '@fontsource-variable/geist'
-import '@fontsource-variable/geist-mono'
-import 'highlight.js/styles/github-dark.css'
-import { Nav } from './components/Nav'
-import { Footer } from './components/Footer'
-import { Home } from './pages/Home'
-import { Writing } from './pages/Writing'
-import { Post } from './pages/Post'
-import { Project } from './pages/Project'
-import { Contact } from './pages/Contact'
-import './styles.css'
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "highlight.js/styles/github-dark.css";
+import { Nav } from "./components/Nav";
+import { Footer } from "./components/Footer";
+import { Lightbox } from "./components/Lightbox";
+import { Home } from "./pages/Home";
+import { Writing } from "./pages/Writing";
+import { Post } from "./pages/Post";
+import { Project } from "./pages/Project";
+import { Contact } from "./pages/Contact";
+import "./styles.css";
 
 function NotFound() {
   return (
     <div className="not-found">
       <h1>Page not found</h1>
       <p>
-        The page you&apos;re looking for doesn&apos;t exist.{' '}
-        <a href="/">Go home</a>
+        The page you&apos;re looking for doesn&apos;t exist. <a href="/">Go home</a>
       </p>
     </div>
-  )
+  );
 }
 
 function App() {
@@ -40,11 +40,12 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <Lightbox />
       </div>
     </BrowserRouter>
-  )
+  );
 }
 
-const rootEl = document.getElementById('root')
-if (rootEl === null) throw new Error('Missing #root element')
-createRoot(rootEl).render(<App />)
+const rootEl = document.getElementById("root");
+if (rootEl === null) throw new Error("Missing #root element");
+createRoot(rootEl).render(<App />);
