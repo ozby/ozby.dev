@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import { assertNoConflictingCustomDomainCname } from "./custom-domain-preflight.ts";
 import { findRepoRoot } from "./deploy-runner.ts";
 import { resolvePreviewLane } from "./deploy-lanes.ts";
+import { destroyPreviewWorker, type PreviewCommandResult } from "./preview-destroy.ts";
 
 type WranglerConfig = {
   readonly $schema?: string;
@@ -61,6 +62,21 @@ function runWorkersWrangler(wranglerArgs: string[], env: NodeJS.ProcessEnv = pro
   run("pnpm", ["--dir", "apps/workers", "exec", "wrangler", ...wranglerArgs], env);
 }
 
+// Capture combined output (instead of streaming) so the destroy path can tell an
+// already-absent Worker apart from a real failure, while still echoing to CI logs.
+function captureRun(command: string, commandArgs: readonly string[]): PreviewCommandResult {
+  const result = spawnSync(command, [...commandArgs], {
+    env: process.env,
+    shell: false,
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  if (result.error) throw result.error;
+  const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+  if (output) process.stdout.write(output);
+  return { status: result.status, output };
+}
+
 function runSecretScoped(command: string, commandArgs: string[]) {
   run(command, commandArgs);
 }
@@ -113,7 +129,7 @@ async function runDnsPreflight(): Promise<void> {
 
 if (destroy) {
   console.log(`\n▶ Destroying preview Worker ${lane.workerName}\n`);
-  runSecretScoped("pnpm", [
+  destroyPreviewWorker(captureRun, "pnpm", [
     "--dir",
     "apps/workers",
     "exec",
