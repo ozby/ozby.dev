@@ -1,5 +1,11 @@
 # ozby-dev
 
+## 0.1.3
+
+### Patch Changes
+
+- c180326: Emphasize developer experience and data-driven decisions (A/B testing, traffic experiments) in the home page copy.
+
 ## 0.1.2
 
 ### Patch Changes
