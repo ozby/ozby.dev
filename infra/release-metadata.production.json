@@ -1,6 +1,6 @@
 {
   "releaseKind": "version_pr",
-  "releaseVersion": "0.1.3",
+  "releaseVersion": "0.1.4",
   "durableObjectMigration": "none",
   "rolloutMode": "direct",
   "requiredChecks": [
