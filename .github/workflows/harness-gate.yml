@@ -42,4 +42,4 @@ jobs:
         run: node scripts/check-workflow-action-pins.ts
       - run: vp install --frozen-lockfile --ignore-scripts
       - name: Produce planned-only harness selection verdict
-        run: wp test --file test/ci-governance-contract.test.ts
+        run: vp exec vitest run --config vitest.config.ts test/ci-governance-contract.test.ts

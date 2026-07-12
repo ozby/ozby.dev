@@ -2,17 +2,17 @@
   "name": "@ozby-dev/workers",
   "private": true,
   "type": "module",
-  "dependencies": {
-    "@ozby/cloudflare": "catalog:"
-  },
   "scripts": {
     "typegen": "wp exec wrangler types",
     "prebuild": "wp exec wrangler types && vp run --filter @ozby-dev/client build",
     "dev": "wp exec wrangler dev --config wrangler.jsonc",
     "build": "wp exec wrangler deploy --config wrangler.jsonc --dry-run",
-    "test": "wp test --file vitest.config.ts",
+    "test": "vitest run --config vitest.config.ts",
     "check-types": "wp typecheck",
     "lint": "wp lint"
+  },
+  "dependencies": {
+    "@ozby/cloudflare": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.16.10",

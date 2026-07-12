@@ -12,7 +12,7 @@
     "dev": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers dev",
     "build": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers build",
     "typecheck": "vp run --filter @ozby-dev/client check-types && vp run --filter @ozby-dev/workers check-types && vp run --filter @ozby-dev/infra check-types && wp typecheck",
-    "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && wp test --file test/ci-governance-contract.test.ts",
+    "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && vp exec vitest run --config vitest.config.ts test/ci-governance-contract.test.ts",
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && vp run test",
     "prepare": "husky",
