@@ -37,7 +37,7 @@ describe("buildChildEnv", () => {
       mkdirSync(path.join(root, ".webpresso"), { recursive: true });
       writeFileSync(
         path.join(root, ".webpresso", "secrets.config.json"),
-        '{"schemaVersion":1,"providers":{"default":{"type":"doppler","project":"ozby-shell"}}}\n',
+        '{"schemaVersion":1,"providers":{"default":{"type":"doppler","project":"ozby-dev"}}}\n',
       );
 
       mkdirSync(path.join(root, ".git", "webpresso"), { recursive: true });
