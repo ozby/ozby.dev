@@ -26,7 +26,7 @@ Agent-kit owns generated agent surfaces here; Webpresso CLI owns the end-user co
 Codex routing instruction surface:
 <wp_instruction_surface host="codex" artifact="AGENTS.md" source="wp_routing">
 <host_contract>
-<native_tool_names>wp_audit, wp_audits, wp_bench, wp_ci_act, wp_e2e, wp_fleet_status, wp_format, wp_gain, wp_goal_cancel, wp_goal_handoff, wp_goal_new, wp_goal_run, wp_goal_status, wp_lint, wp_pr_status, wp_pr_wait, wp_qa, wp_release_readiness, wp_session_batch_execute, wp_session_capture, wp_session_doctor, wp_session_execute, wp_session_execute_file, wp_session_fetch_and_index, wp_session_index, wp_session_purge, wp_session_retrieve, wp_session_restore, wp_session_search, wp_session_snapshot, wp_session_stats, wp_test, wp_typecheck, wp_worker_tail, wp_worktree</native_tool_names>
+<native_tool_names>wp_audit, wp_audits, wp_bench, wp_ci_act, wp_e2e, wp_fleet_status, wp_format, wp_gain, wp_goal_cancel, wp_goal_handoff, wp_goal_new, wp_goal_run, wp_goal_status, wp_lint, wp_pr_status, wp_pr_upsert, wp_pr_wait, wp_qa, wp_release_readiness, wp_session_batch_execute, wp_session_capture, wp_session_doctor, wp_session_execute, wp_session_execute_file, wp_session_fetch_and_index, wp_session_index, wp_session_purge, wp_session_retrieve, wp_session_restore, wp_session_search, wp_session_snapshot, wp_session_stats, wp_test, wp_typecheck, wp_worker_tail, wp_worktree</native_tool_names>
 <stdout_noop>Codex hook commands with no action write {} on stdout; durable guidance belongs in AGENTS.md.</stdout_noop>
 <lifecycle_notes>
 <note>Codex reads repository instruction files for durable guidance.</note>
