@@ -22,18 +22,7 @@ tags:
   - tooling
   - cloudflare
   - contact-form
-approvals:
-  - reviewer: claude
-    verdict: approve
-    commit: 2eac7b36cae7f123ddbc0fdcd530f97bce15aa57
-    targetHash: 2eac7b36cae7f123ddbc0fdcd530f97bce15aa57
-    evidence: reviews.md
-    artifact: review-artifacts/c49a674888a4a27a-claude-claude.md
-    model: opus
-    rev: gate:c49a674888a4a27a:claude:opus
-    note: >-
-      Claude returned approve-with-nits; the non-blocking /health routing
-      observation is documented in the committed review artifact.
+approvals: []
 ---
 
 # Fix wp setup metadata and contact form routing
