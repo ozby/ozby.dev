@@ -12,7 +12,7 @@
     "dev": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers dev",
     "build": "vp run --filter @ozby-dev/client build && vp run --filter @ozby-dev/workers build",
     "typecheck": "vp run --filter @ozby-dev/client check-types && vp run --filter @ozby-dev/workers check-types && vp run --filter @ozby-dev/infra check-types && wp typecheck",
-    "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && wp test --file test/ci-governance-contract.test.ts",
+    "test": "vp run --filter @ozby-dev/client test && vp run --filter @ozby-dev/workers test && vp run --filter @ozby-dev/infra test && vp exec vitest run --config vitest.config.ts test/ci-governance-contract.test.ts test/secrets-config-contract.test.ts",
     "lint": "wp lint",
     "qa": "wp lint && wp typecheck && vp run test",
     "prepare": "husky",
@@ -29,7 +29,9 @@
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "version": "changeset version && bun scripts/sync-release-metadata-version.ts",
-    "release:publish": "bun scripts/release-publish.ts"
+    "release:publish": "bun scripts/release-publish.ts",
+    "setup:agent": "wp setup",
+    "workflow-actions:check": "node scripts/check-workflow-action-pins.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
