@@ -64,6 +64,7 @@ describe("ozby-dev deploy contract", () => {
 
     expect(() => readRepoFile("apps/workers/wrangler.jsonc")).not.toThrow();
     const wrangler = readRepoFile("apps/workers/wrangler.jsonc");
+    expect(wrangler).toContain('"run_worker_first": ["/api/*"]');
     expect(wrangler).toContain('"allowed_sender_addresses": ["info@ozby.dev"]');
     expect(wrangler).toContain(
       '"required": ["CONTACT_TURNSTILE_SITE_KEY", "CONTACT_TURNSTILE_SECRET_KEY"]',
