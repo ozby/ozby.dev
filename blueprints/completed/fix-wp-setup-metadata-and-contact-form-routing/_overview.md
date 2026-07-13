@@ -1,12 +1,12 @@
 ---
 type: blueprint
-title: "Fix wp setup metadata and contact form routing"
+title: Fix wp setup metadata and contact form routing
 owner: ozby
 status: completed
 complexity: M
-created: '2026-07-13'
-last_updated: '2026-07-13'
-progress: '100% (completed)'
+created: "2026-07-13"
+last_updated: "2026-07-13"
+progress: 100% (completed)
 worktree_owner_id: owner-75c2f373b17e
 worktree_owner_branch: bp/fix-wp-setup-metadata-and-contact-form-routing
 historicalZeroTaskWaiver: true
@@ -22,7 +22,19 @@ tags:
   - tooling
   - cloudflare
   - contact-form
-approvals: []
+approvals:
+  - reviewer: kimi
+    verdict: approve
+    evidence: reviews.md
+    rev: gate:59c5b4eefb8e475b:opencode:opencode-go/kimi-k2.7-code
+    commit: 03873d2f3d9bc141dfc116262e1e6e91d38a8416
+    targetHash: 03873d2f3d9bc141dfc116262e1e6e91d38a8416
+  - reviewer: deepseek
+    verdict: approve
+    evidence: reviews.md
+    rev: gate:59c5b4eefb8e475b:opencode:opencode-go/deepseek-v4-pro
+    commit: 03873d2f3d9bc141dfc116262e1e6e91d38a8416
+    targetHash: 03873d2f3d9bc141dfc116262e1e6e91d38a8416
 ---
 
 # Fix wp setup metadata and contact form routing
