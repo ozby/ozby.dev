@@ -46,7 +46,7 @@ describe("ozby-dev CI governance contract", () => {
     const release = readRepoFile(".github/workflows/release.yml");
 
     expect(ci).toContain("voidzero-dev/setup-vp@");
-    expect(ci).toContain("webpresso/agent-kit/.github/actions/setup-wp@");
+    expect(ci).toContain("webpresso/github-actions/.github/actions/setup-wp@");
     expect(ci).toContain("Check workflow action pins");
     expect(ci).not.toContain("agent-kit@latest");
     expect(ci).not.toContain("AGENT_KIT_VERSION");
