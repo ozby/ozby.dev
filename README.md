@@ -45,13 +45,14 @@ Edit `apps/client/src/projects.ts` and add an entry to the array:
 
 ## Development
 
-This repo uses [vite-plus](https://www.npmjs.com/package/vite-plus) (`vp`) as its task runner. pnpm is the underlying package manager — use `vp run` for scripts rather than `pnpm run` directly.
+This repo follows `wp` > `vp` > `pnpm`: use `wp` for project operations,
+`vp` when `wp` has no equivalent, and raw `pnpm` only as the final fallback.
 
 ```bash
-pnpm install
-vp run qa        # lint + typecheck + tests
-vp run build     # production build
-vp run dev       # builds client dist, then serves the local preview at localhost:8787
+vp install
+wp run qa        # lint + typecheck + tests
+wp run build     # production build
+wp run dev       # builds client dist, then serves the local preview at localhost:8787
 ```
 
 ## GitHub Packages
@@ -83,7 +84,7 @@ wp secrets doctor --profile preview --json
 - Dry-run deploy stays secret-free:
 
 ```bash
-vp run deploy:dry-run
+wp run deploy:dry-run
 ```
 
 - Preview deploys use additive custom domains:
@@ -98,7 +99,7 @@ vp run deploy:dry-run
 - Production deploy uses the same DRY secret-manager contract as the other site repos:
 
 ```bash
-vp run changeset && merge the generated Version Packages PR
+wp run changeset && merge the generated Version Packages PR
 ```
 
 That build + deploy path resolves Cloudflare credentials through the selected
@@ -107,7 +108,7 @@ manager instead of hardcoding repo-local env files or ad hoc provider commands.
 - Verify the repo stays metadata-only with:
 
 ```bash
-vp run verify:secrets
+wp run verify:secrets
 ```
 
 ## Contact Form Production Gates
@@ -133,10 +134,10 @@ repo-local commands here:
 ## Verify
 
 ```bash
-vp run lint
-vp run typecheck
-vp run test
-vp run qa
-vp run deploy:dry-run
-vp run verify:deploy-contract
+wp run lint
+wp run typecheck
+wp run test
+wp run qa
+wp run deploy:dry-run
+wp run verify:deploy-contract
 ```
