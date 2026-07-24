@@ -100,15 +100,11 @@ export function Home() {
         </h1>
         <div className="hero-foot">
           <p className="hero-sub">
-            Head of Engineering and CTO who never stopped operating as a principal engineer —
-            two-time founding engineer, still heavily hands-on. Twenty-five years of taking systems
-            from first commit to production scale: growth engineering behind ResearchGate&apos;s 15M
-            users, the #1 multiple sclerosis app from zero to acquisition, and post-merger
-            engineering teams at Mymee. I bet on two things: developer experience — the tooling and
-            fast feedback loops that let small teams ship like big ones — and data-driven decisions,
-            having built A/B testing and traffic-experiment frameworks twice. Today I run
-            engineering for AI-first startups and build the cloud platforms and LLM infrastructure
-            myself.
+            Head of Engineering and CTO, still hands-on as a principal engineer. I have spent 25
+            years taking products from first commit to production: growth engineering for
+            ResearchGate&apos;s 15M users, a multiple-sclerosis app from launch to acquisition, and
+            post-merger teams at Mymee. Today I run engineering for AI startups and build their
+            cloud platforms and LLM infrastructure.
           </p>
           <span className="hero-meta">Berlin · Çanakkale</span>
         </div>

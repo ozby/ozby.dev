@@ -1,27 +1,12 @@
 {
   "extends": "@webpresso/agent-config/tsconfig/cloudflare.json",
   "compilerOptions": {
-    "lib": [
-      "ES2024",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "./worker-configuration.d.ts",
-      "node",
-      "vitest/globals"
-    ],
-    "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["./worker-configuration.d.ts", "node", "vitest/globals"],
     "erasableSyntaxOnly": false,
     "paths": {
-      "#*": [
-        "./src/*"
-      ]
+      "#*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    "wrangler.jsonc"
-  ]
+  "include": ["src", "wrangler.jsonc"]
 }

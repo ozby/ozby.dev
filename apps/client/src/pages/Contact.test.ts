@@ -22,7 +22,7 @@ describe("ContactPage", () => {
   it("blocks submission until the runtime Turnstile site key loads", () => {
     const html = renderToStaticMarkup(ContactPage({ status: null }));
 
-    expect(html).toContain("Security check is loading. The form will unlock automatically.");
+    expect(html).toContain("Security check is loading. It will finish automatically.");
     expect(html).toContain('disabled=""');
     expect(html).not.toContain("cf-turnstile");
   });

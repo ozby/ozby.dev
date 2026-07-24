@@ -10,7 +10,7 @@ export const projects: readonly Project[] = [
       "Engineering operating system for AI-assisted delivery — blueprints, audits, evidence gates.",
     url: "https://github.com/webpresso/agent-kit",
     tech: ["TypeScript", "Node.js", "Platform engineering", "Vitest"],
-    why: `An engineering operating system for AI-assisted delivery. It turns planning, implementation, verification, secrets handling, docs, and lifecycle checks into repeatable workflows with evidence gates. The goal is not more automation for its own sake; it is senior engineering discipline made executable across teams and repositories.`,
+    why: `A repository-native workflow for AI-assisted delivery: planning, implementation, verification, secrets, docs, and lifecycle checks with evidence gates. It makes disciplined engineering repeatable across teams and repositories.`,
   },
   {
     slug: "ingest-lens",
@@ -27,7 +27,7 @@ export const projects: readonly Project[] = [
       "IaC",
       "Preview environments",
     ],
-    why: `A production-shaped reference application that exercises the full agent-kit toolchain against real infrastructure. Pulumi-managed cloud resources, Neon for Postgres, branch-per-PR preview environments, and checks that keep CI close to production reality. It is a proving ground for fast feedback loops, reproducible environments, and safe delivery under real operational constraints.`,
+    why: `A production-shaped reference app for the agent-kit toolchain: Pulumi-managed resources, Neon Postgres, branch-per-PR previews, and checks that keep CI close to production.`,
   },
   {
     slug: "edge-matte",
@@ -44,6 +44,6 @@ export const projects: readonly Project[] = [
       "Pulumi",
       "Hexagonal architecture",
     ],
-    why: `Background removal on the Cloudflare edge using the native \`cf.image segment: "foreground"\` (BiRefNet) transform — no external API key, no round-trips. The interesting part is the operating model: a hexagonal core pipeline (validate → upload → bg-removal → flip → store → respond), dependency-injected platform adapters, and domain logic that stays portable instead of leaking provider assumptions.`,
+    why: `Background removal on Cloudflare using the native \`cf.image segment: "foreground"\` (BiRefNet) transform. The hexagonal pipeline validates, uploads, removes the background, stores the result, and returns a URL while keeping provider adapters separate from domain logic.`,
   },
 ] as const;

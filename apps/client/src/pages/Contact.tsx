@@ -157,7 +157,7 @@ export function ContactPage({
           <TurnstileWidget siteKey={turnstileSiteKey} />
         ) : (
           <p className="contact-status contact-status--error" role="status">
-            Security check is loading. The form will unlock automatically.
+            Security check is loading. It will finish automatically.
           </p>
         )}
         <button type="submit" className="contact-submit" disabled={!verificationReady}>

@@ -1,28 +1,12 @@
 {
   "extends": "@webpresso/agent-config/tsconfig/base.json",
   "compilerOptions": {
-    "lib": [
-      "ES2024",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
-    "types": [
-      "node",
-      "react",
-      "react-dom",
-      "vite/client"
-    ],
-    "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
+    "types": ["node", "react", "react-dom", "vite/client"],
     "paths": {
-      "#*": [
-        "./src/*"
-      ]
+      "#*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    "index.html"
-  ]
+  "include": ["src", "index.html"]
 }

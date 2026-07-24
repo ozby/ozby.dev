@@ -19,7 +19,7 @@ Use the repo-owned Webpresso surfaces before ad hoc command forms.
 
 - Prefer `wp` for audits, tests, lint, typecheck, QA, hooks, and deploy-lane validation.
 - Prefer `vp` for repo script execution and package-scoped orchestration.
-- Do not wrap `wp` in package-manager command chains such as `pnpm run wp`, `npm run wp`, `yarn wp`, `bun run wp`, or `vp run wp`.
+- Do not wrap `wp` in package-manager command chains such as `wp run wp`, `npm run wp`, `yarn wp`, `bun run wp`, or `wp run wp`.
 
 ## Secrets and provider access
 
