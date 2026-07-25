@@ -42,6 +42,8 @@ jobs:
       - run: wp audit architecture-drift --root .
       - run: wp lint
       - run: wp typecheck
+      - name: Run wp audit guardrails
+        run: wp audit guardrails
       - run: vp run test
       - run: wp audit blueprint-lifecycle
 
