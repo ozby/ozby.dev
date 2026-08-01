@@ -1,6 +1,6 @@
-export const agentKitConfig = {
+export const webpressoConfig = {
   deploy: {
-    adapterModule: "./infra/src/deploy/agent-kit-deploy-adapter.ts",
+    adapterModule: "./infra/src/deploy/webpresso-deploy-adapter.ts",
     cloudflare: {
       lanes: {
         dev: { wranglerEnvName: "dev" },
@@ -32,4 +32,4 @@ export const agentKitConfig = {
   },
 } as const;
 
-export default agentKitConfig;
+export default webpressoConfig;
