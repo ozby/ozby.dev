@@ -86,6 +86,10 @@ jobs:
       contents: read
       packages: read
       id-token: write
+      # cloudflare-preview/production request `checks: read`; a job-level
+      # permissions block REPLACES defaults, so omitting it fails the entire
+      # caller at startup before any job is scheduled.
+      checks: read
     uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@2003ca953f336efb779165f748e1ad8408565428
     with:
       lane: ${{ needs.resolve.outputs.lane }}
@@ -115,6 +119,10 @@ jobs:
       contents: read
       packages: read
       id-token: write
+      # cloudflare-preview/production request `checks: read`; a job-level
+      # permissions block REPLACES defaults, so omitting it fails the entire
+      # caller at startup before any job is scheduled.
+      checks: read
     uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@2003ca953f336efb779165f748e1ad8408565428
     with:
       lane: ${{ needs.resolve.outputs.lane }}
