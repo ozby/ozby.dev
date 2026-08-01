@@ -65,6 +65,8 @@ jobs:
         for (const url of urls) await wait(url, url.endsWith('/health') ? 24 : 12);"
       release_version: ${{ needs.gate.outputs.release_version }}
       secret_profile: production
+      secret_sink: deploy-wrangler
+      github_environment: production
       runner: ubuntu-latest
     secrets:
       ci_secret_provider_token: ${{ secrets.CI_SECRET_PROVIDER_TOKEN_PRODUCTION }}
