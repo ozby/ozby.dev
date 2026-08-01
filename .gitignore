@@ -107,8 +107,10 @@ e2e/fixtures/smoke.html
 .runtime/
 .opencode/
 .codex/
+.grok/
 _worktrees/
 .webpresso/hooks-manifest.json
+.webpresso/converged.json
 .claude/settings.json
 .claude/settings.local.json
 .claude/agents/
@@ -117,7 +119,6 @@ _worktrees/
 .claude/skills/
 .claude/worktrees/
 .claude/scheduled_tasks.lock
-.cursor/rules/
 .opencode/agents/
 .opencode/commands/
 .agents/skills/
@@ -127,6 +128,12 @@ _worktrees/
 .agent/.blueprints.lock
 .agent/.blueprints.snapshot.sql
 .agent/.tail-hint-history.jsonl
+# `wp compile` derives .rulesync/ from the canonical agent sources and replaces
+# it wholesale on every run, so it is a build artifact rather than the
+# hand-authored source tree rulesync's own docs describe. The .tmp- dirs are
+# its staging area, normally renamed away but left behind by an interrupt.
+.rulesync/
+.rulesync.tmp-*
 # Stryker writes these mutation-test artifacts beside consumer source trees.
 .stryker-tmp/
 reports/mutation/

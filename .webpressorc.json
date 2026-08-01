@@ -1,19 +1,25 @@
 {
   "version": "1",
   "installed": {
-    "tier3Skills": ["base-kit"]
+    "tier3Skills": [
+      "base-kit"
+    ]
   },
   "hosts": {
     "selected": [],
     "requiredCapabilities": [
       "verify",
       "fix",
+      "investigate",
+      "ai-deslop",
       "plan-refine",
+      "ralplan",
       "best-practice-research",
       "testing-philosophy",
       "tph",
       "claude",
       "codex",
+      "grok",
       "opencode-go",
       "plan-eng-review",
       "plan-ceo-review",
@@ -25,9 +31,13 @@
       "hooks-doctor",
       "tech-debt",
       "lore-protocol",
+      "deep-interview",
       "deep-research",
-      "goal",
-      "autopilot"
+      "autoresearch",
+      "ultragoal",
+      "autopilot",
+      "team",
+      "delivery-program"
     ],
     "visibility": {}
   },
@@ -49,5 +59,6 @@
     "overrides": []
   },
   "scripts": {},
-  "durablePlanningRoot": ".agent/planning/"
+  "durablePlanningRoot": ".agent/planning/",
+  "profile": "full"
 }
