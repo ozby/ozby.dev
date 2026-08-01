@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { webpressoDeployAdapter } from "./agent-kit-deploy-adapter.ts";
+import { webpressoDeployAdapter } from "./webpresso-deploy-adapter.ts";
 import {
   buildCloudflareDnsRecordsUrl,
   getConflictingCustomDomainCnameRecords,
@@ -12,7 +12,7 @@ import {
 import { canonicalPreviewLaneToDashed, resolvePreviewLane } from "./deploy-lanes.ts";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const reusableWorkflowSha = "ba439b2d66ece6f16d3e7fee34bdee3ac5c987c0";
+const reusableWorkflowSha = "2003ca953f336efb779165f748e1ad8408565428";
 
 function readRepoFile(path: string): string {
   return readFileSync(join(repoRoot, path), "utf8");
@@ -20,8 +20,8 @@ function readRepoFile(path: string): string {
 
 describe("ozby-dev deploy contract", () => {
   it("declares preview_main / preview_pr / prd Cloudflare lane metadata", async () => {
-    const { default: agentKitConfig } = await import("../../../agent-kit.config.ts");
-    const cloudflare = agentKitConfig.deploy.cloudflare;
+    const { default: webpressoConfig } = await import("../../../webpresso.config.ts");
+    const cloudflare = webpressoConfig.deploy.cloudflare;
 
     expect(cloudflare.lanes.dev).toMatchObject({ wranglerEnvName: "dev" });
     expect(cloudflare.lanes.preview_main).toMatchObject({ wranglerEnvName: "preview-main" });
@@ -71,8 +71,8 @@ describe("ozby-dev deploy contract", () => {
     );
     expect(() => readRepoFile("apps/workers/worker-configuration.d.ts")).not.toThrow();
     expect(() => readRepoFile("wrangler.jsonc")).toThrow();
-    expect(() => readRepoFile("infra/src/deploy/agent-kit-deploy-adapter.ts")).not.toThrow();
-    expect(() => readRepoFile("scripts/agent-kit-deploy-adapter.ts")).toThrow();
+    expect(() => readRepoFile("infra/src/deploy/webpresso-deploy-adapter.ts")).not.toThrow();
+    expect(() => readRepoFile("scripts/webpresso-deploy-adapter.ts")).toThrow();
     expect(() => readRepoFile("infra/src/deploy/deploy-preview.ts")).not.toThrow();
     expect(() => readRepoFile("scripts/deploy-preview.ts")).toThrow();
     expect(() => readRepoFile("infra/src/deploy/deploy-production.ts")).not.toThrow();

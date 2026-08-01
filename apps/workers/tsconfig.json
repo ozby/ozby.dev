@@ -1,5 +1,5 @@
 {
-  "extends": "@webpresso/agent-config/tsconfig/cloudflare.json",
+  "extends": "@webpresso/app-config/tsconfig/cloudflare.json",
   "compilerOptions": {
     "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "types": ["./worker-configuration.d.ts", "node", "vitest/globals"],

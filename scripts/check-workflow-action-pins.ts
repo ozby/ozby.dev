@@ -148,6 +148,9 @@ function scanWorkflow(file: string, root: string): Violation[] {
   const text = readFileSync(file, "utf8");
   const violations: Violation[] = [];
   const lines = text.split("\n");
+  // The public webpresso/github-actions setup-wp action REQUIRES an explicit
+  // `version:` input (the exact published @webpresso/agent-kit semver), so a
+  // with:/version: block on the setup-wp step is expected — do not flag it.
   for (const [index, line] of lines.entries()) {
     const match = /^\s*(?:-\s*)?uses:\s*(.+?)\s*$/u.exec(line);
     if (match?.[1]) {
@@ -183,7 +186,7 @@ function scanWorkflow(file: string, root: string): Violation[] {
         line: index + 1,
         ref: line.trim(),
         reason:
-          "Do not install @webpresso/agent-kit directly; use the public webpresso/github-actions setup-wp action.",
+          "Do not install @webpresso/agent-kit directly; use the immutable external setup-wp action.",
       });
     }
     if (/^\s*(?:AGENT_KIT_VERSION|WP_SETUP_AGENT_KIT_VERSION)(?::|=)/u.test(line)) {

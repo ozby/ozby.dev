@@ -42,7 +42,7 @@ describe("consumer secrets authority contract", () => {
         "setup:agent": "wp setup",
       },
       devDependencies: {
-        "@webpresso/agent-config": "catalog:",
+        "@webpresso/app-config": "catalog:",
       },
     });
     for (const dependencyField of ["dependencies", "devDependencies", "peerDependencies"]) {

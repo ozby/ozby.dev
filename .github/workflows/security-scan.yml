@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Gitleaks
@@ -40,9 +41,9 @@ jobs:
           node-version: "24.16.0"
           cache: true
           run-install: false
-      - uses: webpresso/github-actions/.github/actions/setup-wp@c2c71a7a4be446fc6858e6b57bf55a11ccfa2d88
+      - uses: webpresso/github-actions/.github/actions/setup-wp@2003ca953f336efb779165f748e1ad8408565428
         with:
-          version: "3.1.17"
+          version: "0.0.5"
       - name: Check workflow action pins
         run: node scripts/check-workflow-action-pins.ts
       - run: vp install --frozen-lockfile --ignore-scripts

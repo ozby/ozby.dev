@@ -1,14 +1,9 @@
 {
-  "extends": "@webpresso/agent-config/tsconfig/base.json",
+  "extends": "@webpresso/app-config/tsconfig/base.json",
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src",
-    "release-metadata.production.json"
-  ]
+  "include": ["src", "release-metadata.production.json"]
 }

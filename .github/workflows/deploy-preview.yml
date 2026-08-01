@@ -24,6 +24,9 @@ concurrency:
   group: ozby-dev-preview-${{ github.event.pull_request.number || github.ref_name || inputs.lane }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   resolve:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.ref != 'changeset-release/main' }}
@@ -86,7 +89,11 @@ jobs:
       contents: read
       packages: read
       id-token: write
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@ba439b2d66ece6f16d3e7fee34bdee3ac5c987c0
+      # cloudflare-preview/production request `checks: read`; a job-level
+      # permissions block REPLACES defaults, so omitting it fails the entire
+      # caller at startup before any job is scheduled.
+      checks: read
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@2003ca953f336efb779165f748e1ad8408565428
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: deploy
@@ -115,7 +122,11 @@ jobs:
       contents: read
       packages: read
       id-token: write
-    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@ba439b2d66ece6f16d3e7fee34bdee3ac5c987c0
+      # cloudflare-preview/production request `checks: read`; a job-level
+      # permissions block REPLACES defaults, so omitting it fails the entire
+      # caller at startup before any job is scheduled.
+      checks: read
+    uses: webpresso/github-actions/.github/workflows/cloudflare-preview.yml@2003ca953f336efb779165f748e1ad8408565428
     with:
       lane: ${{ needs.resolve.outputs.lane }}
       mode: destroy
