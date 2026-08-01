@@ -25,6 +25,7 @@
     "@types/node": "catalog:",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@webpresso/app-config": "catalog:",
     "typescript": "catalog:",
     "vite": "^8.1.5",
     "vitest": "catalog:"

@@ -1,4 +1,4 @@
-import { typescriptBaseConfig } from '@webpresso/agent-config/stryker'
+import { typescriptBaseConfig } from "@webpresso/app-config/stryker";
 
 export default {
   ...typescriptBaseConfig,
@@ -10,6 +10,6 @@ export default {
   },
   vitest: {
     ...typescriptBaseConfig.vitest,
-    configFile: 'vitest.config.ts',
+    configFile: "vitest.config.ts",
   },
-}
+};
