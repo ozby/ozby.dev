@@ -46,6 +46,7 @@
     "@webpresso/app-config": "catalog:",
     "husky": "^9.1.7",
     "secretlint": "^9.3.4",
+    "tsx": "^4.22.4",
     "typescript": "catalog:",
     "vite-plus": "^0.2.1",
     "vitest": "catalog:"
