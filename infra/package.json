@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "wp test --file vitest.config.ts",
+    "test": "wp test --files vitest.config.ts",
     "check-types": "wp typecheck",
     "lint": "wp lint"
   },
