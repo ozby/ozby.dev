@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
 import "highlight.js/styles/github-dark.css";
@@ -34,6 +34,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/writing" element={<Writing />} />
             <Route path="/writing/:slug" element={<Post />} />
+            <Route
+              path="/projects/agent-kit"
+              element={<Navigate to="/projects/webpresso" replace />}
+            />
             <Route path="/projects/:slug" element={<Project />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
