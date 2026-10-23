@@ -18,6 +18,7 @@ export function Project() {
   }
 
   const whyHtml = renderMarkdown(project.why);
+  const urlLabel = new URL(project.url).hostname === "github.com" ? "GitHub" : "Website";
 
   return (
     <>
@@ -41,7 +42,7 @@ export function Project() {
             </a>
           )}
           <a href={project.url} className="btn" target="_blank" rel="noopener noreferrer">
-            GitHub ↗
+            {urlLabel} ↗
           </a>
         </div>
 
