@@ -9,7 +9,7 @@ name: monorepo-navigation
 description: Navigate the ozby-dev repo efficiently.
 license: MIT
 upstream:
-  source: https://github.com/webpresso/agent-kit
+  source: https://github.com/webpresso/app
 ---
 
 # Monorepo Navigation

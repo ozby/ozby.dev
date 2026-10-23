@@ -27,7 +27,7 @@ export const projects: readonly Project[] = [
       "IaC",
       "Preview environments",
     ],
-    why: `A production-shaped reference app for the agent-kit toolchain: Pulumi-managed resources, Neon Postgres, branch-per-PR previews, and checks that keep CI close to production.`,
+    why: `A production-shaped reference app for the Webpresso toolchain: Pulumi-managed resources, Neon Postgres, branch-per-PR previews, and checks that keep CI close to production.`,
   },
   {
     slug: "edge-matte",
