@@ -4,11 +4,11 @@ export type { Project };
 
 export const projects: readonly Project[] = [
   {
-    slug: "agent-kit",
-    name: "agent-kit",
+    slug: "webpresso",
+    name: "Webpresso",
     summary:
-      "Engineering operating system for AI-assisted delivery — blueprints, audits, evidence gates.",
-    url: "https://github.com/webpresso/agent-kit",
+      "Desktop app and wp CLI for AI-assisted delivery — blueprints, audits, evidence gates.",
+    url: "https://webpresso.ai",
     tech: ["TypeScript", "Node.js", "Platform engineering", "Vitest"],
     why: `A repository-native workflow for AI-assisted delivery: planning, implementation, verification, secrets, docs, and lifecycle checks with evidence gates. It makes disciplined engineering repeatable across teams and repositories.`,
   },
@@ -27,7 +27,7 @@ export const projects: readonly Project[] = [
       "IaC",
       "Preview environments",
     ],
-    why: `A production-shaped reference app for the agent-kit toolchain: Pulumi-managed resources, Neon Postgres, branch-per-PR previews, and checks that keep CI close to production.`,
+    why: `A production-shaped reference app for the Webpresso toolchain: Pulumi-managed resources, Neon Postgres, branch-per-PR previews, and checks that keep CI close to production.`,
   },
   {
     slug: "edge-matte",

@@ -124,7 +124,7 @@ The `/contact` route loads its public Turnstile site key at runtime from `/api/c
 ## GitHub deploy workflows
 
 This repo now uses thin caller workflows that delegate to the shared
-`agent-kit` reusable deploy harness by immutable commit SHA while keeping the
+`webpresso/github-actions` reusable deploy harness by immutable commit SHA while keeping the
 repo-local commands here:
 
 - preview: `.github/workflows/deploy-preview.yml`
